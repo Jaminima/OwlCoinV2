@@ -28,12 +28,25 @@ namespace OwlCoinV2.Backend.TwitchBot
         {
             string ChannelID = UserHandler.UserFromUsername(Shared.ConfigHandler.Config["ChannelName"].ToString()).Matches[0].Id;
             List<String> Subs = GetSubs();
-            foreach (string UserId in UserHandler.WatchingTwitchIDs)
+            foreach (string UserId in GetWatching())
             {
                 if (Subs.Contains(UserId)) { Shared.Data.Accounts.GiveUser(UserId, Shared.IDType.Twitch, 300); }
                 else { Shared.Data.Accounts.GiveUser(UserId, Shared.IDType.Twitch, 100); }
             }
             return null;
+        }
+
+        public static List<String> GetWatching()
+        {
+            List<String> Watcher = new List<string> { };
+            WebRequest Req = WebRequest.Create("http://tmi.twitch.tv/group/user/"+ Shared.ConfigHandler.Config["ChannelName"] + "/chatters");
+            Req.Method = "GET";
+            WebResponse Res = Req.GetResponse();
+            string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
+            Newtonsoft.Json.Linq.JObject DJ = Newtonsoft.Json.Linq.JObject.Parse(D);
+            foreach(string Username in DJ["chatters"]["moderators"]) { Watcher.Add(UserHandler.UserFromUsername(Username).Matches[0].Id); }
+            foreach (string UserName in DJ["chatters"]["viewers"]) { Watcher.Add(UserHandler.UserFromUsername(UserName).Matches[0].Id); }
+            return Watcher;
         }
 
         public static List<String> GetSubs()
