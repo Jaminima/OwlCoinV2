@@ -224,10 +224,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\DiscordBot\Bot.cs" />
+    <Compile Include="Backend\DiscordBot\MessageHandler.cs" />
     <Compile Include="Backend\Init.cs" />
     <Compile Include="Backend\Shared\ConfigHandler.cs" />
-    <Compile Include="Backend\Twitch\Bot.cs" />
-    <Compile Include="Backend\Twitch\MessageHandler.cs" />
+    <Compile Include="Backend\Shared\Data\EventResponse.cs" />
+    <Compile Include="Backend\Shared\Data\SQL.cs" />
+    <Compile Include="Backend\Shared\Data\UserData.cs" />
+    <Compile Include="Backend\Shared\IDType.cs" />
+    <Compile Include="Backend\TwitchBot\Bot.cs" />
+    <Compile Include="Backend\TwitchBot\MessageHandler.cs" />
+    <Compile Include="Backend\TwitchBot\UserHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -235,8 +242,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Backend\Discord\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

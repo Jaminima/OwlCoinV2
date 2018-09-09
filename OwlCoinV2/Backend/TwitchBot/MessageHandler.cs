@@ -8,7 +8,7 @@ using TwitchLib.Client.Models;
 using TwitchLib.Client.Events;
 using System.Threading;
 
-namespace OwlCoinV2.Backend.Twitch
+namespace OwlCoinV2.Backend.TwitchBot
 {
     public static class MessageHandler
     {
