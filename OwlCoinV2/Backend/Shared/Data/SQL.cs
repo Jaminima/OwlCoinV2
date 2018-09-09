@@ -42,11 +42,9 @@ namespace OwlCoinV2.Backend.Shared.Data
         public void Insert(string Table,string[] Columns,string[] Data)
         {
             string ColumnString = Columns[0]; Columns[0] = "";
-            if (Columns.Length > 1) { foreach (string S in Columns) { ColumnString = ColumnString  + S + ","; } }
-            ColumnString = ColumnString.Remove(ColumnString.Length-1);
+            if (Columns.Length > 1) { foreach (string S in Columns) { ColumnString = ColumnString  + S + ","; } ColumnString = ColumnString.Remove(ColumnString.Length - 1); }
             string DataString = Data[0]; Data[0] = "";
-            if (Data.Length > 1) { foreach (string S in Data) { DataString = DataString  + S + ","; } }
-            DataString = DataString.Remove(DataString.Length-1);
+            if (Data.Length > 1) { foreach (string S in Data) { DataString = DataString  + S + ","; } DataString = DataString.Remove(DataString.Length - 1); }
             Command = new OleDbCommand("INSERT INTO " + Table + " (" + ColumnString + ") VALUES (" + DataString + ");",Conn);
             Execute();
         }

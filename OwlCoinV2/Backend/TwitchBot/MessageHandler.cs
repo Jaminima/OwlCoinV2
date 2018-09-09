@@ -19,7 +19,8 @@ namespace OwlCoinV2.Backend.TwitchBot
 
         static void Proccessor(OnMessageReceivedArgs e)
         {
-            string Command = e.ChatMessage.Message.Split(" ".ToCharArray())[0].ToLower();
+            string[] SegmentedMessage = e.ChatMessage.Message.Split(" ".ToCharArray());
+            string Command = SegmentedMessage[0].ToLower();
             string Prefix = Shared.ConfigHandler.Config["Prefix"].ToString();
             if (Command.StartsWith(Prefix))
             {
@@ -33,6 +34,12 @@ namespace OwlCoinV2.Backend.TwitchBot
                 }
                 if (Command == "owlcoin" || Command == "bal"||Command=="balance")
                 {
+                    if (SegmentedMessage.Length==2&&SegmentedMessage[1].StartsWith("@"))
+                    {
+                        SegmentedMessage[1] = SegmentedMessage[1].Replace("@", "");
+                        Shared.Data.UserData.CreateUser(SegmentedMessage[1], Shared.IDType.Twitch);
+                        Bot.TwitchC.SendMessage(e.ChatMessage.Channel,"@"+e.ChatMessage.Username+" @"+SegmentedMessage[1]+" has "+Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch) + " Owlcoin!");
+                    }
                     Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " you have " + Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch)+" Owlcoin!");
                 }
 
