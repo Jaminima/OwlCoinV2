@@ -29,10 +29,11 @@ namespace OwlCoinV2.Backend.DiscordBot
 
                 Command = Command.Remove(0, Prefix.Length);
 
-                if (Command == "echo")
-                {
-                    await Message.Channel.SendMessageAsync(Message.Content.Remove(0, Command.Length + Prefix.Length + 1));
-                }
+                //if (Command == "echo")
+                //{
+                //    if (SegmentedMessage.Length < 2) { NotLongEnough(Message); return; }
+                //    await Message.Channel.SendMessageAsync(Message.Content.Remove(0, Command.Length + Prefix.Length + 1));
+                //}
                 if (Command == "pay")
                 {
                     if (SegmentedMessage.Length != 3) { NotLongEnough(Message); return; }
