@@ -46,6 +46,11 @@ namespace OwlCoinV2.Backend.DiscordBot
                     //}
                 }
 
+                if (Command == "owlcoin" || Command == "bal" || Command == "balance")
+                {
+                    await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> you have " + Shared.Data.Accounts.GetBalance(Message.Author.Id.ToString(), Shared.IDType.Discord) + " Owlcoin!");
+                }
+
             }
         }
 

@@ -36,6 +36,9 @@ namespace OwlCoinV2.Backend.TwitchBot
             TwitchC.OnUserLeft += UserHandler.HandleUserLeft;
             TwitchC.Connect();
             Console.WriteLine("TwitchBot Started");
+
+            new Thread(() => Drops.Watching()).Start();
+
         }
 
     }

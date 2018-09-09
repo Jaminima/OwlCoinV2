@@ -14,6 +14,26 @@ namespace OwlCoinV2.Backend.Shared.Data
             Init.SQLInstance.Insert("Accounts", new string[] { "OwlCoinID", "Balance" }, new string[] { OwlCoinID, "500" });
         }
 
+        public static int GetBalance(string ID, IDType IDVariant)
+        {
+            string OwlCoinID = Init.SQLInstance.Select("UserData", "OwlCoinID", IDVariant.ToString() + "ID='" + ID + "'")[0];
+            return int.Parse(Init.SQLInstance.Select("Accounts", "Balance", "OwlCoinID=" + OwlCoinID)[0]);
+        }
+
+        public static bool GiveUser(string ID, IDType IDVariant,int Amount)
+        {
+            Amount = Math.Abs(Amount);
+            bool Response = false;
+
+            UserData.CreateUser(ID, IDVariant);
+            string OCID = Init.SQLInstance.Select("UserData", "OwlCoinID", IDVariant.ToString() + "ID='" + ID + "'")[0];
+            int Bal = int.Parse(Init.SQLInstance.Select("Accounts", "Balance", "OwlCoinID=" + OCID)[0]);
+            Bal += Amount;
+            Init.SQLInstance.Update("Accounts", "OwlCoinID=" + OCID, "Balance=" + Bal);
+            Response = true;
+            return Response;
+        }
+
         public static EventResponse PayUser(string MyID,IDType MyIDType,string TheirID,IDType TheirIDType,int Amount)
         {
             Amount = Math.Abs(Amount);

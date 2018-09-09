@@ -13,7 +13,7 @@ namespace OwlCoinV2.Backend.TwitchBot
 {
     public static class UserHandler
     {
-        public static List<String> WatchingTwitchIDs = new List<String> { };
+        public static List<String> WatchingTwitchIDs = new List<String> { "131475020" };
 
         public static void HandleUserJoin(object sender,OnUserJoinedArgs e)
         {

@@ -1,0 +1,1 @@
+curl -X GET 'https://id.twitch.tv/oauth2/authorize?client_id=obav1xhsi7jl5dx7a2ydqhxbvc4nt1&redirect_uri=http://localhost&response_type=token+id_token&scope=channel_subscriptions+channel_editor+openid'
