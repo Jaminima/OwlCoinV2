@@ -39,6 +39,7 @@ namespace OwlCoinV2.Backend.TwitchBot
                         Shared.Data.UserData.CreateUser(TheirID, Shared.IDType.Twitch);
                         Bot.TwitchC.SendMessage(e.ChatMessage.Channel,"@"+e.ChatMessage.Username+" @"+ SegmentedMessage[1] + " has "+Shared.Data.Accounts.GetBalance(TheirID, Shared.IDType.Twitch) + " Owlcoin!");
                     }
+                    Shared.Data.UserData.CreateUser(e.ChatMessage.UserId, Shared.IDType.Twitch);
                     Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " you have " + Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch)+" Owlcoin!");
                 }
 

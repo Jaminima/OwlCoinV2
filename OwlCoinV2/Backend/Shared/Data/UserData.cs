@@ -32,18 +32,24 @@ namespace OwlCoinV2.Backend.Shared.Data
                 {
                     if (Connection["type"].ToString() == "twitch")
                     {
-                        try
+                        if (UserData.UserExists(Connection["id"].ToString(), IDType.Twitch))
                         {
-                            Init.SQLInstance.Insert("UserData",
-                                new String[] { IDVariant.ToString() + "ID","TwitchID" },
-                                new String[] { ID.ToString(), Connection["id"].ToString() }
-                            );
-                            Response.Success = true;
-                            Response.Message = "Created User Account and added Twitch";
-                            
+                            Init.SQLInstance.Update("UserData", "TwitchID=\"" + Connection["id"]+"\"", "DiscordID=\"" + ID.ToString()+"\"");
                         }
-                        catch { Response.Message = "Error occured during creation"; }
-                        Accounts.CreateAccount(ID, IDVariant);
+                        else
+                        {
+                            try
+                            {
+                                Init.SQLInstance.Insert("UserData",
+                                    new String[] { IDVariant.ToString() + "ID", "TwitchID" },
+                                    new String[] { ID.ToString(), Connection["id"].ToString() }
+                                );
+                                Response.Success = true;
+                                Response.Message = "Created User Account and added Twitch";
+                                Accounts.CreateAccount(ID, IDVariant);
+                            }
+                            catch { Response.Message = "Error occured during creation"; }
+                        }
                         return Response;
                     }
                 }

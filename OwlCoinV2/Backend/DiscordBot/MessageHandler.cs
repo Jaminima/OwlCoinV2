@@ -12,8 +12,8 @@ namespace OwlCoinV2.Backend.DiscordBot
     {
         public static Task HandleMessage(SocketMessage Message)
         {
-            new Thread(async () => await Proccesor(Message)).Start();
-            //Proccesor(Message);
+            //new Thread(async () => await Proccesor(Message)).Start();
+            Proccesor(Message);
             return null;
         }
 
@@ -53,7 +53,9 @@ namespace OwlCoinV2.Backend.DiscordBot
                         Shared.Data.UserData.CreateUser(SegmentedMessage[1], Shared.IDType.Discord);
                         await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> <@"+SegmentedMessage[1]+"> has " + Shared.Data.Accounts.GetBalance(SegmentedMessage[1], Shared.IDType.Discord) + " Owlcoin!");
                     }
-                    else { await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> you have " + Shared.Data.Accounts.GetBalance(Message.Author.Id.ToString(), Shared.IDType.Discord) + " Owlcoin!"); }
+                    else {
+                        Shared.Data.UserData.CreateUser(Message.Author.Id.ToString(), Shared.IDType.Discord);
+                        await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> you have " + Shared.Data.Accounts.GetBalance(Message.Author.Id.ToString(), Shared.IDType.Discord) + " Owlcoin!"); }
                 }
 
             }
