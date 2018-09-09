@@ -42,7 +42,7 @@ namespace OwlCoinV2.Backend.DiscordBot
                     Shared.Data.EventResponse Response = Shared.Data.Accounts.PayUser(Message.Author.Id.ToString(),Shared.IDType.Discord,TheirID,TheirIDType,int.Parse(SegmentedMessage[2]));
                     //if (Response.Success)
                     //{
-                        await Message.Channel.SendMessageAsync(Response.Message);
+                        await Message.Channel.SendMessageAsync("<@"+Message.Author.Id+">"+Response.Message);
                     //}
                 }
 

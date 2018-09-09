@@ -30,6 +30,20 @@ namespace OwlCoinV2.Backend.TwitchBot
                 {
                     Bot.TwitchC.SendMessage(e.ChatMessage.Channel, e.ChatMessage.Message.Remove(0, Command.Length + Prefix.Length + 1));
                 }
+
+                if (Command == "pay")
+                {
+                    if (SegmentedMessage.Length != 3) { NotLongEnough(e); return; }
+                    string TheirID = SegmentedMessage[1]; Shared.IDType TheirIDType = Shared.IDType.Twitch;
+                    if (TheirID.StartsWith("@")) { TheirID = TheirID.Replace("@", ""); TheirID= UserHandler.UserFromUsername(TheirID).Matches[0].Id; }
+
+                    Shared.Data.EventResponse Response = Shared.Data.Accounts.PayUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, TheirID, TheirIDType, int.Parse(SegmentedMessage[2]));
+                    //if (Response.Success)
+                    //{
+                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@"+e.ChatMessage.Username+Response.Message);
+                    //}
+                }
+
                 if (Command == "owlcoin" || Command == "bal"||Command=="balance")
                 {
                     if (SegmentedMessage.Length==2&&SegmentedMessage[1].StartsWith("@"))
@@ -44,6 +58,12 @@ namespace OwlCoinV2.Backend.TwitchBot
                 }
 
             }
+
+        }
+
+        static async void NotLongEnough(OnMessageReceivedArgs e)
+        {
+            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "You are missing parameters or have too many!");
         }
 
     }
