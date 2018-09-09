@@ -24,8 +24,6 @@ namespace OwlCoinV2.Backend.TwitchBot
             string Prefix = Shared.ConfigHandler.Config["Prefix"].ToString();
             if (Command.StartsWith(Prefix))
             {
-                Console.WriteLine(e.ChatMessage.IsSubscriber);
-
                 Command = Command.Remove(0, Prefix.Length);
 
                 if (Command == "echo")
@@ -37,8 +35,9 @@ namespace OwlCoinV2.Backend.TwitchBot
                     if (SegmentedMessage.Length==2&&SegmentedMessage[1].StartsWith("@"))
                     {
                         SegmentedMessage[1] = SegmentedMessage[1].Replace("@", "");
-                        Shared.Data.UserData.CreateUser(SegmentedMessage[1], Shared.IDType.Twitch);
-                        Bot.TwitchC.SendMessage(e.ChatMessage.Channel,"@"+e.ChatMessage.Username+" @"+SegmentedMessage[1]+" has "+Shared.Data.Accounts.GetBalance(SegmentedMessage[1], Shared.IDType.Twitch) + " Owlcoin!");
+                        String TheirID = UserHandler.UserFromUsername(SegmentedMessage[1]).Matches[0].Id;
+                        Shared.Data.UserData.CreateUser(TheirID, Shared.IDType.Twitch);
+                        Bot.TwitchC.SendMessage(e.ChatMessage.Channel,"@"+e.ChatMessage.Username+" @"+ SegmentedMessage[1] + " has "+Shared.Data.Accounts.GetBalance(TheirID, Shared.IDType.Twitch) + " Owlcoin!");
                     }
                     Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " you have " + Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch)+" Owlcoin!");
                 }
