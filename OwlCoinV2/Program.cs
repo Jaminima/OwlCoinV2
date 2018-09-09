@@ -10,6 +10,8 @@ namespace OwlCoinV2
     {
         static void Main(string[] args)
         {
+            Backend.Init.Start();
+            while (true) { Console.ReadLine(); }
         }
     }
 }
