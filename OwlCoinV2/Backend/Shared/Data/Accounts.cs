@@ -53,7 +53,7 @@ namespace OwlCoinV2.Backend.Shared.Data
                     TheirBal += Amount; MyBal -= Amount;
                     Init.SQLInstance.Update("Accounts", "OwlCoinID=" + MyOCID, "Balance=" + MyBal);
                     Init.SQLInstance.Update("Accounts", "OwlCoinID=" + TheirOCID, "Balance=" + TheirBal);
-                    Response.Message = " Payment Complete, New Balance: "+MyBal+" Owlcoin!";
+                    Response.Message = " Payment of "+Amount+" Owlcoin Complete, New Balance: "+MyBal+" Owlcoin!";
                     Response.Success = true;
                 }
                 else { Response.Message = "Not enough OwlCoin"; }

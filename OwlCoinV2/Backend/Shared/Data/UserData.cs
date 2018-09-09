@@ -21,38 +21,42 @@ namespace OwlCoinV2.Backend.Shared.Data
 
             if (IDVariant == IDType.Discord)
             {
-                WebRequest Req = WebRequest.Create("https://discordapp.com/api/v6/users/" + ID + "/profile");
-                Req.Headers.Add("authorization", ConfigHandler.Config["DiscordBot"]["AuthToken"].ToString());
-                Req.Method = "GET";
-                WebResponse Res = Req.GetResponse();
-                string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
-
-                Newtonsoft.Json.Linq.JObject ProfileData = Newtonsoft.Json.Linq.JObject.Parse(D);
-                foreach (Newtonsoft.Json.Linq.JObject Connection in ProfileData["connected_accounts"])
+                try
                 {
-                    if (Connection["type"].ToString() == "twitch")
+                    WebRequest Req = WebRequest.Create("https://discordapp.com/api/v6/users/" + ID + "/profile");
+                    Req.Headers.Add("authorization", ConfigHandler.Config["DiscordBot"]["AuthToken"].ToString());
+                    Req.Method = "GET";
+                    WebResponse Res = Req.GetResponse();
+                    string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
+
+                    Newtonsoft.Json.Linq.JObject ProfileData = Newtonsoft.Json.Linq.JObject.Parse(D);
+                    foreach (Newtonsoft.Json.Linq.JObject Connection in ProfileData["connected_accounts"])
                     {
-                        if (UserData.UserExists(Connection["id"].ToString(), IDType.Twitch))
+                        if (Connection["type"].ToString() == "twitch")
                         {
-                            Init.SQLInstance.Update("UserData", "TwitchID=\"" + Connection["id"]+"\"", "DiscordID=\"" + ID.ToString()+"\"");
-                        }
-                        else
-                        {
-                            try
+                            if (UserData.UserExists(Connection["id"].ToString(), IDType.Twitch))
                             {
-                                Init.SQLInstance.Insert("UserData",
-                                    new String[] { IDVariant.ToString() + "ID", "TwitchID" },
-                                    new String[] { ID.ToString(), Connection["id"].ToString() }
-                                );
-                                Response.Success = true;
-                                Response.Message = "Created User Account and added Twitch";
-                                Accounts.CreateAccount(ID, IDVariant);
+                                Init.SQLInstance.Update("UserData", "TwitchID=\"" + Connection["id"] + "\"", "DiscordID=\"" + ID.ToString() + "\"");
                             }
-                            catch { Response.Message = "Error occured during creation"; }
+                            else
+                            {
+                                try
+                                {
+                                    Init.SQLInstance.Insert("UserData",
+                                        new String[] { IDVariant.ToString() + "ID", "TwitchID" },
+                                        new String[] { ID.ToString(), Connection["id"].ToString() }
+                                    );
+                                    Response.Success = true;
+                                    Response.Message = "Created User Account and added Twitch";
+                                    Accounts.CreateAccount(ID, IDVariant);
+                                }
+                                catch { Response.Message = "Error occured during creation"; }
+                            }
+                            return Response;
                         }
-                        return Response;
                     }
                 }
+                catch { }
             }
 
             try

@@ -37,6 +37,7 @@ namespace OwlCoinV2.Backend.TwitchBot
                     if (SegmentedMessage.Length != 3) { NotLongEnough(e); return; }
                     string TheirID = SegmentedMessage[1]; Shared.IDType TheirIDType = Shared.IDType.Twitch;
                     if (TheirID.StartsWith("@")) { TheirID = TheirID.Replace("@", ""); TheirID= UserHandler.UserFromUsername(TheirID).Matches[0].Id; }
+                    if (SegmentedMessage[2].ToLower() == "all") { SegmentedMessage[2] = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId,Shared.IDType.Twitch).ToString(); }
 
                     Shared.Data.EventResponse Response = Shared.Data.Accounts.PayUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, TheirID, TheirIDType, int.Parse(SegmentedMessage[2]));
                     //if (Response.Success)
