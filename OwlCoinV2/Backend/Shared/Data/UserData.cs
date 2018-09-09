@@ -22,7 +22,7 @@ namespace OwlCoinV2.Backend.Shared.Data
             if (IDVariant == IDType.Discord)
             {
                 WebRequest Req = WebRequest.Create("https://discordapp.com/api/v6/users/" + ID + "/profile");
-                Req.Headers.Add("authorization", "NDg4MTM0MzIzNTczMDk2NDQ5.DnaNOA.A6M5N6TBbQO6PlblaOoIKqjgU9Y");
+                Req.Headers.Add("authorization", ConfigHandler.Config["DiscordBot"]["AuthToken"].ToString());
                 Req.Method = "GET";
                 WebResponse Res = Req.GetResponse();
                 string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
@@ -43,7 +43,7 @@ namespace OwlCoinV2.Backend.Shared.Data
                             
                         }
                         catch { Response.Message = "Error occured during creation"; }
-                        CreateAccount(ID, IDVariant);
+                        Accounts.CreateAccount(ID, IDVariant);
                         return Response;
                     }
                 }
@@ -57,17 +57,11 @@ namespace OwlCoinV2.Backend.Shared.Data
                 );
                 Response.Success = true;
                 Response.Message = "Created User Account";
-                CreateAccount(ID, IDVariant);
+                Accounts.CreateAccount(ID, IDVariant);
             }
             catch { Response.Message = "Error occured during creation"; }
 
             return Response;
-        }
-
-        static void CreateAccount(string ID, IDType IDVariant)
-        {
-            string OwlCoinID = Init.SQLInstance.Select("UserData", "OwlCoinID", IDVariant.ToString() + "ID='" + ID+"'")[0];
-            Init.SQLInstance.Insert("Accounts",new string[] { "OwlCoinID","Balance" },new string[] { OwlCoinID,"0" });
         }
 
         public static EventResponse AddID(string CurrentID, IDType CurrentIDVariant,string NewID, IDType NewIDVariant)

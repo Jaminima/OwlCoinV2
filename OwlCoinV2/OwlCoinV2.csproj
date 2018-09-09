@@ -228,6 +228,7 @@
     <Compile Include="Backend\DiscordBot\MessageHandler.cs" />
     <Compile Include="Backend\Init.cs" />
     <Compile Include="Backend\Shared\ConfigHandler.cs" />
+    <Compile Include="Backend\Shared\Data\Accounts.cs" />
     <Compile Include="Backend\Shared\Data\EventResponse.cs" />
     <Compile Include="Backend\Shared\Data\SQL.cs" />
     <Compile Include="Backend\Shared\Data\UserData.cs" />

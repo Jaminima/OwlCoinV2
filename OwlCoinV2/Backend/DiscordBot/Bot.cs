@@ -16,7 +16,7 @@ namespace OwlCoinV2.Backend.DiscordBot
         {
             DiscordClient = new DiscordSocketClient();
             DiscordClient.MessageReceived += MessageHandler.HandleMessage;
-            await DiscordClient.LoginAsync(Discord.TokenType.Bot, "NDg4MTM2MTM0ODY2NjMyNzA0.DnZ8jg.VRk8Prg8KlLsJRpIiLQ5FM_4DL8");
+            await DiscordClient.LoginAsync(Discord.TokenType.Bot, Shared.ConfigHandler.Config["DiscordBot"]["Token"].ToString());
             await DiscordClient.StartAsync();
             Console.WriteLine("DiscordBot Started");
         }
