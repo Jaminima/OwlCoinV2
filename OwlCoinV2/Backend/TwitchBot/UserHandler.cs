@@ -13,11 +13,11 @@ namespace OwlCoinV2.Backend.TwitchBot
 {
     public static class UserHandler
     {
-        public static List<int> WatchingTwitchIDs = new List<int> { };
+        public static List<String> WatchingTwitchIDs = new List<String> { };
 
         public static void HandleUserJoin(object sender,OnUserJoinedArgs e)
         {
-            int UID = int.Parse(UserFromUsername(e.Username).Matches[0].Id);
+            string UID = UserFromUsername(e.Username).Matches[0].Id;
             if (!WatchingTwitchIDs.Contains(UID)&&e.Username!= "owlcoinbot") { WatchingTwitchIDs.Add(UID); } else { return; }
             Shared.Data.UserData.CreateUser(UID, Shared.IDType.Twitch);
             Console.WriteLine(e.Username+"Joined");
@@ -25,7 +25,7 @@ namespace OwlCoinV2.Backend.TwitchBot
 
         public static void HandleUserLeft(object sender, OnUserLeftArgs e)
         {
-            int UID = int.Parse(UserFromUsername(e.Username).Matches[0].Id);
+            String UID = UserFromUsername(e.Username).Matches[0].Id;
             if (WatchingTwitchIDs.Contains(UID)) { WatchingTwitchIDs.Remove(UID); } else { return; }
             Console.WriteLine(e.Username+"Left");
         }

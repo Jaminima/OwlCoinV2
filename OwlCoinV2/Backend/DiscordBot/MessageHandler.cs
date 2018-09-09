@@ -18,11 +18,14 @@ namespace OwlCoinV2.Backend.DiscordBot
 
         public static async Task Proccesor(SocketMessage Message)
         {
-            Console.WriteLine(Message.Content);
+            
             string Command = Message.Content.Split(" ".ToCharArray())[0].ToLower();
             string Prefix = Shared.ConfigHandler.Config["Prefix"].ToString();
             if (Command.StartsWith(Prefix))
             {
+
+                Shared.Data.UserData.CreateUser(Message.Author.Id.ToString(),Shared.IDType.Discord);
+
                 Command = Command.Remove(0, Prefix.Length);
 
                 if (Command == "echo")
