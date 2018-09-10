@@ -49,7 +49,7 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Shared.Data.EventResponse Response = Shared.Data.Accounts.PayUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, TheirID, TheirIDType, int.Parse(SegmentedMessage[2]));
                     //if (Response.Success)
                     //{
-                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@"+e.ChatMessage.Username+Response.Message);
+                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username+Response.Message);
                     //}
                 }
 
@@ -60,7 +60,7 @@ namespace OwlCoinV2.Backend.TwitchBot
                         SegmentedMessage[1] = SegmentedMessage[1].Replace("@", "");
                         String TheirID = UserHandler.UserFromUsername(SegmentedMessage[1]).Matches[0].Id;
                         Shared.Data.UserData.CreateUser(TheirID, Shared.IDType.Twitch);
-                        Bot.TwitchC.SendMessage(e.ChatMessage.Channel,"@"+e.ChatMessage.Username+" @"+ SegmentedMessage[1] + " has "+Shared.Data.Accounts.GetBalance(TheirID, Shared.IDType.Twitch) + " Owlcoin!");
+                        Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username+" @"+ SegmentedMessage[1] + " has "+Shared.Data.Accounts.GetBalance(TheirID, Shared.IDType.Twitch) + " Owlcoin!");
                     }
                     Shared.Data.UserData.CreateUser(e.ChatMessage.UserId, Shared.IDType.Twitch);
                     Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " you have " + Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch)+" Owlcoin!");
@@ -99,14 +99,14 @@ namespace OwlCoinV2.Backend.TwitchBot
 
         }
 
-        static async void NotLongEnough(OnMessageReceivedArgs e)
+        static void NotLongEnough(OnMessageReceivedArgs e)
         {
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "You are missing parameters or have too many!");
+            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@"+e.ChatMessage.Username+" are missing parameters or have too many!");
         }
 
-        static async void InvalidParameter(OnMessageReceivedArgs e)
+        static void InvalidParameter(OnMessageReceivedArgs e)
         {
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "You have one or more invalid parameter!");
+            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@"+e.ChatMessage.Username+" have one or more invalid parameter!");
         }
 
     }
