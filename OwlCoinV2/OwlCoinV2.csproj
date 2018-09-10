@@ -235,6 +235,7 @@
     <Compile Include="Backend\Shared\IDType.cs" />
     <Compile Include="Backend\TwitchBot\Bot.cs" />
     <Compile Include="Backend\TwitchBot\ChatLogger.cs" />
+    <Compile Include="Backend\TwitchBot\Commands\Viewer\Commands.cs" />
     <Compile Include="Backend\TwitchBot\Drops.cs" />
     <Compile Include="Backend\TwitchBot\MessageHandler.cs" />
     <Compile Include="Backend\TwitchBot\UserHandler.cs" />

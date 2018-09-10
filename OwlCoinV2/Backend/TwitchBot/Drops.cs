@@ -14,19 +14,23 @@ namespace OwlCoinV2.Backend.TwitchBot
         public static List<String> RaffleParticipant = new List<string> { };
         public static void Handler()
         {
+            int RaffleLastRunMin = -1;
+            int WatchingGiveOCLastRunMin = -1;
             while (true)
             {
-                if (DateTime.Now.Minute % 15 == 0)
+                if (DateTime.Now.Minute % 15 == 0 && RaffleLastRunMin!=DateTime.Now.Minute)
                 {
                     Raffles++;
+                    RaffleLastRunMin = DateTime.Now.Minute;
                     if (Raffles % 4 == 0) { new Thread(() => RaffleStart(true)).Start(); } else { new Thread(() => RaffleStart(false)).Start(); }
                 }
 
-                if (DateTime.Now.Minute % 10 == 0)
+                if (DateTime.Now.Minute % 10 == 0&&WatchingGiveOCLastRunMin!=DateTime.Now.Minute)
                 {
+                    WatchingGiveOCLastRunMin = DateTime.Now.Minute;
                     new Thread(() => WatchingGiveOC()).Start();
                 }
-                System.Threading.Thread.Sleep(60000);
+                System.Threading.Thread.Sleep(2000);
             }
         }
         static Random Rnd = new Random();
