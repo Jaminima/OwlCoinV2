@@ -30,7 +30,7 @@ namespace OwlCoinV2.Backend.TwitchBot
             }
         }
         static Random Rnd = new Random();
-        static int Raffles = 3;
+        static int Raffles = 0;
         public static Task RaffleStart(bool IsMega)
         {
             int PayOutAmount=1000;
