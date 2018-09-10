@@ -39,8 +39,8 @@ namespace OwlCoinV2.Backend.DiscordBot
                 if (Command == "pay")
                 {
                     if (SegmentedMessage.Length != 3) { NotLongEnough(Message); return; }
-                    string TheirID = SegmentedMessage[1]; Shared.IDType TheirIDType = Shared.IDType.Discord;
-                    if (TheirID.StartsWith("<@")) { TheirID = TheirID.Replace("<@","").Replace(">",""); }
+                    string TheirID = GetDiscordID(SegmentedMessage[1]); Shared.IDType TheirIDType = Shared.IDType.Discord;
+                    //if (TheirID.StartsWith("<@")) { TheirID = TheirID.Replace("<@","").Replace(">",""); }
                     if (SegmentedMessage[2].ToLower() == "all") { SegmentedMessage[2] = Shared.Data.Accounts.GetBalance(Message.Author.Id.ToString(), Shared.IDType.Discord).ToString(); }
 
                     Shared.Data.EventResponse Response = Shared.Data.Accounts.PayUser(Message.Author.Id.ToString(),Shared.IDType.Discord,TheirID,TheirIDType,int.Parse(SegmentedMessage[2]));
@@ -52,8 +52,8 @@ namespace OwlCoinV2.Backend.DiscordBot
 
                 if (Command == "owlcoin" || Command == "bal" || Command == "balance")
                 {
-                    if (SegmentedMessage.Length==2&&SegmentedMessage[1].StartsWith("<@")) {
-                        SegmentedMessage[1] = SegmentedMessage[1].Replace("<@", "").Replace(">", "");
+                    if (SegmentedMessage.Length==2/*&&SegmentedMessage[1].StartsWith("<@")*/) {
+                        SegmentedMessage[1] = GetDiscordID(SegmentedMessage[1]);//.Replace("<@", "").Replace(">", "");
                         Shared.Data.UserData.CreateUser(SegmentedMessage[1], Shared.IDType.Discord);
                         await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> <@"+SegmentedMessage[1]+"> has " + Shared.Data.Accounts.GetBalance(SegmentedMessage[1], Shared.IDType.Discord) + " Owlcoin!");
                     }
@@ -67,7 +67,7 @@ namespace OwlCoinV2.Backend.DiscordBot
                     if (SegmentedMessage.Length != 2) { NotLongEnough(Message); return; }
                     int coins, amount;
                     coins = amount = Shared.Data.Accounts.GetBalance(Message.Author.Id.ToString(), Shared.IDType.Discord);
-                    if (SegmentedMessage[1] != "all")
+                    if (SegmentedMessage[1].ToLower() != "all")
                     {
                         if (!int.TryParse(SegmentedMessage[1], out amount)) { InvalidParameter(Message); return; }
                     }
@@ -90,17 +90,73 @@ namespace OwlCoinV2.Backend.DiscordBot
                         await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, you only have " + coins + " Owlcoins");
                     }
                 }
+
+                if (Command == "duel")
+                {
+                    if (SegmentedMessage.Length != 3) { NotLongEnough(Message); return; }
+                    string TheirID = GetDiscordID(SegmentedMessage[1]);
+                    if (TheirID == Message.Author.Id.ToString())
+                    {
+                        await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, You can't duel yourself");
+                        return;
+                    }
+                    int amount, myCoins, theirCoins;
+                    myCoins = amount = Shared.Data.Accounts.GetBalance(Message.Author.Id.ToString(), Shared.IDType.Discord);
+                    theirCoins = Shared.Data.Accounts.GetBalance(TheirID, Shared.IDType.Discord);
+                    if (SegmentedMessage[2].ToLower() != "all")
+                    {
+                        if (!int.TryParse(SegmentedMessage[2], out amount)) { InvalidParameter(Message); return; }
+                    }
+                    if (amount <= myCoins)
+                    {
+                        if (amount <= theirCoins)
+                        {
+                            Shared.Data.EventResponse Response;
+                            if (random.Next(100) < 50)
+                            {
+                                Response = Shared.Data.Accounts.PayUser(Message.Author.Id.ToString(), Shared.IDType.Discord, TheirID, Shared.IDType.Discord, amount);
+                                await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> won " + amount + " Owlcoins in a duel against <@" + TheirID + "> and now has " + (myCoins + amount) + " Owlcoins!");
+                            }
+                            else
+                            {
+                                Response = Shared.Data.Accounts.PayUser(TheirID, Shared.IDType.Discord, Message.Author.Id.ToString(), Shared.IDType.Discord, amount);
+                                await Message.Channel.SendMessageAsync("<@" + TheirID + "> won " + amount + " Owlcoins in a duel against <@" + Message.Author.Id + "> and now has " + (theirCoins + amount) + " Owlcoins!");
+                            }
+                            if (!Response.Success)
+                            {
+                                Console.WriteLine(Response.Message);
+                            }
+                        }
+                        else
+                        {
+                            await Message.Channel.SendMessageAsync("<@" + TheirID + "> only has " + theirCoins + " Owlcoins");
+                        }
+                    }
+                    else
+                    {
+                        await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, you only have " + myCoins + " Owlcoins");
+                    }
+                }
             }
         }
 
         static async void NotLongEnough(SocketMessage Message)
         {
-            await Message.Channel.SendMessageAsync("You are missing parameters or have too many!");
+            await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, you are missing parameters or have too many!");
         }
 
         static async void InvalidParameter(SocketMessage Message)
         {
-            await Message.Channel.SendMessageAsync("You have one or more invalid parameter!");
+            await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, you have one or more invalid parameter!");
+        }
+
+        static string GetDiscordID(string message)
+        {
+            if (message.StartsWith("<@"))
+            {
+                message = message.Replace("<@", "").Replace(">", "").Replace("!", "");
+            }
+            return message;
         }
     }
 }
