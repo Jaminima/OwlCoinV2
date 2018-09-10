@@ -72,7 +72,7 @@ namespace OwlCoinV2.Backend.TwitchBot
 
         public static void PayOut(string Winner,int Amount)
         {
-            Shared.Data.Accounts.GiveUser(Winner, Shared.IDType.Twitch, 1000);
+            Shared.Data.Accounts.GiveUser(Winner, Shared.IDType.Twitch, Amount);
             Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "The Raffle has ended and @" + UserHandler.UserFromUserID(Winner).Name + " won " + Amount + " Owlcoin FeelsGoodMan");
         }
 
