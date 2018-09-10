@@ -12,6 +12,8 @@ namespace OwlCoinV2.Backend.TwitchBot
 {
     public static class MessageHandler
     {
+        static Random random = new Random();
+
         public static void HandleMessage(object sender, OnMessageReceivedArgs e)
         {
             new Thread(() => Proccessor(e)).Start();
@@ -59,6 +61,35 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " you have " + Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch)+" Owlcoin!");
                 }
 
+                if (Command == "gamble" || Command == "roulette")
+                {
+                    if (SegmentedMessage.Length != 2) { NotLongEnough(e); return; }
+                    int coins, amount;
+                    coins = amount = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch);
+                    if (SegmentedMessage[1] != "all")
+                    {
+                        if (!int.TryParse(SegmentedMessage[1], out amount)) { InvalidParameter(e); return; }
+                    }
+
+                    if (amount <= coins)
+                    {
+                        if (random.Next(100) < int.Parse(Shared.ConfigHandler.Config["GambleWinChance"].ToString()))
+                        {
+                            Shared.Data.Accounts.GiveUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, amount);
+                            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " won " + amount + " Owlcoins in roulette and now has " + (coins + amount) + " Owlcoins!");
+                        }
+                        else
+                        {
+                            Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, amount);
+                            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " lost " + amount + " Owlcoins in roulette and now has " + (coins - amount) + " Owlcoins!");
+                        }
+                    }
+                    else
+                    {
+                        Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", you only have " + coins + " Owlcoins");
+                    }
+                }
+
             }
 
         }
@@ -66,6 +97,11 @@ namespace OwlCoinV2.Backend.TwitchBot
         static async void NotLongEnough(OnMessageReceivedArgs e)
         {
             Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "You are missing parameters or have too many!");
+        }
+
+        static async void InvalidParameter(OnMessageReceivedArgs e)
+        {
+            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "You have one or more invalid parameter!");
         }
 
     }
