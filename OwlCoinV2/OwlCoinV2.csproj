@@ -237,6 +237,7 @@
     <Compile Include="Backend\TwitchBot\ChatLogger.cs" />
     <Compile Include="Backend\TwitchBot\Commands\Moderator\Commands.cs" />
     <Compile Include="Backend\TwitchBot\Commands\Viewer\Commands.cs" />
+    <Compile Include="Backend\TwitchBot\Commands\Viewer\Songs.cs" />
     <Compile Include="Backend\TwitchBot\Drops.cs" />
     <Compile Include="Backend\TwitchBot\MessageHandler.cs" />
     <Compile Include="Backend\TwitchBot\UserHandler.cs" />
