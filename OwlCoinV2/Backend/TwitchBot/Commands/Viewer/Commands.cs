@@ -46,7 +46,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
         {
             int MyBal = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch);
             int Required = 500;
-            if (Drops.GetSubs().Contains(e.ChatMessage.UserId)) { Required = 250; }
+            if (e.ChatMessage.IsSubscriber) { Required = 250; }
             if (MyBal >= Required)
             {
                 MyBal -= Required;
