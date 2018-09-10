@@ -66,6 +66,20 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " you have " + Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch)+" Owlcoin!");
                 }
 
+                if (Command == "r")
+                {
+                    int MyBal = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch);
+                    int Required = 500;
+                    if (Drops.GetSubs().Contains(e.ChatMessage.UserId)) { Required = 250; }
+                    if (MyBal >= Required)
+                    {
+                        MyBal -= Required;
+                        Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId,Shared.IDType.Twitch,Required);
+                        Bot.TwitchC.SendMessage(e.ChatMessage.Channel,"!sr"+e.ChatMessage.Message.Remove(0,Prefix.Length+Command.Length));
+                        Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " song requested!");
+                    }
+                }
+
                 if (Command == "gamble" || Command == "roulette")
                 {
                     if (SegmentedMessage.Length != 2) { NotLongEnough(e); return; }
