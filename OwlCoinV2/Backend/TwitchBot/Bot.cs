@@ -34,7 +34,8 @@ namespace OwlCoinV2.Backend.TwitchBot
             TwitchC.OnMessageReceived += ChatLogger.AddToLog;
             TwitchC.Connect();
             Console.WriteLine("TwitchBot Started");
-            new Thread(() => Drops.Watching()).Start();
+            System.Threading.Thread.Sleep(500);
+            new Thread(() => Drops.Handler()).Start();
         }
 
     }

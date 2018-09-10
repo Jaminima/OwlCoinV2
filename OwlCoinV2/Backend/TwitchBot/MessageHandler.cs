@@ -34,6 +34,11 @@ namespace OwlCoinV2.Backend.TwitchBot
                 //    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, e.ChatMessage.Message.Remove(0, Command.Length + Prefix.Length + 1));
                 //}
 
+                if (Command == "join")
+                {
+                    if (!Drops.RaffleParticipant.Contains(e.ChatMessage.UserId)) { Drops.RaffleParticipant.Add(e.ChatMessage.UserId); }
+                }
+
                 if (Command == "pay")
                 {
                     if (SegmentedMessage.Length != 3) { NotLongEnough(e); return; }

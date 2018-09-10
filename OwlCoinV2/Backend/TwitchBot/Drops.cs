@@ -11,20 +11,73 @@ namespace OwlCoinV2.Backend.TwitchBot
 {
     public static class Drops
     {
-        public static void Watching()
+        public static List<String> RaffleParticipant = new List<string> { };
+        public static void Handler()
         {
             while (true)
             {
+                if (DateTime.Now.Minute % 15 == 0)
+                {
+                    Raffles++;
+                    if (Raffles % 4 == 0) { new Thread(() => RaffleStart(true)).Start(); } else { new Thread(() => RaffleStart(false)).Start(); }
+                }
+
                 if (DateTime.Now.Minute % 10 == 0)
                 {
                     //new Thread(async() => await GiveOC()).Start();
-                    GiveOC();
+                    WatchingGiveOC();
                 }
                 System.Threading.Thread.Sleep(60000);
             }
         }
+        static Random Rnd = new Random();
+        static int Raffles = 3;
+        public static Task RaffleStart(bool IsMega)
+        {
+            int PayOutAmount=1000;
+            if (IsMega) { PayOutAmount = 5000; }
+            RaffleParticipant = new List<string> { };
+            Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "PogChamp a Raffle has begun for "+PayOutAmount+" Owlcoin PogChamp it will end in 60 Seconds. Enter by typing \"oc!join\" OpieOP");
+            System.Threading.Thread.Sleep(15000);
+            Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "The Raffle for " + PayOutAmount + " Owlcoin will end in 45 Seconds. Enter by typing \"oc!join\" FeelsGoodMan");
+            System.Threading.Thread.Sleep(15000);
+            Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "The Raffle for " + PayOutAmount + " Owlcoin will end in 30 Seconds. Enter by typing \"oc!join\" FeelsGoodMan");
+            System.Threading.Thread.Sleep(15000);
+            Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "The Raffle for " + PayOutAmount + " Owlcoin will end in 15 Seconds. Enter by typing \"oc!join\" FeelsGoodMan");
+            System.Threading.Thread.Sleep(15000);
+            if (RaffleParticipant.Count == 0)
+            {
+                Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "No one joined the raffle!");
+            }
+            else if (!IsMega||RaffleParticipant.Count==1)
+            {
+                string Winner = RaffleParticipant[Rnd.Next(0, RaffleParticipant.Count - 1)];
+                PayOut(Winner, PayOutAmount);
+            }
+            else
+            {
+                int UsersCount = Rnd.Next(1,2);
+                string Winner="";
+                List<String> Winners = new List<string> { "" };
+                for (int i = 0; i < UsersCount; i++)
+                {
+                    while (Winners.Contains(Winner))
+                    { Winner = RaffleParticipant[Rnd.Next(0, RaffleParticipant.Count - 1)]; }
+                    Winners.Add(Winner);
+                    PayOut(Winner, (int)Math.Floor((decimal)PayOutAmount / UsersCount));
+                }
+            }
+            
+            return Task.CompletedTask;
+        }
 
-        public static  Task GiveOC()
+        public static void PayOut(string Winner,int Amount)
+        {
+            Shared.Data.Accounts.GiveUser(Winner, Shared.IDType.Twitch, 1000);
+            Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "The Raffle has ended and @" + UserHandler.UserFromUserID(Winner).Name + " won " + Amount + " Owlcoin FeelsGoodMan");
+        }
+
+        public static Task WatchingGiveOC()
         {
             string ChannelID = UserHandler.UserFromUsername(Shared.ConfigHandler.Config["ChannelName"].ToString()).Matches[0].Id;
             List<String> Subs = GetSubs();
