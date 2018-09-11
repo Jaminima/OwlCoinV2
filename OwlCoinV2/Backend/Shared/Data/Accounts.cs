@@ -62,7 +62,7 @@ namespace OwlCoinV2.Backend.Shared.Data
             {
                 string MyOCID = Init.SQLInstance.Select("UserData", "OwlCoinID", MyIDType.ToString() + "ID='" + MyID + "'")[0],
                     TheirOCID = Init.SQLInstance.Select("UserData", "OwlCoinID", TheirIDType.ToString() + "ID='" + TheirID + "'")[0];
-                if (MyOCID == TheirOCID) { Response.Message="You can pay yourself"; return Response; }
+                if (MyOCID == TheirOCID) { Response.Message="You can't pay yourself"; return Response; }
                 int MyBal = int.Parse(Init.SQLInstance.Select("Accounts", "Balance", "OwlCoinID=" + MyOCID)[0]),
                     TheirBal = int.Parse(Init.SQLInstance.Select("Accounts", "Balance", "OwlCoinID=" + TheirOCID)[0]);
                 if (MyBal >= Amount)

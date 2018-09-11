@@ -225,6 +225,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Backend\DiscordBot\Bot.cs" />
+    <Compile Include="Backend\DiscordBot\Duels.cs" />
     <Compile Include="Backend\DiscordBot\MessageHandler.cs" />
     <Compile Include="Backend\Init.cs" />
     <Compile Include="Backend\Shared\ConfigHandler.cs" />
@@ -232,6 +233,7 @@
     <Compile Include="Backend\Shared\Data\EventResponse.cs" />
     <Compile Include="Backend\Shared\Data\SQL.cs" />
     <Compile Include="Backend\Shared\Data\UserData.cs" />
+    <Compile Include="Backend\Shared\Duel.cs" />
     <Compile Include="Backend\Shared\IDType.cs" />
     <Compile Include="Backend\TwitchBot\Bot.cs" />
     <Compile Include="Backend\TwitchBot\ChatLogger.cs" />
