@@ -28,7 +28,8 @@ namespace OwlCoinV2.Backend.TwitchBot.Streamlabs
             try
             {
                 Res = Req.GetResponse();
-                Console.WriteLine(new StreamReader(Res.GetResponseStream()).ReadToEnd());
+                //Console.WriteLine(new StreamReader(Res.GetResponseStream()).ReadToEnd());
+                return true;
             }
             catch (WebException E)
             {
