@@ -178,6 +178,43 @@ namespace OwlCoinV2.Backend.DiscordBot
                         await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, You are not in a duel");
                     }
                 }
+
+                if (Command == "slots")
+                {
+                    if (SegmentedMessage.Length != 2) { NotLongEnough(Message); return; }
+                    int coins, amount;
+                    coins = amount = Shared.Data.Accounts.GetBalance(Message.Author.Id.ToString(), Shared.IDType.Discord);
+                    if (SegmentedMessage[1].ToLower() != "all")
+                    {
+                        if (!int.TryParse(SegmentedMessage[1], out amount)) { InvalidParameter(Message); return; }
+                    }
+                    if (amount <= coins)
+                    {
+                        string[] emotes = Shared.ConfigHandler.Config["DiscordSlotsEmotes"].Select(e => e.ToString()).ToArray();
+                        int roll = random.Next(100);
+                        int combo = random.Next(2);
+                        if (roll < 10)
+                        {
+                            amount *= 2;
+                            combo = 2;
+                        }
+                        if (roll < 35)
+                        {
+                            Shared.Data.Accounts.GiveUser(Message.Author.Id.ToString(), Shared.IDType.Discord, amount);
+                            await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, you got [" + emotes[combo] + "|" + emotes[combo] + "|" + emotes[combo] + "] and won " + amount + " Owlcoins, you now have " + (coins + amount) + " Owlcoins!");
+                        }
+                        else
+                        {
+                            combo = Enumerable.Range(1, 25).Where(x => x != 13).ElementAt(random.Next(24));
+                            Shared.Data.Accounts.TakeUser(Message.Author.Id.ToString(), Shared.IDType.Discord, amount);
+                            await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, you got [" + emotes[combo/9] + "|" + emotes[(combo/3)%3] + "|" + emotes[combo%3] + "] and lost " + amount + " Owlcoins, you now have " + (coins - amount) + " Owlcoins!");
+                        }
+                    }
+                    else
+                    {
+                        await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, you only have " + coins + " Owlcoins");
+                    }
+                }
             }
         }
 
