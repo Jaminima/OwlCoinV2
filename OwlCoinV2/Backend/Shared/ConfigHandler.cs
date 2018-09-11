@@ -15,5 +15,10 @@ namespace OwlCoinV2.Backend.Shared
             Config = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText("./Data/Config.json"));
         }
 
+        public static void SaveConfig()
+        {
+            System.IO.File.WriteAllText("./Data/Config.json",Config.ToString());
+        }
+
     }
 }

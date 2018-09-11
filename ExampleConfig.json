@@ -1,0 +1,20 @@
+{
+  "TwitchBot": {
+    "Username": "OwlCoinbot",
+    "0AuthToken": "",
+    "ClientId": "",
+    "AccessToken": ""
+  },
+  "DiscordBot": {
+    "Token": "",
+    "AuthToken": ""
+  },
+  "StreamLabs": {
+    "RefreshToken": "",
+	"ClientId":"",
+	"ClientSecret":""
+  },
+  "ChannelName": "harbonator",
+  "Prefix": "oc!",
+  "GambleWinChance": 40
+}
