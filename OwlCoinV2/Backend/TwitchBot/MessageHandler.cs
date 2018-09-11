@@ -55,7 +55,7 @@ namespace OwlCoinV2.Backend.TwitchBot
 
                 if (Command == "gamble" || Command == "roulette")
                 {
-                    Commands.Viewer.Commands.SongRequest(e, SegmentedMessage);
+                    Commands.Viewer.Commands.Roulette(e, SegmentedMessage);
                 }
 
                 if (Command == "give")
