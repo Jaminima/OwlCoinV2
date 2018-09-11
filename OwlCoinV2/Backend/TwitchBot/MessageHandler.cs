@@ -68,6 +68,11 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Commands.Viewer.Songs.Proccessor(e, SegmentedMessage);
                 }
 
+                if (Command == "accountage" || Command == "age")
+                {
+                    Commands.Viewer.Commands.AccountAge(e, SegmentedMessage);
+                }
+
             }
 
         }

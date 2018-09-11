@@ -85,5 +85,37 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             }
         }
 
+        public static void AccountAge(OnMessageReceivedArgs e, string[] SegmentedMessage)
+        {
+            DateTime CreatedAt;
+            if (SegmentedMessage.Length == 2 && SegmentedMessage[1].StartsWith("@"))
+            {
+                SegmentedMessage[1] = SegmentedMessage[1].Replace("@", "");
+                CreatedAt = UserHandler.UserFromUsername(SegmentedMessage[1]).Matches[0].CreatedAt;
+                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " @" + SegmentedMessage[1] + " account is " + AgeString(CreatedAt) + " old!");
+                return;
+            }
+            CreatedAt = UserHandler.UserFromUserID(e.ChatMessage.UserId).CreatedAt;
+            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " your account is " + AgeString(CreatedAt) + " old!");
+        }
+
+        static string AgeString(DateTime CreatedAt)
+        {
+            string Age = "";
+            int Years = DateTime.Now.Year - CreatedAt.Year;
+            int Months = DateTime.Now.Month - CreatedAt.Month;
+            int Days = DateTime.Now.Day - CreatedAt.Day;
+            int Hours = DateTime.Now.Hour - CreatedAt.Hour;
+            if (Hours < 0) { Hours += 23; Days -= 1; }
+
+            if (Years != 0) { if (Years > 1) { Age = Age + Years + " Years "; } else { Age = Age + Years + " Year "; } }
+            if (Months != 0) { if (Months > 1) { Age = Age + Months + " Months "; } else { Age = Age + Months + " Month "; } }
+            if (Days != 0) { if (Days > 1) { Age = Age + Days + " Days "; } else { Age = Age + Days + " Day "; } }
+            if (Age.Length != 0) { Age = Age + "and "; }
+            if (Hours > 1) { Age = Age + Hours + " Hours(ish)"; } else { Age = Age + Hours + " Hour(ish)"; }
+
+            return Age;
+        }
+
     }
 }
