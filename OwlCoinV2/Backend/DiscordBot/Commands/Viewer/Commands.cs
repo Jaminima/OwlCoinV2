@@ -49,7 +49,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             {
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(Message); return; }
             }
-
+            if (amount < 100) { await Message.Channel.SendMessageAsync("@<" + Message.Author.Username + "> Minimum bet is 100 owlcoin!"); return; }
             if (amount <= coins)
             {
                 if (random.Next(100) < int.Parse(Shared.ConfigHandler.Config["GambleWinChance"].ToString()))
@@ -78,9 +78,10 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             {
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(Message); return; }
             }
+            if (amount < 100) { await Message.Channel.SendMessageAsync("@<" + Message.Author.Username + "> Minimum bet is 100 owlcoin!"); return; }
             if (amount <= coins)
             {
-                string[] emotes = Shared.ConfigHandler.Config["DiscordSlotsEmotes"].Select(e => e.ToString()).ToArray();
+                string[] emotes = Shared.ConfigHandler.Config["Slots"]["Discord"].Select(e => e.ToString()).ToArray();
                 int roll = random.Next(100);
                 int combo = random.Next(2);
                 if (roll < 10)

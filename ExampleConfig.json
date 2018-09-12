@@ -17,5 +17,16 @@
   "ChannelName": "harbonator",
   "Prefix": "oc!",
   "GambleWinChance": 40,
-  "DiscordSlotsEmotes":["😀", "😁", "😂"]
+  "Slots": {
+    "Discord": [
+      "😀",
+      "😁",
+      "😂"
+    ],
+    "Twitch": [
+      "harbonCITO",
+      "harbonSOCIETY",
+      "harbonA"
+    ]
+  }
 }

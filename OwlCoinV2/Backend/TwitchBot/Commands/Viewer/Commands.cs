@@ -65,7 +65,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             {
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(e); return; }
             }
-
+            if (amount < 100) { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Minimum bet is 100 owlcoin!"); return; }
             if (amount <= coins)
             {
                 if (random.Next(100) < int.Parse(Shared.ConfigHandler.Config["GambleWinChance"].ToString()))
@@ -117,21 +117,84 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             return Age;
         }
 
+        static List<string[]> LastRequested = new List<string[]> { };
+
         public static void RequestAlert(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
             if (SegmentedMessage.Length < 2) { MessageHandler.NotLongEnough(e); return; }
+            foreach(string[] Pair in LastRequested)
+            {
+                if (Pair[0] == e.ChatMessage.UserId)
+                {
+                    int MinsLeft = 10-(int)TimeSpan.FromTicks(Int64.Parse(Pair[1]) - DateTime.Now.Ticks).TotalMinutes;
+                    if (MinsLeft>0)
+                    {
+                        string Mins = "min";
+                        if (MinsLeft != 1) { Mins = Mins + "s"; }
+                        Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Cant send requests that quickly! Please wait "+(MinsLeft)+" "+Mins+" before trying again.");
+                        return;
+                    }
+                    LastRequested.Remove(Pair);
+                    break;
+                }
+            }
             string SearchFor = e.ChatMessage.Message.Replace(SegmentedMessage[0]+" ","");
             int AlertID=0;
-            try { AlertID = int.Parse(Init.SQLInstance.Select("Alerts", "AlertID", "Name LIKE \"" + SearchFor.ToLower() + "%\"")[0]); }
-            catch { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " unable to find Alert " + SearchFor); return; }
+            string Determinant = "";
+            foreach(string S in SearchFor.ToLower().Split(" ".ToCharArray())) { Determinant = Determinant + "(Name LIKE \"%" + S + "%\") OR"; }
+            Determinant = Determinant.Remove(Determinant.Length - 2);
+            try { AlertID = int.Parse(Init.SQLInstance.Select("Alerts", "AlertID", ""+Determinant+"")[0]); }
+            catch (Exception E) { Console.WriteLine(E); Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " unable to find Alert " + SearchFor); return; }
             string ImageURL = Init.SQLInstance.Select("Alerts", "ImageUrl", "AlertID=" + AlertID)[0],
                 SoundURL = Init.SQLInstance.Select("Alerts", "SoundUrl", "AlertID=" + AlertID)[0];
             int Cost = int.Parse(Init.SQLInstance.Select("Alerts", "Cost", "AlertID=" + AlertID)[0]);
             if (Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Cost))
             {
-                Streamlabs.Alert.SendRequest(ImageURL, SoundURL);
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Alert sent!");
+                if (Streamlabs.Alert.SendRequest(ImageURL, SoundURL))
+                {
+                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Alert sent!");
+                    LastRequested.Add(new string[] { e.ChatMessage.UserId,DateTime.Now.Ticks.ToString() });
+                }
+                else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Alert failed to send!"); }
             }else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Not enough owlcoin!"); }
+        }
+
+        public static void Slots(OnMessageReceivedArgs e,string[] SegmentedMessage)
+        {
+            if (SegmentedMessage.Length != 2) { MessageHandler.NotLongEnough(e); return; }
+            int coins, amount;
+            coins = amount = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch);
+            if (SegmentedMessage[1].ToLower() != "all")
+            {
+                if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(e); return; }
+            }
+            if (amount < 100) { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Minimum bet is 100 owlcoin!"); return; }
+            if (amount <= coins)
+            {
+                string[] emotes = Shared.ConfigHandler.Config["Slots"]["Twitch"].Select(r => r.ToString()).ToArray();
+                int roll = random.Next(100);
+                int combo = random.Next(2);
+                if (roll < 10)
+                {
+                    amount *= 2;
+                    combo = 2;
+                }
+                if (roll < 35)
+                {
+                    Shared.Data.Accounts.GiveUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, amount);
+                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel,"@" + e.ChatMessage.Username + ", you got [ " + emotes[combo] + " | " + emotes[combo] + " | " + emotes[combo] + " ] and won " + amount + " Owlcoins, you now have " + (coins + amount) + " Owlcoins!");
+                }
+                else
+                {
+                    combo = Enumerable.Range(1, 25).Where(x => x != 13).ElementAt(random.Next(24));
+                    Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, amount);
+                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", you got [ " + emotes[combo / 9] + " | " + emotes[(combo / 3) % 3] + " | " + emotes[combo % 3] + " ] and lost " + amount + " Owlcoins, you now have " + (coins - amount) + " Owlcoins!");
+                }
+            }
+            else
+            {
+                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", you only have " + coins + " Owlcoins");
+            }
         }
 
     }

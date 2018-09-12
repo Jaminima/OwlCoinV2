@@ -16,7 +16,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Streamlabs
             Req.Method = "POST";
             Req.ContentType = "application/x-www-form-urlencoded";
             byte[] PostData = Encoding.UTF8.GetBytes("access_token=" + GetAuthCode() +
-                "&type=donation&message=Wow an amazing meme!&image_href=" + ImageUrl +
+                "&type=merch&duration=0&message= &image_href=https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/TransparentPlaceholder.svg/240px-TransparentPlaceholder.svg.png" /*+ ImageUrl*/ +
                 "&sound_href=" + SoundUrl);
             //byte[] PostData = Encoding.UTF8.GetBytes("access_token=" + Shared.ConfigHandler.Config["StreamLabs"]["access_token"].ToString() + "&type=donation&image_href=" + ImageUrl + "&sound_href=" + SoundUrl);
             Req.ContentLength = PostData.Length;
@@ -34,6 +34,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Streamlabs
             catch (WebException E)
             {
                 Console.WriteLine(new StreamReader(E.Response.GetResponseStream()).ReadToEnd());
+                return false;
             }
             return false;
         }
