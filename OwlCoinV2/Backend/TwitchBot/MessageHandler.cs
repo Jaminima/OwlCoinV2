@@ -38,7 +38,7 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Commands.Viewer.Commands.JoinRaffle(e);
                 }
 
-                if (Command == "pay")
+                if (Command == "pay"||Command=="giveowlcoin")
                 {
                     Commands.Viewer.Commands.Pay(e, SegmentedMessage);
                 }
@@ -73,7 +73,7 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Commands.Viewer.Commands.AccountAge(e, SegmentedMessage);
                 }
 
-                if (Command == "alert")
+                if (Command == "alert"||Command=="alerts")
                 {
                     Commands.Viewer.Commands.RequestAlert(e,SegmentedMessage);
                 }
