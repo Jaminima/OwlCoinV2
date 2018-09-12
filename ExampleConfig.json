@@ -16,5 +16,6 @@
   },
   "ChannelName": "harbonator",
   "Prefix": "oc!",
-  "GambleWinChance": 40
+  "GambleWinChance": 40,
+  "DiscordSlotsEmotes":["😀", "😁", "😂"]
 }
