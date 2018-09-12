@@ -83,6 +83,21 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Commands.Viewer.Commands.Slots(e, SegmentedMessage);
                 }
 
+                if (Command == "duel")
+                {
+                    Commands.Viewer.Duel.StartDuel(e, SegmentedMessage);
+                }
+
+                if (Command == "accept")
+                {
+                    Commands.Viewer.Duel.Accept(e, SegmentedMessage);
+                }
+
+                if (Command == "deny")
+                {
+                    Commands.Viewer.Duel.Deny(e, SegmentedMessage);
+                }
+
             }
 
         }
