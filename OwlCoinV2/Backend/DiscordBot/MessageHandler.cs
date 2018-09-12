@@ -70,6 +70,12 @@ namespace OwlCoinV2.Backend.DiscordBot
                 {
                     await Commands.Viewer.Commands.Slots(Message, SegmentedMessage);
                 }
+
+                if (Command == "give")
+                {
+                    await Commands.Moderator.Commands.GivePoints(Message, SegmentedMessage);
+                }
+
             }
         }
 
