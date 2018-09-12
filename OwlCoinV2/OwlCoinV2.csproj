@@ -225,6 +225,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Backend\DiscordBot\Bot.cs" />
+    <Compile Include="Backend\DiscordBot\Commands\Viewer\Commands.cs" />
+    <Compile Include="Backend\DiscordBot\Commands\Viewer\Duel.cs" />
     <Compile Include="Backend\DiscordBot\Duels.cs" />
     <Compile Include="Backend\DiscordBot\MessageHandler.cs" />
     <Compile Include="Backend\Init.cs" />
