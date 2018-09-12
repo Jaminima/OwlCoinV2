@@ -117,5 +117,22 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             return Age;
         }
 
+        public static void RequestAlert(OnMessageReceivedArgs e, string[] SegmentedMessage)
+        {
+            if (SegmentedMessage.Length < 2) { MessageHandler.NotLongEnough(e); return; }
+            string SearchFor = e.ChatMessage.Message.Replace(SegmentedMessage[0]+" ","");
+            int AlertID=0;
+            try { AlertID = int.Parse(Init.SQLInstance.Select("Alerts", "AlertID", "Name LIKE \"" + SearchFor.ToLower() + "%\"")[0]); }
+            catch { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " unable to find Alert " + SearchFor); return; }
+            string ImageURL = Init.SQLInstance.Select("Alerts", "ImageUrl", "AlertID=" + AlertID)[0],
+                SoundURL = Init.SQLInstance.Select("Alerts", "SoundUrl", "AlertID=" + AlertID)[0];
+            int Cost = int.Parse(Init.SQLInstance.Select("Alerts", "Cost", "AlertID=" + AlertID)[0]);
+            if (Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Cost))
+            {
+                Streamlabs.Alert.SendRequest(ImageURL, SoundURL);
+                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Alert sent!");
+            }else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Not enough owlcoin!"); }
+        }
+
     }
 }
