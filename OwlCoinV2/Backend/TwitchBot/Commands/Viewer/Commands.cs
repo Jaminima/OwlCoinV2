@@ -126,7 +126,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             {
                 if (Pair[0] == e.ChatMessage.UserId)
                 {
-                    int MinsLeft = 10-(int)TimeSpan.FromTicks(Int64.Parse(Pair[1]) - DateTime.Now.Ticks).TotalMinutes;
+                    int MinsLeft = 10-(int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(Pair[1])).TotalMinutes);
                     if (MinsLeft>0)
                     {
                         string Mins = "min";
@@ -153,10 +153,11 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 if (Streamlabs.Alert.SendRequest(ImageURL, SoundURL))
                 {
                     Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Alert sent!");
-                    LastRequested.Add(new string[] { e.ChatMessage.UserId,DateTime.Now.Ticks.ToString() });
+                    LastRequested.Add(new string[] { e.ChatMessage.UserId, DateTime.Now.Ticks.ToString() });
                 }
                 else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Alert failed to send!"); }
-            }else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Not enough owlcoin!"); }
+            }
+            else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Not enough owlcoin!"); }
         }
 
         public static void Slots(OnMessageReceivedArgs e,string[] SegmentedMessage)
