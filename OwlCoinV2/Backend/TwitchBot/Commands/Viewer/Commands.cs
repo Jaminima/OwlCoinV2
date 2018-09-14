@@ -158,7 +158,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 SoundURL = Init.SQLInstance.Select("Alerts", "SoundUrl", "AlertID=" + AlertID)[0];
             int Cost = int.Parse(Init.SQLInstance.Select("Alerts", "Cost", "AlertID=" + AlertID)[0]);
             int TSinceLast = (int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(LastReq)).TotalSeconds);
-            if (TSinceLast < 120&&LastReq!="0") { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Cant send another alert so soon! Please wait "+TSinceLast+" Seconds before requesting again."); return; }
+            if (TSinceLast < 120&&LastReq!="0") { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Cant send another alert so soon! Please wait "+(120-TSinceLast)+" Seconds before requesting again."); return; }
             if (Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Cost))
             {
                 if (Streamlabs.Alert.SendRequest(ImageURL, SoundURL))
@@ -186,14 +186,14 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             if (amount <= coins)
             {
                 string[] emotes = Shared.ConfigHandler.Config["Slots"]["Twitch"].Select(r => r.ToString()).ToArray();
-                int roll = random.Next(100);
+                int roll = random.Next(0,100);
                 int combo = random.Next(2);
                 if (roll < 10)
                 {
-                    amount *= 2;
+                    amount *= 4;
                     combo = 2;
                 }
-                if (roll < 35)
+                if (roll < 10)
                 {
                     Shared.Data.Accounts.GiveUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, amount);
                     Bot.TwitchC.SendMessage(e.ChatMessage.Channel,"@" + e.ChatMessage.Username + ", you got [ " + emotes[combo] + " | " + emotes[combo] + " | " + emotes[combo] + " ] and won " + amount + " Owlcoins, you now have " + (coins + amount) + " Owlcoins!");
