@@ -29,6 +29,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             {
                 if (!int.TryParse(SegmentedMessage[2], out amount)) { MessageHandler.InvalidParameter(e); return; }
             }
+            amount = Math.Abs(amount);
             if (amount <= myCoins)
             {
                 if (amount <= theirCoins)

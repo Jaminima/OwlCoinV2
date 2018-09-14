@@ -43,12 +43,12 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Commands.Viewer.Commands.Pay(e, SegmentedMessage);
                 }
 
-                if (Command == "owlcoin" || Command == "bal"||Command=="balance")
+                if (Command == "owlcoin" || Command == "bal"||Command=="balance"||Command=="owc")
                 {
                     Commands.Viewer.Commands.OwlCoin(e, SegmentedMessage);
                 }
 
-                if (Command == "r")
+                if (Command == "r"||Command=="subr")
                 {
                     Commands.Viewer.Commands.SongRequest(e, SegmentedMessage);
                 }
@@ -96,6 +96,11 @@ namespace OwlCoinV2.Backend.TwitchBot
                 if (Command == "deny")
                 {
                     Commands.Viewer.Duel.Deny(e, SegmentedMessage);
+                }
+
+                if (Command == "help")
+                {
+                    Commands.Viewer.Commands.Help(e, SegmentedMessage);
                 }
 
             }

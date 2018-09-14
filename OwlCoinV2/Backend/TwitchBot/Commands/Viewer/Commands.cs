@@ -37,6 +37,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 String TheirID = UserHandler.UserFromUsername(SegmentedMessage[1]).Matches[0].Id;
                 Shared.Data.UserData.CreateUser(TheirID, Shared.IDType.Twitch);
                 Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " @" + SegmentedMessage[1] + " has " + Shared.Data.Accounts.GetBalance(TheirID, Shared.IDType.Twitch) + " Owlcoin!");
+                return;
             }
             Shared.Data.UserData.CreateUser(e.ChatMessage.UserId, Shared.IDType.Twitch);
             Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " you have " + Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch) + " Owlcoin!");
@@ -51,9 +52,10 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             {
                 MyBal -= Required;
                 Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Required);
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "!sr" + e.ChatMessage.Message.Remove(0, Shared.ConfigHandler.Config["Prefix"].ToString().Length + SegmentedMessage[0].Length));
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " song requested!");
+                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "!sr" + e.ChatMessage.Message.Replace(Shared.ConfigHandler.Config["Prefix"]+"r",""));
+                //Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " song requested!");
             }
+            else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", you need " + Required + " Owlcoins to request a song!"); }
         }
 
         public static void Roulette(OnMessageReceivedArgs e, string[] SegmentedMessage)
@@ -65,6 +67,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             {
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(e); return; }
             }
+            amount = Math.Abs(amount);
             if (amount < 100) { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Minimum bet is 100 owlcoin!"); return; }
             if (amount <= coins)
             {
@@ -83,6 +86,11 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             {
                 Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", you only have " + coins + " Owlcoins");
             }
+        }
+
+        public static void Help(OnMessageReceivedArgs e, string[] SegmentedMessage)
+        {
+            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Commands are available here: https://pastebin.com/H60Ydn1s");
         }
 
         public static void AccountAge(OnMessageReceivedArgs e, string[] SegmentedMessage)
@@ -155,7 +163,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                     Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Alert sent!");
                     LastRequested.Add(new string[] { e.ChatMessage.UserId, DateTime.Now.Ticks.ToString() });
                 }
-                else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Alert failed to send!"); }
+                else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Alert failed to send! Please try again soon!"); }
             }
             else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Not enough owlcoin!"); }
         }
@@ -169,6 +177,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             {
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(e); return; }
             }
+            amount = Math.Abs(amount);
             if (amount < 100) { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Minimum bet is 100 owlcoin!"); return; }
             if (amount <= coins)
             {

@@ -64,8 +64,8 @@ namespace OwlCoinV2.Backend.TwitchBot.Streamlabs
             catch (WebException E)
             {
                 Console.WriteLine(new StreamReader(E.Response.GetResponseStream()).ReadToEnd());
+                return GetAuthCode();
             }
-            return "";
         }
     }
 }
