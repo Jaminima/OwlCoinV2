@@ -104,6 +104,17 @@ namespace OwlCoinV2.Backend.TwitchBot
                 }
 
             }
+            else
+            {
+                //jccjaminima gave 100 Owlcoin to owlcoinbot PogChamp
+                if (e.ChatMessage.Message.EndsWith("Owlcoin to owlcoinbot PogChamp"))
+                {
+                    string ID = UserHandler.UserFromUsername(SegmentedMessage[0]).Matches[0].Id;
+                    Shared.Data.UserData.CreateUser(ID, Shared.IDType.Twitch);
+                    Shared.Data.Accounts.GiveUser(ID,Shared.IDType.Twitch,int.Parse(SegmentedMessage[2]));
+                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + SegmentedMessage[0] + " Added " + SegmentedMessage[2] + " Owlcoin to your OwlcoinV2 Account!");
+                }
+            }
 
         }
 
