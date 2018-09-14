@@ -126,6 +126,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
         }
 
         static List<string[]> LastRequested = new List<string[]> { };
+        static string LastReq = "0";
 
         public static void RequestAlert(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
@@ -156,11 +157,14 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             string ImageURL = Init.SQLInstance.Select("Alerts", "ImageUrl", "AlertID=" + AlertID)[0],
                 SoundURL = Init.SQLInstance.Select("Alerts", "SoundUrl", "AlertID=" + AlertID)[0];
             int Cost = int.Parse(Init.SQLInstance.Select("Alerts", "Cost", "AlertID=" + AlertID)[0]);
+            int TSinceLast = (int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(LastReq)).TotalSeconds);
+            if (TSinceLast < 120&&LastReq!="0") { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Cant send another alert so soon! Please wait "+TSinceLast+" Seconds before requesting again."); return; }
             if (Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Cost))
             {
                 if (Streamlabs.Alert.SendRequest(ImageURL, SoundURL))
                 {
                     Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Alert sent!");
+                    LastReq = DateTime.Now.Ticks.ToString();
                     LastRequested.Add(new string[] { e.ChatMessage.UserId, DateTime.Now.Ticks.ToString() });
                 }
                 else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Alert failed to send! Please try again soon!"); }
