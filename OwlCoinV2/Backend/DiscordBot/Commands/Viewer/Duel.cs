@@ -33,7 +33,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
                 {
                     if (Duels.duels.Add(new Shared.Duel(Message.Author.Id.ToString(), TheirID, amount)))
                     {
-                        await Message.Channel.SendMessageAsync("<@" + TheirID + ">, <@" + Message.Author.Id + "> wants to duel you for " + amount + " Owlcoins, you can !accept or !deny within 2 minutes");
+                        await Message.Channel.SendMessageAsync("<@" + TheirID + ">, <@" + Message.Author.Id + "> wants to duel you for " + amount + " Owlcoins, you can oc!accept or oc!deny within 2 minutes");
                     }
                     else
                     {

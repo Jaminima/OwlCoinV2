@@ -26,7 +26,7 @@ namespace OwlCoinV2.Backend.DiscordBot
             if (Command.StartsWith(Prefix))
             {
 
-                Shared.Data.UserData.CreateUser(Message.Author.Id.ToString(),Shared.IDType.Discord);
+                Shared.Data.UserData.CreateUser(Message.Author.Id.ToString(), Shared.IDType.Discord);
                 Shared.Data.UserData.MergeAccounts(Message.Author.Id.ToString());
 
                 Command = Command.Remove(0, Prefix.Length);
@@ -39,7 +39,7 @@ namespace OwlCoinV2.Backend.DiscordBot
 
                 if (Command == "pay" || Command == "giveowlcoin")
                 {
-                    await Commands.Viewer.Commands.Pay(Message,SegmentedMessage);
+                    await Commands.Viewer.Commands.Pay(Message, SegmentedMessage);
                 }
 
                 if (Command == "owlcoin" || Command == "bal" || Command == "balance")
@@ -77,8 +77,32 @@ namespace OwlCoinV2.Backend.DiscordBot
                     await Commands.Moderator.Commands.GivePoints(Message, SegmentedMessage);
                 }
 
+                if (Command == "help")
+                {
+                    await Commands.Viewer.Commands.Help(Message, SegmentedMessage);
+                }
+
             }
+
+            foreach (string[] Pair in UserInteraction)
+            {
+                if (Pair[0] == Message.Author.Id.ToString())
+                {
+                    int MinsSince = (int)(int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(Pair[1])).TotalMinutes); ;
+                    if ( MinsSince < 10)
+                    {
+                        Shared.Data.Accounts.GiveUser(Message.Author.Id.ToString(), Shared.IDType.Discord, 300);
+                        UserInteraction.Remove(Pair);
+                        UserInteraction.Add(new string[] { Message.Author.Id.ToString(), DateTime.Now.Ticks.ToString() });
+                    }
+                    return;
+                }
+            }
+            UserInteraction.Add(new string[] { Message.Author.Id.ToString(), DateTime.Now.Ticks.ToString() });
+            Shared.Data.Accounts.GiveUser(Message.Author.Id.ToString(), Shared.IDType.Discord, 300);
+
         }
+        static List<string[]> UserInteraction = new List<string[]> { };
 
         public static async void NotLongEnough(SocketMessage Message)
         {

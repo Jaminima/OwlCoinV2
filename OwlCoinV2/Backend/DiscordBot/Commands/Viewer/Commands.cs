@@ -78,7 +78,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             {
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(Message); return; }
             }
-            if (amount < 100) { await Message.Channel.SendMessageAsync("@<" + Message.Author.Username + "> Minimum bet is 100 owlcoin!"); return; }
+            if (amount < 100) { await Message.Channel.SendMessageAsync("<@" + Message.Author.Username + "> Minimum bet is 100 owlcoin!"); return; }
             if (amount <= coins)
             {
                 string[] emotes = Shared.ConfigHandler.Config["Slots"]["Discord"].Select(e => e.ToString()).ToArray();
@@ -86,10 +86,10 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
                 int combo = random.Next(2);
                 if (roll < 10)
                 {
-                    amount *= 2;
+                    amount *= 4;
                     combo = 2;
                 }
-                if (roll < 35)
+                if (roll < 10)
                 {
                     Shared.Data.Accounts.GiveUser(Message.Author.Id.ToString(), Shared.IDType.Discord, amount);
                     await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, you got [" + emotes[combo] + "|" + emotes[combo] + "|" + emotes[combo] + "] and won " + amount + " Owlcoins, you now have " + (coins + amount) + " Owlcoins!");
@@ -105,6 +105,11 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             {
                 await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, you only have " + coins + " Owlcoins");
             }
+        }
+
+        public static async Task Help(SocketMessage Message, string[] SegmentedMessage)
+        {
+            await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> Commands are available here: https://pastebin.com/H60Ydn1s");
         }
 
     }
