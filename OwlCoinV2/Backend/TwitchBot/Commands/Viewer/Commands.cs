@@ -52,7 +52,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             {
                 MyBal -= Required;
                 Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Required);
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "!sr" + e.ChatMessage.Message.Replace(Shared.ConfigHandler.Config["Prefix"]+"r",""));
+                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "!sr" + e.ChatMessage.Message.Remove(0,Shared.ConfigHandler.Config["Prefix"].ToString().Length+1));
                 //Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " song requested!");
             }
             else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", you need " + Required + " Owlcoins to request a song!"); }
