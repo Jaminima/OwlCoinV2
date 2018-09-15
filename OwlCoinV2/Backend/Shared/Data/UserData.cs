@@ -23,20 +23,17 @@ namespace OwlCoinV2.Backend.Shared.Data
             {
                 try
                 {
-                    WebRequest Req = WebRequest.Create("https://discordapp.com/api/v6/users/" + ID + "/profile");
-                    Req.Headers.Add("authorization", ConfigHandler.Config["DiscordBot"]["AuthToken"].ToString());
-                    Req.Method = "GET";
-                    WebResponse Res = Req.GetResponse();
-                    string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
-
-                    Newtonsoft.Json.Linq.JObject ProfileData = Newtonsoft.Json.Linq.JObject.Parse(D);
-                    foreach (Newtonsoft.Json.Linq.JObject Connection in ProfileData["connected_accounts"])
+                    foreach (Newtonsoft.Json.Linq.JObject Connection in GetConnections(ID)["connected_accounts"])
                     {
                         if (Connection["type"].ToString() == "twitch")
                         {
                             if (UserData.UserExists(Connection["id"].ToString(), IDType.Twitch))
                             {
-                                Init.SQLInstance.Update("UserData", "TwitchID=\"" + Connection["id"] + "\"", "DiscordID=\"" + ID.ToString() + "\"");
+                                if (Init.SQLInstance.Select("UserData", "DiscordID", "TwitchID=\"" + Connection["id"] + "\"")[0] == "")
+                                {
+                                    Init.SQLInstance.Update("UserData", "TwitchID=\"" + Connection["id"] + "\"", "DiscordID=\"" + ID.ToString() + "\"");
+                                    return Response;
+                                }
                             }
                             else
                             {
@@ -51,8 +48,8 @@ namespace OwlCoinV2.Backend.Shared.Data
                                     Accounts.CreateAccount(ID, IDVariant);
                                 }
                                 catch { Response.Message = "Error occured during creation"; }
+                                return Response;
                             }
-                            return Response;
                         }
                     }
                 }
@@ -71,6 +68,28 @@ namespace OwlCoinV2.Backend.Shared.Data
             }
             catch { Response.Message = "Error occured during creation"; }
 
+            return Response;
+        }
+
+        public static EventResponse MergeAccounts(string DiscordID)
+        {
+            EventResponse Response = new EventResponse();
+            foreach (Newtonsoft.Json.Linq.JObject Connection in GetConnections(DiscordID)["connected_accounts"])
+            {
+                if (Connection["type"].ToString() == "twitch")
+                {
+                    if (UserData.UserExists(Connection["id"].ToString(), IDType.Twitch))
+                    {
+                        if (Init.SQLInstance.Select("UserData", "DiscordID", "TwitchID=\"" + Connection["id"] + "\"")[0] == "")
+                        {
+                            Accounts.GiveUser(Connection["id"].ToString(), IDType.Twitch, Accounts.GetBalance(DiscordID, IDType.Discord));
+                            Init.SQLInstance.Delete("Accounts", "OwlCoinID=" + Init.SQLInstance.Select("UserData", "OwlCoinID", "DiscordID=\"" + DiscordID + "\"")[0]);
+                            Init.SQLInstance.Delete("UserData", "DiscordID=\"" + DiscordID + "\"");
+                            Init.SQLInstance.Update("UserData", "TwitchID=\"" + Connection["id"] + "\"", "DiscordID=\"" + DiscordID.ToString() + "\"");
+                        }
+                    }
+                }
+            }
             return Response;
         }
 
@@ -93,6 +112,17 @@ namespace OwlCoinV2.Backend.Shared.Data
             catch { Response.Message = "Error occured while setting " + NewIDVariant.ToString() + "ID"; }
 
             return Response;
+        }
+
+        static Newtonsoft.Json.Linq.JObject GetConnections(string ID)
+        {
+            WebRequest Req = WebRequest.Create("https://discordapp.com/api/v6/users/" + ID + "/profile");
+            Req.Headers.Add("authorization", ConfigHandler.Config["DiscordBot"]["AuthToken"].ToString());
+            Req.Method = "GET";
+            WebResponse Res = Req.GetResponse();
+            string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
+            Newtonsoft.Json.Linq.JObject ProfileData = Newtonsoft.Json.Linq.JObject.Parse(D);
+            return ProfileData;
         }
 
         public static Boolean UserExists(string ID, IDType IDVariant)

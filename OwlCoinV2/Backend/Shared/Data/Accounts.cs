@@ -51,7 +51,7 @@ namespace OwlCoinV2.Backend.Shared.Data
             return Response;
         }
 
-        public static EventResponse PayUser(string MyID,IDType MyIDType,string TheirID,IDType TheirIDType,int Amount)
+        public static EventResponse PayUser(string MyID, IDType MyIDType, string TheirID, IDType TheirIDType, int Amount)
         {
             Amount = Math.Abs(Amount);
             EventResponse Response = new EventResponse();
