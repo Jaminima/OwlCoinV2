@@ -99,8 +99,8 @@ namespace OwlCoinV2.Backend.TwitchBot
             WebResponse Res = Req.GetResponse();
             string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
             Newtonsoft.Json.Linq.JObject DJ = Newtonsoft.Json.Linq.JObject.Parse(D);
-            foreach(string Username in DJ["chatters"]["moderators"]) { Watcher.Add(UserHandler.UserFromUsername(Username).Matches[0].Id); }
-            foreach (string UserName in DJ["chatters"]["viewers"]) { Watcher.Add(UserHandler.UserFromUsername(UserName).Matches[0].Id); }
+            foreach(string Username in DJ["chatters"]["moderators"]) { try { Watcher.Add(UserHandler.UserFromUsername(Username).Matches[0].Id); } catch { } }
+            foreach (string UserName in DJ["chatters"]["viewers"]) { try { Watcher.Add(UserHandler.UserFromUsername(UserName).Matches[0].Id); } catch { } }
             return Watcher;
         }
 

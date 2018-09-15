@@ -23,11 +23,13 @@ namespace OwlCoinV2.Backend.DiscordBot
             string[] SegmentedMessage = Message.Content.Split(" ".ToCharArray());
             string Command = SegmentedMessage[0].ToLower();
             string Prefix = Shared.ConfigHandler.Config["Prefix"].ToString();
+
+            Shared.Data.UserData.CreateUser(Message.Author.Id.ToString(), Shared.IDType.Discord);
+            Shared.Data.UserData.MergeAccounts(Message.Author.Id.ToString());
+
             if (Command.StartsWith(Prefix))
             {
-
-                Shared.Data.UserData.CreateUser(Message.Author.Id.ToString(), Shared.IDType.Discord);
-                Shared.Data.UserData.MergeAccounts(Message.Author.Id.ToString());
+                await AwardForInteraction(Message);
 
                 Command = Command.Remove(0, Prefix.Length);
 
@@ -83,13 +85,17 @@ namespace OwlCoinV2.Backend.DiscordBot
                 }
 
             }
+        }
+        static List<string[]> UserInteraction = new List<string[]> { };
 
+        static async Task AwardForInteraction(SocketMessage Message)
+        {
             foreach (string[] Pair in UserInteraction)
             {
                 if (Pair[0] == Message.Author.Id.ToString())
                 {
                     int MinsSince = (int)(int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(Pair[1])).TotalMinutes); ;
-                    if ( MinsSince < 10)
+                    if (MinsSince > 10)
                     {
                         Shared.Data.Accounts.GiveUser(Message.Author.Id.ToString(), Shared.IDType.Discord, 300);
                         UserInteraction.Remove(Pair);
@@ -100,9 +106,7 @@ namespace OwlCoinV2.Backend.DiscordBot
             }
             UserInteraction.Add(new string[] { Message.Author.Id.ToString(), DateTime.Now.Ticks.ToString() });
             Shared.Data.Accounts.GiveUser(Message.Author.Id.ToString(), Shared.IDType.Discord, 300);
-
         }
-        static List<string[]> UserInteraction = new List<string[]> { };
 
         public static async void NotLongEnough(SocketMessage Message)
         {

@@ -23,6 +23,9 @@ namespace OwlCoinV2.Backend.TwitchBot
             string[] SegmentedMessage = e.ChatMessage.Message.Split(" ".ToCharArray());
             string Command = SegmentedMessage[0].ToLower();
             string Prefix = Shared.ConfigHandler.Config["Prefix"].ToString();
+
+            Shared.Data.UserData.CreateUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch);
+
             if (Command.StartsWith(Prefix))
             {
                 Command = Command.Remove(0, Prefix.Length);

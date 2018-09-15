@@ -74,18 +74,21 @@ namespace OwlCoinV2.Backend.Shared.Data
         public static EventResponse MergeAccounts(string DiscordID)
         {
             EventResponse Response = new EventResponse();
-            foreach (Newtonsoft.Json.Linq.JObject Connection in GetConnections(DiscordID)["connected_accounts"])
+            if (Init.SQLInstance.Select("UserData", "TwitchID", "DiscordID=\"" + DiscordID + "\"")[0] == "")
             {
-                if (Connection["type"].ToString() == "twitch")
+                foreach (Newtonsoft.Json.Linq.JObject Connection in GetConnections(DiscordID)["connected_accounts"])
                 {
-                    if (UserData.UserExists(Connection["id"].ToString(), IDType.Twitch))
+                    if (Connection["type"].ToString() == "twitch")
                     {
-                        if (Init.SQLInstance.Select("UserData", "DiscordID", "TwitchID=\"" + Connection["id"] + "\"")[0] == "")
+                        if (UserData.UserExists(Connection["id"].ToString(), IDType.Twitch))
                         {
-                            Accounts.GiveUser(Connection["id"].ToString(), IDType.Twitch, Accounts.GetBalance(DiscordID, IDType.Discord));
-                            Init.SQLInstance.Delete("Accounts", "OwlCoinID=" + Init.SQLInstance.Select("UserData", "OwlCoinID", "DiscordID=\"" + DiscordID + "\"")[0]);
-                            Init.SQLInstance.Delete("UserData", "DiscordID=\"" + DiscordID + "\"");
-                            Init.SQLInstance.Update("UserData", "TwitchID=\"" + Connection["id"] + "\"", "DiscordID=\"" + DiscordID.ToString() + "\"");
+                            if (Init.SQLInstance.Select("UserData", "DiscordID", "TwitchID=\"" + Connection["id"] + "\"")[0] == "")
+                            {
+                                Accounts.GiveUser(Connection["id"].ToString(), IDType.Twitch, Accounts.GetBalance(DiscordID, IDType.Discord));
+                                Init.SQLInstance.Delete("Accounts", "OwlCoinID=" + Init.SQLInstance.Select("UserData", "OwlCoinID", "DiscordID=\"" + DiscordID + "\"")[0]);
+                                Init.SQLInstance.Delete("UserData", "DiscordID=\"" + DiscordID + "\"");
+                                Init.SQLInstance.Update("UserData", "TwitchID=\"" + Connection["id"] + "\"", "DiscordID=\"" + DiscordID.ToString() + "\"");
+                            }
                         }
                     }
                 }
