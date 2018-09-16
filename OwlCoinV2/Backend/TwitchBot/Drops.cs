@@ -40,14 +40,18 @@ namespace OwlCoinV2.Backend.TwitchBot
             int PayOutAmount=1000;
             if (IsMega) { PayOutAmount = 5000; }
             RaffleParticipant = new List<string> { };
-            Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "/me PogChamp a Raffle has begun for "+PayOutAmount+" Owlcoin PogChamp it will end in 60 Seconds. Enter by typing \"oc!join\" OpieOP");
-            System.Threading.Thread.Sleep(15000);
-            Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "/me The Raffle for " + PayOutAmount + " Owlcoin will end in 45 Seconds. Enter by typing \"oc!join\" FeelsGoodMan");
-            System.Threading.Thread.Sleep(15000);
-            Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "/me The Raffle for " + PayOutAmount + " Owlcoin will end in 30 Seconds. Enter by typing \"oc!join\" FeelsGoodMan");
-            System.Threading.Thread.Sleep(15000);
-            Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "/me The Raffle for " + PayOutAmount + " Owlcoin will end in 15 Seconds. Enter by typing \"oc!join\" FeelsGoodMan");
-            System.Threading.Thread.Sleep(15000);
+            try
+            {
+                Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "/me PogChamp a Raffle has begun for " + PayOutAmount + " Owlcoin PogChamp it will end in 60 Seconds. Enter by typing \"oc!join\" OpieOP");
+                System.Threading.Thread.Sleep(15000);
+                Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "/me The Raffle for " + PayOutAmount + " Owlcoin will end in 45 Seconds. Enter by typing \"oc!join\" FeelsGoodMan");
+                System.Threading.Thread.Sleep(15000);
+                Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "/me The Raffle for " + PayOutAmount + " Owlcoin will end in 30 Seconds. Enter by typing \"oc!join\" FeelsGoodMan");
+                System.Threading.Thread.Sleep(15000);
+                Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "/me The Raffle for " + PayOutAmount + " Owlcoin will end in 15 Seconds. Enter by typing \"oc!join\" FeelsGoodMan");
+                System.Threading.Thread.Sleep(15000);
+            }
+            catch { Console.WriteLine("Failed TO Start Raffle"); return null; }
             if (RaffleParticipant.Count == 0)
             {
                 Bot.TwitchC.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), "No one entered the raffle LUL");
