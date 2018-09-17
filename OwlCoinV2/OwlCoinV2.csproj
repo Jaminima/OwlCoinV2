@@ -228,6 +228,7 @@
     <Compile Include="Backend\DiscordBot\Commands\Moderator\Commands.cs" />
     <Compile Include="Backend\DiscordBot\Commands\Viewer\Commands.cs" />
     <Compile Include="Backend\DiscordBot\Commands\Viewer\Duel.cs" />
+    <Compile Include="Backend\Shared\InputVerification.cs" />
     <Compile Include="Backend\TwitchBot\Commands\Viewer\Duel.cs" />
     <Compile Include="Backend\DiscordBot\Duels.cs" />
     <Compile Include="Backend\DiscordBot\MessageHandler.cs" />
@@ -246,6 +247,7 @@
     <Compile Include="Backend\TwitchBot\Commands\Viewer\Songs.cs" />
     <Compile Include="Backend\TwitchBot\Drops.cs" />
     <Compile Include="Backend\TwitchBot\Duels.cs" />
+    <Compile Include="Backend\TwitchBot\Events.cs" />
     <Compile Include="Backend\TwitchBot\MessageHandler.cs" />
     <Compile Include="Backend\TwitchBot\Streamlabs\Alert.cs" />
     <Compile Include="Backend\TwitchBot\UserHandler.cs" />

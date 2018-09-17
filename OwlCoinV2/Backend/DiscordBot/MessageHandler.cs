@@ -44,7 +44,7 @@ namespace OwlCoinV2.Backend.DiscordBot
                     await Commands.Viewer.Commands.Pay(Message, SegmentedMessage);
                 }
 
-                if (Command == "owlcoin" || Command == "bal" || Command == "balance")
+                if (Command == "owlcoin" || Command == "bal" || Command == "balance"||Command=="owc")
                 {
                     await Commands.Viewer.Commands.OwlCoin(Message, SegmentedMessage);
                 }

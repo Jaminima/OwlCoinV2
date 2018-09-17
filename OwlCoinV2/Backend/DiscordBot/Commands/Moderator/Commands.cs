@@ -18,6 +18,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Moderator
             if (IsMod(Message).Result)
             {
                 string TheirID = MessageHandler.GetDiscordID(SegmentedMessage[1]);
+                if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])) { return; };
                 Shared.Data.Accounts.GiveUser(TheirID, Shared.IDType.Discord, int.Parse(SegmentedMessage[2]));
                 await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> gave <@" + TheirID + "> " + SegmentedMessage[2] + " owlcoin!");
             }

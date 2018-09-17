@@ -17,6 +17,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             string TheirID = MessageHandler.GetDiscordID(SegmentedMessage[1]); Shared.IDType TheirIDType = Shared.IDType.Discord;
             //if (TheirID.StartsWith("<@")) { TheirID = TheirID.Replace("<@","").Replace(">",""); }
             if (SegmentedMessage[2].ToLower() == "all") { SegmentedMessage[2] = Shared.Data.Accounts.GetBalance(Message.Author.Id.ToString(), Shared.IDType.Discord).ToString(); }
+            if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])) { MessageHandler.InvalidParameter(Message); return; };
 
             Shared.Data.EventResponse Response = Shared.Data.Accounts.PayUser(Message.Author.Id.ToString(), Shared.IDType.Discord, TheirID, TheirIDType, int.Parse(SegmentedMessage[2]));
             //if (Response.Success)

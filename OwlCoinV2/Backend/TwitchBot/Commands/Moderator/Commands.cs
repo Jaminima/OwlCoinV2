@@ -16,8 +16,9 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
             if (e.ChatMessage.IsModerator)
             {
                 string TheirID = UserHandler.UserFromUsername(SegmentedMessage[1].Replace("@", "")).Matches[0].Id;
+                if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])) { return; };
                 Shared.Data.Accounts.GiveUser(TheirID,Shared.IDType.Twitch,int.Parse(SegmentedMessage[2]));
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " gave @" + SegmentedMessage[1] + " " + SegmentedMessage[2] + " owlcoin!");
+                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " gave @" + SegmentedMessage[1].Replace("@", "") + " " + SegmentedMessage[2] + " owlcoin!");
             }
             else { NotMod(e); }
         }

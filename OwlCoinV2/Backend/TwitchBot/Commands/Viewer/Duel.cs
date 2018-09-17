@@ -36,7 +36,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 {
                     if (Duels.duels.Add(new Shared.Duel(e.ChatMessage.UserId.ToString(), TheirID, amount)))
                     {
-                        Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@"+ UserHandler.UserFromUserID(TheirID).Name +" @" + e.ChatMessage.Username + " wants to duel you for " + amount + " Owlcoins, you can oc!accept or oc!deny within 2 minutes");
+                        Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@"+ UserHandler.UserFromUserID(TheirID).Name +" @" + e.ChatMessage.Username + " wants to duel you for " + amount + " Owlcoins, you can !accept or !deny within 2 minutes");
                     }
                     else
                     {

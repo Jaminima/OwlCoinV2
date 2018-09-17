@@ -32,6 +32,10 @@ namespace OwlCoinV2.Backend.TwitchBot
             TwitchC.Initialize(credentials, Shared.ConfigHandler.Config["ChannelName"].ToString());
             TwitchC.OnMessageReceived += MessageHandler.HandleMessage;
             TwitchC.OnMessageReceived += ChatLogger.AddToLog;
+            TwitchC.OnGiftedSubscription += Events.SubGifted;
+            TwitchC.OnNewSubscriber += Events.Subbed;
+            TwitchC.OnReSubscriber += Events.ReSubbed;
+            TwitchC.OnHostingStarted += Events.Hosting;
             TwitchC.Connect();
             Console.WriteLine("TwitchBot Started");
             System.Threading.Thread.Sleep(500);
