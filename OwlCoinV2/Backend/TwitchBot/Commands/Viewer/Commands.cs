@@ -100,7 +100,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
 
         public static void Help(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Commands are available here: https://pastebin.com/H60Ydn1s");
+            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Commands are available here: https://pastebin.com/H60Ydn1s\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2");
         }
 
         public static void AccountAge(OnMessageReceivedArgs e, string[] SegmentedMessage)

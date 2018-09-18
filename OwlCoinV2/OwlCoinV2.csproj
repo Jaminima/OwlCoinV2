@@ -241,7 +241,7 @@
     <Compile Include="Backend\Shared\Duel.cs" />
     <Compile Include="Backend\Shared\IDType.cs" />
     <Compile Include="Backend\TwitchBot\Bot.cs" />
-    <Compile Include="Backend\TwitchBot\ChatLogger.cs" />
+    <Compile Include="Backend\TwitchBot\Logger.cs" />
     <Compile Include="Backend\TwitchBot\Commands\Moderator\Commands.cs" />
     <Compile Include="Backend\TwitchBot\Commands\Viewer\Commands.cs" />
     <Compile Include="Backend\TwitchBot\Commands\Viewer\Songs.cs" />

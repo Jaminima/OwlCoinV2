@@ -113,7 +113,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
 
         public static async Task Help(SocketMessage Message, string[] SegmentedMessage)
         {
-            await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> Commands are available here: https://pastebin.com/wfF6m3nq");
+            await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> Commands are available here: https://pastebin.com/wfF6m3nq\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2");
         }
 
     }
