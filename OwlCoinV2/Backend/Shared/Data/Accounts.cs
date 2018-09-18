@@ -16,12 +16,14 @@ namespace OwlCoinV2.Backend.Shared.Data
 
         public static int GetBalance(string ID, IDType IDVariant)
         {
+            UserData.CreateUser(ID, IDVariant);
             string OwlCoinID = Init.SQLInstance.Select("UserData", "OwlCoinID", IDVariant.ToString() + "ID='" + ID + "'")[0];
             return int.Parse(Init.SQLInstance.Select("Accounts", "Balance", "OwlCoinID=" + OwlCoinID)[0]);
         }
 
         public static bool GiveUser(string ID, IDType IDVariant,int Amount)
         {
+            UserData.CreateUser(ID, IDVariant);
             Amount = Math.Abs(Amount);
             bool Response = false;
 
@@ -36,6 +38,7 @@ namespace OwlCoinV2.Backend.Shared.Data
 
         public static bool TakeUser(string ID, IDType IDVariant, int Amount)
         {
+            UserData.CreateUser(ID, IDVariant);
             Amount = Math.Abs(Amount);
             bool Response = false;
 

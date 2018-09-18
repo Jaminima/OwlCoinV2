@@ -15,6 +15,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
         {
             if (SegmentedMessage.Length != 3) { MessageHandler.NotLongEnough(Message); return; }
             string TheirID = MessageHandler.GetDiscordID(SegmentedMessage[1]);
+            if (Shared.InputVerification.ContainsLetter(TheirID)) { await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> That user doesnt exist!"); return; }
             if (TheirID == Message.Author.Id.ToString())
             {
                 await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, You can't duel yourself");
@@ -27,6 +28,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             {
                 if (!int.TryParse(SegmentedMessage[2], out amount)) { MessageHandler.InvalidParameter(Message); return; }
             }
+            amount = Math.Abs(amount);
             if (amount <= myCoins)
             {
                 if (amount <= theirCoins)

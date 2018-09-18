@@ -131,5 +131,10 @@ namespace OwlCoinV2.Backend.TwitchBot
             Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@"+e.ChatMessage.Username+" have one or more invalid parameter!");
         }
 
+        public static void NegativeValue(OnMessageReceivedArgs e)
+        {
+            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " You wanna not do -ve's dad!");
+        }
+
     }
 }

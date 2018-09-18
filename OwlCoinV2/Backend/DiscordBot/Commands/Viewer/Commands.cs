@@ -14,7 +14,9 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
         public static async Task Pay(SocketMessage Message,string[] SegmentedMessage)
         {
             if (SegmentedMessage.Length != 3) { MessageHandler.NotLongEnough(Message); return; }
-            string TheirID = MessageHandler.GetDiscordID(SegmentedMessage[1]); Shared.IDType TheirIDType = Shared.IDType.Discord;
+            string TheirID; Shared.IDType TheirIDType = Shared.IDType.Discord;
+            TheirID = MessageHandler.GetDiscordID(SegmentedMessage[1]);
+            if (Shared.InputVerification.ContainsLetter(TheirID)) { await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> That user doesnt exist!"); return; }
             //if (TheirID.StartsWith("<@")) { TheirID = TheirID.Replace("<@","").Replace(">",""); }
             if (SegmentedMessage[2].ToLower() == "all") { SegmentedMessage[2] = Shared.Data.Accounts.GetBalance(Message.Author.Id.ToString(), Shared.IDType.Discord).ToString(); }
             if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])) { MessageHandler.InvalidParameter(Message); return; };
@@ -30,7 +32,8 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
         {
             if (SegmentedMessage.Length == 2/*&&SegmentedMessage[1].StartsWith("<@")*/)
             {
-                SegmentedMessage[1] = MessageHandler.GetDiscordID(SegmentedMessage[1]);//.Replace("<@", "").Replace(">", "");
+                SegmentedMessage[1] = MessageHandler.GetDiscordID(SegmentedMessage[1]);
+                if (Shared.InputVerification.ContainsLetter(SegmentedMessage[1])) {await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> That user doesnt exist!"); return; }
                 Shared.Data.UserData.CreateUser(SegmentedMessage[1], Shared.IDType.Discord);
                 await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> <@" + SegmentedMessage[1] + "> has " + Shared.Data.Accounts.GetBalance(SegmentedMessage[1], Shared.IDType.Discord) + " Owlcoin!");
             }
@@ -50,7 +53,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             {
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(Message); return; }
             }
-            if (amount < 100) { await Message.Channel.SendMessageAsync("@<" + Message.Author.Username + "> Minimum bet is 100 owlcoin!"); return; }
+            if (amount < 100) { await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> Minimum bet is 100 owlcoin!"); return; }
             if (amount <= coins)
             {
                 if (random.Next(100) < int.Parse(Shared.ConfigHandler.Config["GambleWinChance"].ToString()))
@@ -79,7 +82,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             {
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(Message); return; }
             }
-            if (amount < 100) { await Message.Channel.SendMessageAsync("<@" + Message.Author.Username + "> Minimum bet is 100 owlcoin!"); return; }
+            if (amount < 100) { await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> Minimum bet is 100 owlcoin!"); return; }
             if (amount <= coins)
             {
                 string[] emotes = Shared.ConfigHandler.Config["Slots"]["Discord"].Select(e => e.ToString()).ToArray();
@@ -110,7 +113,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
 
         public static async Task Help(SocketMessage Message, string[] SegmentedMessage)
         {
-            await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> Commands are available here: https://pastebin.com/H60Ydn1s");
+            await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> Commands are available here: https://pastebin.com/wfF6m3nq");
         }
 
     }

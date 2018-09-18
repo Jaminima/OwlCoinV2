@@ -13,31 +13,32 @@ namespace OwlCoinV2.Backend.TwitchBot
     {
         public static void SubGifted(object sender,OnGiftedSubscriptionArgs e)
         {
-            Shared.Data.UserData.CreateUser(e.GiftedSubscription.Id, Shared.IDType.Twitch);
-            Shared.Data.Accounts.GiveUser(e.GiftedSubscription.Id, Shared.IDType.Twitch, 1000);
+            string Id = UserHandler.UserFromUsername(e.GiftedSubscription.DisplayName).Matches[0].Id;
+            Shared.Data.UserData.CreateUser(Id, Shared.IDType.Twitch);
+            Shared.Data.Accounts.GiveUser(Id, Shared.IDType.Twitch, 1000);
             Bot.TwitchC.SendMessage(e.Channel, "@" + e.GiftedSubscription.DisplayName + " Gifted a sub too @" + e.GiftedSubscription.MsgParamRecipientDisplayName + " and received 1000 Owlcoin!");
         }
 
         public static void Subbed(object sender, OnNewSubscriberArgs e)
         {
-            Shared.Data.UserData.CreateUser(e.Subscriber.Id, Shared.IDType.Twitch);
-            Shared.Data.Accounts.GiveUser(e.Subscriber.Id, Shared.IDType.Twitch, 1000);
+            Shared.Data.UserData.CreateUser(e.Subscriber.UserId, Shared.IDType.Twitch);
+            Shared.Data.Accounts.GiveUser(e.Subscriber.UserId, Shared.IDType.Twitch, 1000);
             Bot.TwitchC.SendMessage(e.Channel, "@" + e.Subscriber.DisplayName + " Subbed for the first time and received 1000 Owlcoin!");
         }
         public static void ReSubbed(object sender,OnReSubscriberArgs e)
         {
-            Shared.Data.UserData.CreateUser(e.ReSubscriber.Id, Shared.IDType.Twitch);
-            Shared.Data.Accounts.GiveUser(e.ReSubscriber.Id, Shared.IDType.Twitch, 1000);
+            Shared.Data.UserData.CreateUser(e.ReSubscriber.UserId, Shared.IDType.Twitch);
+            Shared.Data.Accounts.GiveUser(e.ReSubscriber.UserId, Shared.IDType.Twitch, 1000);
             Bot.TwitchC.SendMessage(e.Channel, "@" + e.ReSubscriber.DisplayName + " Resubbed and received 1000 Owlcoin!");
         }
         static List<String[]> Hosts = new List<string[]> { };
-        public static void Hosting(object sender,OnHostingStartedArgs e)
+        public static void Hosting(object sender,OnBeingHostedArgs e)
         {
-            if (Hosts.Contains(new string[] { e.HostingStarted.HostingChannel,DateTime.Now.DayOfYear.ToString() })) { return; }
-            Shared.Data.UserData.CreateUser(e.HostingStarted.HostingChannel, Shared.IDType.Twitch);
-            Shared.Data.Accounts.GiveUser(e.HostingStarted.HostingChannel, Shared.IDType.Twitch, 250);
-            Bot.TwitchC.SendMessage(e.HostingStarted.TargetChannel, "@" + e.HostingStarted.HostingChannel + " Started hosting with "+e.HostingStarted.Viewers+" viewers and received 250 Owlcoin!");
-            Hosts.Add(new string[] { e.HostingStarted.HostingChannel,DateTime.Now.DayOfYear.ToString() });
+            if (Hosts.Contains(new string[] { e.BeingHostedNotification.HostedByChannel,DateTime.Now.DayOfYear.ToString() })) { return; }
+            Shared.Data.UserData.CreateUser(e.BeingHostedNotification.HostedByChannel, Shared.IDType.Twitch);
+            Shared.Data.Accounts.GiveUser(e.BeingHostedNotification.HostedByChannel, Shared.IDType.Twitch, 250);
+            Bot.TwitchC.SendMessage(e.BeingHostedNotification.Channel, "@" + e.BeingHostedNotification.HostedByChannel + " Started hosting with "+e.BeingHostedNotification.Viewers+" viewers and received 250 Owlcoin!");
+            Hosts.Add(new string[] { e.BeingHostedNotification.HostedByChannel,DateTime.Now.DayOfYear.ToString() });
         }
 
     }

@@ -16,7 +16,10 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
         public static void StartDuel(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
             if (SegmentedMessage.Length != 3) { MessageHandler.NotLongEnough(e); return; }
-            string TheirID = UserHandler.UserFromUsername(SegmentedMessage[1].Replace("@","")).Matches[0].Id;
+            string TheirID;
+            try { TheirID = UserHandler.UserFromUsername(SegmentedMessage[1].Replace("@", "")).Matches[0].Id; }
+            catch { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " That user doesnt exist!"); return; }
+
             if (TheirID == e.ChatMessage.UserId.ToString())
             {
                 Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", You can't duel yourself");

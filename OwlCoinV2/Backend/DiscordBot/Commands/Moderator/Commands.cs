@@ -22,7 +22,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Moderator
                 Shared.Data.Accounts.GiveUser(TheirID, Shared.IDType.Discord, int.Parse(SegmentedMessage[2]));
                 await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> gave <@" + TheirID + "> " + SegmentedMessage[2] + " owlcoin!");
             }
-            else { NotMod(Message); }
+            else { await NotMod(Message); }
         }
 
         static async Task<bool> IsMod(SocketMessage Message)

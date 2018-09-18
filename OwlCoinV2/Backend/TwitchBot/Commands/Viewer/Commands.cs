@@ -19,14 +19,19 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
         {
             if (SegmentedMessage.Length != 3) { MessageHandler.NotLongEnough(e); return; }
             string TheirID = SegmentedMessage[1]; Shared.IDType TheirIDType = Shared.IDType.Twitch;
-            if (TheirID.StartsWith("@")) { TheirID = TheirID.Replace("@", ""); TheirID = UserHandler.UserFromUsername(TheirID).Matches[0].Id; }
-            if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])){ MessageHandler.InvalidParameter(e); return; };
-            
+            if (TheirID.StartsWith("@")) { TheirID = TheirID.Replace("@", "");
+                try { TheirID = UserHandler.UserFromUsername(TheirID).Matches[0].Id; }
+                catch { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " That user doesnt exist!"); return; } }
+            if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])&&SegmentedMessage[2].ToLower()!="all"){ MessageHandler.InvalidParameter(e); return; }
+            else if (SegmentedMessage[2].ToLower()=="all"){ SegmentedMessage[2] = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch).ToString(); }
+            int N = int.Parse(SegmentedMessage[2]);
+            if (N < 0) { MessageHandler.NegativeValue(e); return; }
 
-            Shared.Data.EventResponse Response = Shared.Data.Accounts.PayUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, TheirID, TheirIDType, int.Parse(SegmentedMessage[2]));
+
+            Shared.Data.EventResponse Response = Shared.Data.Accounts.PayUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, TheirID, TheirIDType, N);
             //if (Response.Success)
             //{
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + Response.Message);
+            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " " + Response.Message);
             //}
         }
 
@@ -35,13 +40,17 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             if (SegmentedMessage.Length == 2 && SegmentedMessage[1].StartsWith("@"))
             {
                 SegmentedMessage[1] = SegmentedMessage[1].Replace("@", "");
-                String TheirID = UserHandler.UserFromUsername(SegmentedMessage[1]).Matches[0].Id;
+                String TheirID;
+                try { TheirID = UserHandler.UserFromUsername(SegmentedMessage[1]).Matches[0].Id; } catch { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " That user doesnt exist!"); return; }
                 Shared.Data.UserData.CreateUser(TheirID, Shared.IDType.Twitch);
                 Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " @" + SegmentedMessage[1] + " has " + Shared.Data.Accounts.GetBalance(TheirID, Shared.IDType.Twitch) + " Owlcoin!");
                 return;
             }
-            Shared.Data.UserData.CreateUser(e.ChatMessage.UserId, Shared.IDType.Twitch);
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " you have " + Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch) + " Owlcoin!");
+            else
+            {
+                Shared.Data.UserData.CreateUser(e.ChatMessage.UserId, Shared.IDType.Twitch);
+                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " you have " + Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch) + " Owlcoin!");
+            }
         }
 
         public static void SongRequest(OnMessageReceivedArgs e, string[] SegmentedMessage)
