@@ -32,7 +32,9 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             {
                 if (!int.TryParse(SegmentedMessage[2], out amount)) { MessageHandler.InvalidParameter(e); return; }
             }
+            else { if (myCoins > theirCoins) { amount = theirCoins; } }
             amount = Math.Abs(amount);
+            if (amount < 100) { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Minimum duel is 100 owlcoin!"); return; }
             if (amount <= myCoins)
             {
                 if (amount <= theirCoins)
@@ -48,7 +50,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 }
                 else
                 {
-                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " only has " + theirCoins + " Owlcoins");
+                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " @"+ SegmentedMessage[1].Replace("@", "") + " only has " + theirCoins + " Owlcoins");
                 }
             }
             else

@@ -110,7 +110,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             {
                 SegmentedMessage[1] = SegmentedMessage[1].Replace("@", "");
                 CreatedAt = UserHandler.UserFromUsername(SegmentedMessage[1]).Matches[0].CreatedAt;
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " @" + SegmentedMessage[1] + " account is " + AgeString(CreatedAt) + " old!");
+                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " @" + SegmentedMessage[1] + "'s account is " + AgeString(CreatedAt) + " old!");
                 return;
             }
             CreatedAt = UserHandler.UserFromUserID(e.ChatMessage.UserId).CreatedAt;
@@ -119,18 +119,16 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
 
         static string AgeString(DateTime CreatedAt)
         {
+            TimeSpan Span = DateTime.Now - CreatedAt;
             string Age = "";
-            int Years = DateTime.Now.Year - CreatedAt.Year;
-            int Months = DateTime.Now.Month - CreatedAt.Month;
-            int Days = DateTime.Now.Day - CreatedAt.Day;
-            int Hours = DateTime.Now.Hour - CreatedAt.Hour;
-            if (Hours < 0) { Hours += 23; Days -= 1; }
+            int Years = (int)Math.Floor((decimal)Span.Days / 365);
+            int Months = (int)Math.Floor((decimal)(Span.Days - (Years * 365)) / 30);
+            int Days = Span.Days - ((Years * 365) + (Months * 30));
 
-            if (Years != 0) { if (Years > 1) { Age = Age + Years + " Years "; } else { Age = Age + Years + " Year "; } }
-            if (Months != 0) { if (Months > 1) { Age = Age + Months + " Months "; } else { Age = Age + Months + " Month "; } }
-            if (Days != 0) { if (Days > 1) { Age = Age + Days + " Days "; } else { Age = Age + Days + " Day "; } }
-            if (Age.Length != 0) { Age = Age + "and "; }
-            if (Hours > 1) { Age = Age + Hours + " Hours(ish)"; } else { Age = Age + Hours + " Hour(ish)"; }
+            if (Years != 0) { if (Years == 1) { Age += Years + " Year "; } else { Age += Years + " Years "; } }if (Months != 0 && Days == 0 && Span.Hours == 0) { Age += "and "; }
+            if (Months != 0) { if (Months == 1) { Age += Months + " Month "; } else { Age += Months + " Months "; } } if (Days != 0 && Span.Hours == 0) { Age += "and "; }
+            if (Days != 0) { if (Days == 1) { Age += Days + " Day "; } else { Age += Days + " Days "; } }
+            if (Span.Hours != 0) { if (Span.Hours == 1) { Age +="and "+ Span.Hours + " Hour "; } else { Age +="and "+ Span.Hours + " Hours "; } }
 
             return Age;
         }

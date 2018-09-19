@@ -28,7 +28,9 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             {
                 if (!int.TryParse(SegmentedMessage[2], out amount)) { MessageHandler.InvalidParameter(Message); return; }
             }
+            else { if (myCoins > theirCoins) { amount = theirCoins; } }
             amount = Math.Abs(amount);
+            if (amount < 100) { await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> Minimum duel is 100 owlcoin!"); return; }
             if (amount <= myCoins)
             {
                 if (amount <= theirCoins)
