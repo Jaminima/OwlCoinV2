@@ -18,6 +18,7 @@ namespace OwlCoinV2.Backend.DiscordBot
             DiscordClient.MessageReceived += MessageHandler.HandleMessage;
             await DiscordClient.LoginAsync(Discord.TokenType.Bot, Shared.ConfigHandler.Config["DiscordBot"]["Token"].ToString());
             await DiscordClient.StartAsync();
+            await DiscordClient.SetGameAsync("!help");
             Console.WriteLine("DiscordBot Started");
             new Thread(() => Duels.Handler()).Start();
         }

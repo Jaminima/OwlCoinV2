@@ -109,7 +109,8 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             if (SegmentedMessage.Length == 2 && SegmentedMessage[1].StartsWith("@"))
             {
                 SegmentedMessage[1] = SegmentedMessage[1].Replace("@", "");
-                CreatedAt = UserHandler.UserFromUsername(SegmentedMessage[1]).Matches[0].CreatedAt;
+                try { CreatedAt = UserHandler.UserFromUsername(SegmentedMessage[1]).Matches[0].CreatedAt; }
+                catch {Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " User Doesnt Exist!"); return; }
                 Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " @" + SegmentedMessage[1] + "'s account is " + AgeString(CreatedAt) + " old!");
                 return;
             }
