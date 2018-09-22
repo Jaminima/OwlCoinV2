@@ -97,15 +97,18 @@ namespace OwlCoinV2.Backend.TwitchBot
 
         public static List<String> GetWatching()
         {
-            List<String> Watcher = new List<string> { };
-            WebRequest Req = WebRequest.Create("http://tmi.twitch.tv/group/user/"+ Shared.ConfigHandler.Config["ChannelName"] + "/chatters");
-            Req.Method = "GET";
-            WebResponse Res = Req.GetResponse();
-            string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
-            Newtonsoft.Json.Linq.JObject DJ = Newtonsoft.Json.Linq.JObject.Parse(D);
-            foreach(string Username in DJ["chatters"]["moderators"]) { try { Watcher.Add(UserHandler.UserFromUsername(Username).Matches[0].Id); } catch { } }
-            foreach (string UserName in DJ["chatters"]["viewers"]) { try { Watcher.Add(UserHandler.UserFromUsername(UserName).Matches[0].Id); } catch { } }
-            return Watcher;
+            try
+            {
+                List<String> Watcher = new List<string> { };
+                WebRequest Req = WebRequest.Create("http://tmi.twitch.tv/group/user/" + Shared.ConfigHandler.Config["ChannelName"] + "/chatters");
+                Req.Method = "GET";
+                WebResponse Res = Req.GetResponse();
+                string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
+                Newtonsoft.Json.Linq.JObject DJ = Newtonsoft.Json.Linq.JObject.Parse(D);
+                foreach (string Username in DJ["chatters"]["moderators"]) { try { Watcher.Add(UserHandler.UserFromUsername(Username).Matches[0].Id); } catch { } }
+                foreach (string UserName in DJ["chatters"]["viewers"]) { try { Watcher.Add(UserHandler.UserFromUsername(UserName).Matches[0].Id); } catch { } }
+                return Watcher;
+            }catch (Exception E) { Console.WriteLine(E); return GetWatching(); }
         }
 
         public static List<String> GetSubs()
@@ -114,12 +117,8 @@ namespace OwlCoinV2.Backend.TwitchBot
             int Offset = 0;
             while (Subs.Count % 25 == 0)
             {
-                WebRequest Req = WebRequest.Create("https://api.twitch.tv/kraken/channels/" + Shared.ConfigHandler.Config["ChannelName"] + "/subscriptions?offset="+Offset);
-                Req.Method = "GET";
-                Req.Headers.Add("Client-ID", Shared.ConfigHandler.Config["TwitchBot"]["ClientId"].ToString());
-                Req.Headers.Add("Authorization", "OAuth " + Shared.ConfigHandler.Config["TwitchBot"]["AccessToken"].ToString());
-                WebResponse Res = Req.GetResponse();
-                string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
+                string D="";
+                while (D == "") { try { D = GetSubData(Offset); } catch (Exception E) { Console.WriteLine(E); D = GetSubData(Offset); } }
                 foreach (Newtonsoft.Json.Linq.JToken Item in Newtonsoft.Json.Linq.JObject.Parse(D)["subscriptions"])
                 {
                     Subs.Add(Item["user"]["_id"].ToString());
@@ -127,6 +126,17 @@ namespace OwlCoinV2.Backend.TwitchBot
                 Offset += 25;
             }
             return Subs;
+        }
+
+        static string GetSubData(int Offset)
+        {
+            WebRequest Req = WebRequest.Create("https://api.twitch.tv/kraken/channels/" + Shared.ConfigHandler.Config["ChannelName"] + "/subscriptions?offset=" + Offset);
+            Req.Method = "GET";
+            Req.Headers.Add("Client-ID", Shared.ConfigHandler.Config["TwitchBot"]["ClientId"].ToString());
+            Req.Headers.Add("Authorization", "OAuth " + Shared.ConfigHandler.Config["TwitchBot"]["AccessToken"].ToString());
+            WebResponse Res = Req.GetResponse();
+            string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
+            return D;
         }
 
     }
