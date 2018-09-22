@@ -18,8 +18,11 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Moderator
             if (IsMod(Message).Result)
             {
                 string TheirID = MessageHandler.GetDiscordID(SegmentedMessage[1]);
-                if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])) { return; };
-                Shared.Data.Accounts.GiveUser(TheirID, Shared.IDType.Discord, int.Parse(SegmentedMessage[2]));
+                int Amount = 0;
+                if (SegmentedMessage[2].ToLower().EndsWith("k")) { Amount = int.Parse(SegmentedMessage[2].ToLower().Replace("k", "")) * 1000; }
+                else if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])) { return; }
+                else { Amount = int.Parse(SegmentedMessage[2]); }
+                Shared.Data.Accounts.GiveUser(TheirID, Shared.IDType.Discord, Amount);
                 await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> gave <@" + TheirID + "> " + SegmentedMessage[2] + " owlcoin!");
             }
             else { await NotMod(Message); }

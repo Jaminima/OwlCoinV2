@@ -22,13 +22,19 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             if (TheirID.StartsWith("@")) { TheirID = TheirID.Replace("@", "");
                 try { TheirID = UserHandler.UserFromUsername(TheirID).Matches[0].Id; }
                 catch { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " That user doesnt exist!"); return; } }
-            if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])&&SegmentedMessage[2].ToLower()!="all"){ MessageHandler.InvalidParameter(e); return; }
-            else if (SegmentedMessage[2].ToLower()=="all"){ SegmentedMessage[2] = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch).ToString(); }
-            int N = int.Parse(SegmentedMessage[2]);
-            if (N < 0) { MessageHandler.NegativeValue(e); return; }
+            int Amount = 0;
+            if (SegmentedMessage[2].ToLower() == "all") { Amount = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch); }
+            else if (SegmentedMessage[2].ToLower().EndsWith("k"))
+            {
+                if (!int.TryParse(SegmentedMessage[2].ToLower().Replace("k", ""), out Amount)) { MessageHandler.InvalidParameter(e); return; }
+                Amount *= 1000;
+            }
+            else { if (!int.TryParse(SegmentedMessage[2].ToLower(), out Amount)) { MessageHandler.InvalidParameter(e); return; } }
+            //if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2]) && SegmentedMessage[2].ToLower() != "all") { MessageHandler.InvalidParameter(e); return; }
+            if (Amount < 0) { MessageHandler.NegativeValue(e); return; }
 
 
-            Shared.Data.EventResponse Response = Shared.Data.Accounts.PayUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, TheirID, TheirIDType, N);
+            Shared.Data.EventResponse Response = Shared.Data.Accounts.PayUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, TheirID, TheirIDType, Amount);
             //if (Response.Success)
             //{
             Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " " + Response.Message);
@@ -73,7 +79,12 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             if (SegmentedMessage.Length != 2) { MessageHandler.NotLongEnough(e); return; }
             int coins, amount;
             coins = amount = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch);
-            if (SegmentedMessage[1] != "all")
+            if (SegmentedMessage[1].ToLower().EndsWith("k"))
+            {
+                if (!int.TryParse(SegmentedMessage[1].ToLower().Replace("k", ""), out amount)) { MessageHandler.InvalidParameter(e); return; }
+                amount *= 1000;
+            }
+            else if (SegmentedMessage[1] != "all")
             {
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(e); return; }
             }
@@ -186,7 +197,12 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             if (SegmentedMessage.Length != 2) { MessageHandler.NotLongEnough(e); return; }
             int coins, amount;
             coins = amount = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch);
-            if (SegmentedMessage[1].ToLower() != "all")
+            if (SegmentedMessage[1].ToLower().EndsWith("k"))
+            {
+                if (!int.TryParse(SegmentedMessage[1].ToLower().Replace("k", ""), out amount)) { MessageHandler.InvalidParameter(e); return; }
+                amount *= 1000;
+            }
+            else if (SegmentedMessage[1].ToLower() != "all")
             {
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(e); return; }
             }

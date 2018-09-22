@@ -16,12 +16,17 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             if (SegmentedMessage.Length != 3) { MessageHandler.NotLongEnough(Message); return; }
             string TheirID; Shared.IDType TheirIDType = Shared.IDType.Discord;
             TheirID = MessageHandler.GetDiscordID(SegmentedMessage[1]);
-            if (Shared.InputVerification.ContainsLetter(TheirID)) { await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> That user doesnt exist!"); return; }
             //if (TheirID.StartsWith("<@")) { TheirID = TheirID.Replace("<@","").Replace(">",""); }
-            if (SegmentedMessage[2].ToLower() == "all") { SegmentedMessage[2] = Shared.Data.Accounts.GetBalance(Message.Author.Id.ToString(), Shared.IDType.Discord).ToString(); }
-            if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])) { MessageHandler.InvalidParameter(Message); return; };
+            int Amount = 0;
+            if (SegmentedMessage[2].ToLower() == "all") { Amount = Shared.Data.Accounts.GetBalance(Message.Author.Id.ToString(), Shared.IDType.Discord); }
+            else if (SegmentedMessage[2].ToLower().EndsWith("k"))
+            {
+                if (!int.TryParse(SegmentedMessage[2].ToLower().Replace("k", ""), out Amount)) { MessageHandler.InvalidParameter(Message); return; }
+                Amount *= 1000;
+            }
+            else { if (!int.TryParse(SegmentedMessage[2].ToLower(), out Amount)) { MessageHandler.InvalidParameter(Message); return; } }
 
-            Shared.Data.EventResponse Response = Shared.Data.Accounts.PayUser(Message.Author.Id.ToString(), Shared.IDType.Discord, TheirID, TheirIDType, int.Parse(SegmentedMessage[2]));
+            Shared.Data.EventResponse Response = Shared.Data.Accounts.PayUser(Message.Author.Id.ToString(), Shared.IDType.Discord, TheirID, TheirIDType, Amount);
             //if (Response.Success)
             //{
             await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">" + Response.Message);
@@ -49,7 +54,12 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             if (SegmentedMessage.Length != 2) { MessageHandler.NotLongEnough(Message); return; }
             int coins, amount;
             coins = amount = Shared.Data.Accounts.GetBalance(Message.Author.Id.ToString(), Shared.IDType.Discord);
-            if (SegmentedMessage[1].ToLower() != "all")
+            if (SegmentedMessage[1].ToLower().EndsWith("k"))
+            {
+                if (!int.TryParse(SegmentedMessage[1].ToLower().Replace("k", ""), out amount)) { MessageHandler.InvalidParameter(Message); return; }
+                amount *= 1000;
+            }
+            else if (SegmentedMessage[1].ToLower() != "all")
             {
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(Message); return; }
             }
@@ -78,7 +88,12 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             if (SegmentedMessage.Length != 2) { MessageHandler.NotLongEnough(Message); return; }
             int coins, amount;
             coins = amount = Shared.Data.Accounts.GetBalance(Message.Author.Id.ToString(), Shared.IDType.Discord);
-            if (SegmentedMessage[1].ToLower() != "all")
+            if (SegmentedMessage[1].ToLower().EndsWith("k"))
+            {
+                if (!int.TryParse(SegmentedMessage[1].ToLower().Replace("k", ""), out amount)) { MessageHandler.InvalidParameter(Message); return; }
+                amount *= 1000;
+            }
+            else if (SegmentedMessage[1].ToLower() != "all")
             {
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(Message); return; }
             }
