@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TwitchLib.Client;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Events;
+using System.Threading;
 
 namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
 {
@@ -21,6 +22,28 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
                 else { Amount = int.Parse(SegmentedMessage[2]); }
                 Shared.Data.Accounts.GiveUser(TheirID, Shared.IDType.Twitch, Amount);
                 Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " gave @" + SegmentedMessage[1].Replace("@", "") + " " + SegmentedMessage[2] + " owlcoin!");
+            }
+            else { NotMod(e); }
+        }
+
+        public static void SetGame(OnMessageReceivedArgs e, string[] SegmentedMessage)
+        {
+            if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
+            {
+                string Game = e.ChatMessage.Message.Replace(SegmentedMessage[0]+" ", "");
+                new Thread(async () =>await Bot.TwitchA.Channels.v5.UpdateChannelAsync(UserHandler.UserFromUsername(e.ChatMessage.Channel).Matches[0].Id, null, Game)).Start();
+                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Updated game to: "+Game);
+            }
+            else { NotMod(e); }
+        }
+
+        public static void SetTitle(OnMessageReceivedArgs e, string[] SegmentedMessage)
+        {
+            if (e.ChatMessage.IsModerator || e.ChatMessage.IsBroadcaster)
+            {
+                string Name = e.ChatMessage.Message.Replace(SegmentedMessage[0] + " ", "");
+                new Thread(async () => await Bot.TwitchA.Channels.v5.UpdateChannelAsync(UserHandler.UserFromUsername(e.ChatMessage.Channel).Matches[0].Id, Name)).Start();
+                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Updated title to: " + Name);
             }
             else { NotMod(e); }
         }

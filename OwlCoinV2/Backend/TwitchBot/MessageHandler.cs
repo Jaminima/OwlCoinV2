@@ -66,6 +66,15 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Commands.Moderator.Commands.GivePoints(e,SegmentedMessage);
                 }
 
+                if (Command == "setgame")
+                {
+                    Commands.Moderator.Commands.SetGame(e, SegmentedMessage);
+                }
+                if (Command == "settitle")
+                {
+                    Commands.Moderator.Commands.SetTitle(e, SegmentedMessage);
+                }
+
                 if (Command == "songs"||Command=="song")
                 {
                     Commands.Viewer.Songs.Proccessor(e, SegmentedMessage);

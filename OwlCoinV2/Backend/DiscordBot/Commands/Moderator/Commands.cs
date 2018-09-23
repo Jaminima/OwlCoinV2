@@ -28,7 +28,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Moderator
             else { await NotMod(Message); }
         }
 
-        static async Task<bool> IsMod(SocketMessage Message)
+        public static async Task<bool> IsMod(SocketMessage Message)
         { 
             foreach (SocketRole Role in ((SocketGuildUser)Message.Author).Roles)
             {

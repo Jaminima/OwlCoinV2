@@ -111,6 +111,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
 
         public static void Help(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
+            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator) { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Mod Commands here:https://pastebin.com/tPPjRE1f"); }
             Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Commands are available here: https://pastebin.com/H60Ydn1s\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2");
         }
 
