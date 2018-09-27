@@ -26,6 +26,7 @@ namespace OwlCoinV2.Backend.TwitchBot
 
             Shared.Data.UserData.CreateUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch);
 
+            AwardForInteraction(e);
             if (Command.StartsWith(Prefix))
             {
                 Command = Command.Remove(0, Prefix.Length);
@@ -119,15 +120,35 @@ namespace OwlCoinV2.Backend.TwitchBot
             else
             {
                 //jccjaminima gave 100 Owlcoin to owlcoinbot PogChamp
-                if (e.ChatMessage.Message.EndsWith("Owlcoin to owlcoinbot PogChamp"))
-                {
-                    string ID = UserHandler.UserFromUsername(SegmentedMessage[0]).Matches[0].Id;
-                    Shared.Data.UserData.CreateUser(ID, Shared.IDType.Twitch);
-                    Shared.Data.Accounts.GiveUser(ID,Shared.IDType.Twitch,int.Parse(SegmentedMessage[2]));
-                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + SegmentedMessage[0] + " Added " + SegmentedMessage[2] + " Owlcoin to your OwlcoinV2 Account!");
-                }
+                //if (e.ChatMessage.Message.EndsWith("Owlcoin to owlcoinbot PogChamp"))
+                //{
+                //    string ID = UserHandler.UserFromUsername(SegmentedMessage[0]).Matches[0].Id;
+                //    Shared.Data.UserData.CreateUser(ID, Shared.IDType.Twitch);
+                //    Shared.Data.Accounts.GiveUser(ID,Shared.IDType.Twitch,int.Parse(SegmentedMessage[2]));
+                //    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + SegmentedMessage[0] + " Added " + SegmentedMessage[2] + " Owlcoin to your OwlcoinV2 Account!");
+                //}
             }
 
+        }
+        static List<string[]> UserInteraction = new List<string[]> { };
+        static void AwardForInteraction(OnMessageReceivedArgs e)
+        {
+            foreach (string[] Pair in UserInteraction)
+            {
+                if (Pair[0] == e.ChatMessage.UserId)
+                {
+                    int MinsSince = (int)(int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(Pair[1])).TotalMinutes); ;
+                    if (MinsSince > 10)
+                    {
+                        Shared.Data.Accounts.GiveUser(e.ChatMessage.UserId, Shared.IDType.Twitch, 300);
+                        UserInteraction.Remove(Pair);
+                        UserInteraction.Add(new string[] { e.ChatMessage.UserId, DateTime.Now.Ticks.ToString() });
+                    }
+                    return;
+                }
+            }
+            UserInteraction.Add(new string[] { e.ChatMessage.UserId, DateTime.Now.Ticks.ToString() });
+            Shared.Data.Accounts.GiveUser( e.ChatMessage.UserId, Shared.IDType.Twitch, 300);
         }
 
         public static void NotLongEnough(OnMessageReceivedArgs e)

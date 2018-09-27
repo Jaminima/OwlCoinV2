@@ -27,9 +27,9 @@ namespace OwlCoinV2.Backend.DiscordBot
             Shared.Data.UserData.CreateUser(Message.Author.Id.ToString(), Shared.IDType.Discord);
             Shared.Data.UserData.MergeAccounts(Message.Author.Id.ToString());
 
+            await AwardForInteraction(Message);
             if (Command.StartsWith(Prefix))
             {
-                await AwardForInteraction(Message);
 
                 Command = Command.Remove(0, Prefix.Length);
 
