@@ -86,7 +86,7 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Commands.Viewer.Commands.AccountAge(e, SegmentedMessage);
                 }
 
-                if (Command == "alert"||Command=="alerts")
+                if (Command == "alert"||Command=="alerts"||Command=="redeem")
                 {
                     Commands.Viewer.Commands.RequestAlert(e,SegmentedMessage);
                 }
@@ -164,6 +164,27 @@ namespace OwlCoinV2.Backend.TwitchBot
         public static void NegativeValue(OnMessageReceivedArgs e)
         {
             Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " You wanna not do -ve's dad!");
+        }
+
+        public static void SendMessage(OnMessageReceivedArgs e,string Message)
+        {
+            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, Message);
+        }
+        public static void SendMessage(OnMessageReceivedArgs e, string Message, string TargetUsername = null, int Amount = -1, int NewBal = -1, string OtherString = "")
+        {
+            Bot.TwitchC.SendMessage(e.ChatMessage.Channel,ParseConfigString(Message,e.ChatMessage,TargetUsername,Amount,NewBal));
+        }
+
+        public static string ParseConfigString(string ConfString,ChatMessage e,string TargetUsername=null,int Amount=-1,int NewBal=-1,string OtherString="")
+        {
+            ConfString = ConfString.Replace("@<OtherString>", OtherString);
+            ConfString = ConfString.Replace("@<SenderUser>", "@" + e.Username);
+            ConfString = ConfString.Replace("@<CurrencyName>", Shared.ConfigHandler.Config["CurrencyName"].ToString());
+            ConfString = ConfString.Replace("@<TargetUser>", "@" + TargetUsername);
+            ConfString = ConfString.Replace("@<Amount>", Amount.ToString());
+            ConfString = ConfString.Replace("@<NewBalance>", NewBal.ToString());
+            ConfString = ConfString.Replace("@<Prefix>", Shared.ConfigHandler.Config["Prefix"].ToString());
+            return ConfString;
         }
 
     }

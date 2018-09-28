@@ -21,7 +21,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             string TheirID = SegmentedMessage[1]; Shared.IDType TheirIDType = Shared.IDType.Twitch;
             if (TheirID.StartsWith("@")) { TheirID = TheirID.Replace("@", "");
                 try { TheirID = UserHandler.UserFromUsername(TheirID).Matches[0].Id; }
-                catch { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " That user doesnt exist!"); return; } }
+                catch { MessageHandler.SendMessage(e,MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NoUser"].ToString(),e.ChatMessage)); return; } }
             int Amount = 0;
             if (SegmentedMessage[2].ToLower() == "all") { Amount = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch); }
             else if (SegmentedMessage[2].ToLower().EndsWith("k"))
@@ -30,15 +30,12 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 Amount *= 1000;
             }
             else { if (!int.TryParse(SegmentedMessage[2].ToLower(), out Amount)) { MessageHandler.InvalidParameter(e); return; } }
-            //if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2]) && SegmentedMessage[2].ToLower() != "all") { MessageHandler.InvalidParameter(e); return; }
             if (Amount < 0) { MessageHandler.NegativeValue(e); return; }
-
-
+            
             Shared.Data.EventResponse Response = Shared.Data.Accounts.PayUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, TheirID, TheirIDType, Amount);
-            //if (Response.Success)
-            //{
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " " + Response.Message);
-            //}
+
+            if (Response.Success) { MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Pay"]["PaymentComplete"].ToString(),e.ChatMessage,null,Amount, Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch))); }
+            else { MessageHandler.SendMessage(e,MessageHandler.ParseConfigString(Response.Message,e.ChatMessage)); }
         }
 
         public static void OwlCoin(OnMessageReceivedArgs e, string[] SegmentedMessage)
@@ -49,33 +46,33 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 String TheirID;
                 try { TheirID = UserHandler.UserFromUsername(SegmentedMessage[1]).Matches[0].Id; } catch { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " That user doesnt exist!"); return; }
                 Shared.Data.UserData.CreateUser(TheirID, Shared.IDType.Twitch);
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " @" + SegmentedMessage[1] + " has " + Shared.Data.Accounts.GetBalance(TheirID, Shared.IDType.Twitch) + " Owlcoin!");
+                MessageHandler.SendMessage(e,MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Bal"]["Other"].ToString(),e.ChatMessage,SegmentedMessage[1], Shared.Data.Accounts.GetBalance(TheirID, Shared.IDType.Twitch)));
                 return;
             }
             else
             {
                 Shared.Data.UserData.CreateUser(e.ChatMessage.UserId, Shared.IDType.Twitch);
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " you have " + Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch) + " Owlcoin!");
+                MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Bal"]["Self"].ToString(),e.ChatMessage,null, Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch)));
             }
         }
 
         public static void SongRequest(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
             int MyBal = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch);
-            int Required = 500;
-            if (e.ChatMessage.IsSubscriber) { Required = 250; }
+            int Required = int.Parse(Shared.ConfigHandler.Config["Songs"]["Cost"]["Viewer"].ToString());
+            if (e.ChatMessage.IsSubscriber) { Required = int.Parse(Shared.ConfigHandler.Config["Songs"]["Cost"]["Subscriber"].ToString()); }
             if (MyBal >= Required)
             {
                 MyBal -= Required;
                 Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Required);
                 Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "!sr" + e.ChatMessage.Message.Remove(0,Shared.ConfigHandler.Config["Prefix"].ToString().Length+1));
-                //Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " song requested!");
             }
-            else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", you need " + Required + " Owlcoins to request a song!"); }
+            else { MessageHandler.SendMessage(e,MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString(),e.ChatMessage)); }
         }
 
         public static void Roulette(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
+            int MinBet = int.Parse(Shared.ConfigHandler.Config["Roulette"]["MinBet"].ToString());
             if (SegmentedMessage.Length != 2) { MessageHandler.NotLongEnough(e); return; }
             int coins, amount;
             coins = amount = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch);
@@ -89,30 +86,36 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(e); return; }
             }
             amount = Math.Abs(amount);
-            if (amount < 100) { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Minimum bet is 100 owlcoin!"); return; }
+            if (amount < MinBet) {
+                MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["BetTooLow"].ToString(), e.ChatMessage,null, MinBet));
+                return;
+            }
             if (amount <= coins)
             {
                 if (random.Next(100) < int.Parse(Shared.ConfigHandler.Config["GambleWinChance"].ToString()))
                 {
                     Shared.Data.Accounts.GiveUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, amount);
-                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " won " + amount + " Owlcoins in roulette and now has " + (coins + amount) + " Owlcoins!");
+                    MessageHandler.SendMessage(e,MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Roulette"]["Win"].ToString(),e.ChatMessage,null,amount));
                 }
                 else
                 {
                     Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, amount);
-                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " lost " + amount + " Owlcoins in roulette and now has " + (coins - amount) + " Owlcoins!");
+                    MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Roulette"]["Lose"].ToString(), e.ChatMessage, null, amount));
                 }
             }
             else
             {
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", you only have " + coins + " Owlcoins");
+                MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString(), e.ChatMessage));
             }
         }
 
         public static void Help(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
-            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator) { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Mod Commands here:https://pastebin.com/tPPjRE1f"); }
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Commands are available here: https://pastebin.com/H60Ydn1s\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2");
+            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
+            {
+                MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Moderator"].ToString(), e.ChatMessage));
+            }
+            MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Viewer"].ToString(), e.ChatMessage));
         }
 
         public static void AccountAge(OnMessageReceivedArgs e, string[] SegmentedMessage)
@@ -122,12 +125,12 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             {
                 SegmentedMessage[1] = SegmentedMessage[1].Replace("@", "");
                 try { CreatedAt = UserHandler.UserFromUsername(SegmentedMessage[1]).Matches[0].CreatedAt; }
-                catch {Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " User Doesnt Exist!"); return; }
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " @" + SegmentedMessage[1] + "'s account is " + AgeString(CreatedAt) + " old!");
+                catch {MessageHandler.SendMessage(e,MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NoUser"].ToString(),e.ChatMessage)); return; }
+                MessageHandler.SendMessage(e,MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Age"]["Other"].ToString(),e.ChatMessage,SegmentedMessage[1],-1,-1,AgeString(CreatedAt)));
                 return;
             }
             CreatedAt = UserHandler.UserFromUserID(e.ChatMessage.UserId).CreatedAt;
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " your account is " + AgeString(CreatedAt) + " old!");
+            MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Age"]["Self"].ToString(), e.ChatMessage,null,-1,-1, AgeString(CreatedAt)));
         }
 
         static string AgeString(DateTime CreatedAt)
@@ -161,7 +164,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                     {
                         string Mins = "min";
                         if (MinsLeft != 1) { Mins = Mins + "s"; }
-                        Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Cant send requests that quickly! Please wait "+(MinsLeft)+" "+Mins+" before trying again.");
+                        MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage,null,MinsLeft));
                         return;
                     }
                     LastRequested.Remove(Pair);
@@ -179,7 +182,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 SoundURL = Init.SQLInstance.Select("Alerts", "SoundUrl", "AlertID=" + AlertID)[0];
             int Cost = int.Parse(Init.SQLInstance.Select("Alerts", "Cost", "AlertID=" + AlertID)[0]);
             int TSinceLast = (int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(LastReq)).TotalSeconds);
-            if (TSinceLast < 120&&LastReq!="0") { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Cant send another alert so soon! Please wait "+(120-TSinceLast)+" Seconds before requesting again."); return; }
+            if (TSinceLast < 120&&LastReq!="0") { MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage, null, (120 - TSinceLast))); return; }
             if (Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Cost))
             {
                 if (Streamlabs.Alert.SendRequest(ImageURL, SoundURL))
@@ -190,11 +193,12 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 }
                 else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Alert failed to send! Please try again soon!"); }
             }
-            else { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Not enough owlcoin!"); }
+            else { MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString(), e.ChatMessage)); }
         }
 
         public static void Slots(OnMessageReceivedArgs e,string[] SegmentedMessage)
         {
+            int MinBet = int.Parse(Shared.ConfigHandler.Config["Slots"]["MinBet"].ToString());
             if (SegmentedMessage.Length != 2) { MessageHandler.NotLongEnough(e); return; }
             int coins, amount;
             coins = amount = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch);
@@ -208,7 +212,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(e); return; }
             }
             amount = Math.Abs(amount);
-            if (amount < 100) { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Minimum bet is 100 owlcoin!"); return; }
+            if (amount < MinBet) { MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["BetTooLow"].ToString(), e.ChatMessage, null, MinBet)); return; }
             if (amount <= coins)
             {
                 string[] emotes = Shared.ConfigHandler.Config["Slots"]["Twitch"].Select(r => r.ToString()).ToArray();
@@ -222,18 +226,18 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 if (roll < 10)
                 {
                     Shared.Data.Accounts.GiveUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, amount);
-                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel,"@" + e.ChatMessage.Username + ", you got [ " + emotes[combo] + " | " + emotes[combo] + " | " + emotes[combo] + " ] and won " + amount + " Owlcoins, you now have " + (coins + amount) + " Owlcoins!");
+                    MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Slots"]["Win"].ToString(), e.ChatMessage, null, amount,-1,"[ " + emotes[combo] + " | " + emotes[combo] + " | " + emotes[combo] + " ]"));
                 }
                 else
                 {
                     combo = Enumerable.Range(1, 25).Where(x => x != 13).ElementAt(random.Next(24));
                     Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, amount);
-                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", you got [ " + emotes[combo / 9] + " | " + emotes[(combo / 3) % 3] + " | " + emotes[combo % 3] + " ] and lost " + amount + " Owlcoins, you now have " + (coins - amount) + " Owlcoins!");
+                    MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Slots"]["Lose"].ToString(), e.ChatMessage, null, amount, -1, "[ " + emotes[combo / 9] + " | " + emotes[(combo / 3) % 3] + " | " + emotes[combo % 3] + " ]"));
                 }
             }
             else
             {
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", you only have " + coins + " Owlcoins");
+                MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString(), e.ChatMessage));
             }
         }
 

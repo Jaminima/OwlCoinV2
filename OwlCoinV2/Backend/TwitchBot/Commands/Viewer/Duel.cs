@@ -15,14 +15,15 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
 
         public static void StartDuel(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
+            int MinBet = int.Parse(Shared.ConfigHandler.Config["Duel"]["MinBet"].ToString());
             if (SegmentedMessage.Length != 3) { MessageHandler.NotLongEnough(e); return; }
             string TheirID;
             try { TheirID = UserHandler.UserFromUsername(SegmentedMessage[1].Replace("@", "")).Matches[0].Id; }
-            catch { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " That user doesnt exist!"); return; }
+            catch { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NoUser"].ToString(),null); return; }
 
             if (TheirID == e.ChatMessage.UserId.ToString())
             {
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", You can't duel yourself");
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["Self"].ToString(), null);
                 return;
             }
             int amount, myCoins, theirCoins;
@@ -34,28 +35,28 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             }
             else { if (myCoins > theirCoins) { amount = theirCoins; } }
             amount = Math.Abs(amount);
-            if (amount < 100) { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Minimum duel is 100 owlcoin!"); return; }
+            if (amount < MinBet) { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["BetTooLow"].ToString(), null,MinBet); return; }
             if (amount <= myCoins)
             {
                 if (amount <= theirCoins)
                 {
                     if (Duels.duels.Add(new Shared.Duel(e.ChatMessage.UserId.ToString(), TheirID, amount)))
                     {
-                        Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@"+ UserHandler.UserFromUserID(TheirID).Name +" @" + e.ChatMessage.Username + " wants to duel you for " + amount + " Owlcoins, you can !accept or !deny within 2 minutes");
+                        MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["Start"].ToString(), UserHandler.UserFromUserID(TheirID).Name, amount);
                     }
                     else
                     {
-                        Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", this person is already in a duel");
+                        MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["AlreadyInDuel"].ToString(), null);
                     }
                 }
                 else
                 {
-                    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " @"+ SegmentedMessage[1].Replace("@", "") + " only has " + theirCoins + " Owlcoins");
+                    MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["OtherNotEnough"].ToString(), null);
                 }
             }
             else
             {
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", you only have " + myCoins + " Owlcoins");
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString(), null);
             }
         }
 
@@ -72,22 +73,26 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             int dueleeCoins = Shared.Data.Accounts.GetBalance(duel.duelee, Shared.IDType.Twitch);
             if (targetCoins < duel.amount)
             {
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " only has " + targetCoins + " Owlcoins");
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["OtherNotEnough"].ToString(), e.ChatMessage.Username);
+                //Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " only has " + targetCoins + " Owlcoins");
             }
             if (dueleeCoins < duel.amount)
             {
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " only has " + dueleeCoins + " Owlcoins");
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["OtherNotEnough"].ToString(), e.ChatMessage.Username);
+                //Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " only has " + dueleeCoins + " Owlcoins");
             }
             Shared.Data.EventResponse Response;
             if (random.Next(100) < 50)
             {
                 Response = Shared.Data.Accounts.PayUser(duel.target, Shared.IDType.Twitch, duel.duelee, Shared.IDType.Twitch, duel.amount);
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + UserHandler.UserFromUserID(duel.duelee).Name + " won " + duel.amount + " Owlcoins in a duel against @" + UserHandler.UserFromUserID(duel.target).Name + " and now has " + (dueleeCoins + duel.amount) + " Owlcoins!");
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["Won"].ToString(), UserHandler.UserFromUserID(duel.target).Name,duel.amount);
+                //Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + UserHandler.UserFromUserID(duel.duelee).Name + " won " + duel.amount + " Owlcoins in a duel against @" + UserHandler.UserFromUserID(duel.target).Name + " and now has " + (dueleeCoins + duel.amount) + " Owlcoins!");
             }
             else
             {
                 Response = Shared.Data.Accounts.PayUser(duel.duelee, Shared.IDType.Twitch, duel.target, Shared.IDType.Twitch, duel.amount);
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + UserHandler.UserFromUserID(duel.target).Name + " won " + duel.amount + " Owlcoins in a duel against @" + UserHandler.UserFromUserID(duel.duelee).Name + " and now has " + (targetCoins + duel.amount) + " Owlcoins!");
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["Lose"].ToString(), UserHandler.UserFromUserID(duel.duelee).Name,duel.amount);
+                //Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + UserHandler.UserFromUserID(duel.target).Name + " won " + duel.amount + " Owlcoins in a duel against @" + UserHandler.UserFromUserID(duel.duelee).Name + " and now has " + (targetCoins + duel.amount) + " Owlcoins!");
             }
             if (!Response.Success)
             {
@@ -99,11 +104,11 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
         {
             if (Duels.duels.RemoveWhere(duel => duel.target == e.ChatMessage.UserId.ToString()) == 1)
             {
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", You have denied the duel");
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["Denied"].ToString(), null);
             }
             else
             {
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + ", You are not in a duel");
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["NotInDuel"].ToString(), null);
             }
         }
     }

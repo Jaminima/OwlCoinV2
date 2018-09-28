@@ -65,7 +65,7 @@ namespace OwlCoinV2.Backend.Shared.Data
             {
                 string MyOCID = Init.SQLInstance.Select("UserData", "OwlCoinID", MyIDType.ToString() + "ID='" + MyID + "'")[0],
                     TheirOCID = Init.SQLInstance.Select("UserData", "OwlCoinID", TheirIDType.ToString() + "ID='" + TheirID + "'")[0];
-                if (MyOCID == TheirOCID) { Response.Message="You can't pay yourself"; return Response; }
+                if (MyOCID == TheirOCID) { Response.Message= Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["Self"].ToString(); return Response; }
                 int MyBal = int.Parse(Init.SQLInstance.Select("Accounts", "Balance", "OwlCoinID=" + MyOCID)[0]),
                     TheirBal = int.Parse(Init.SQLInstance.Select("Accounts", "Balance", "OwlCoinID=" + TheirOCID)[0]);
                 if (MyBal >= Amount)
@@ -76,9 +76,9 @@ namespace OwlCoinV2.Backend.Shared.Data
                     Response.Message = " Payment of "+Amount+" Owlcoin Complete, New Balance: "+MyBal+" Owlcoin!";
                     Response.Success = true;
                 }
-                else { Response.Message = "Not enough OwlCoin"; }
+                else { Response.Message = Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString(); }
             }
-            else { Response.Message = "The person you are trying to pay, doesnt have an account"; }
+            else { Response.Message = Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NoUser"].ToString(); }
 
             return Response;
         }
