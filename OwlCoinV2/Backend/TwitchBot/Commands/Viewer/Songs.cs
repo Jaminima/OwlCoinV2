@@ -15,6 +15,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
     {
         public static void Proccessor(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
+            if (SegmentedMessage.Length != 2) { MessageHandler.NotLongEnough(e); return; }
             string SubCommand = SegmentedMessage[1].ToLower();
             if (SubCommand == "current")
             {
