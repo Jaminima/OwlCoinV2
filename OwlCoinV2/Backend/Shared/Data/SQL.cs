@@ -74,11 +74,29 @@ namespace OwlCoinV2.Backend.Shared.Data
             return ExecuteReader(Command).ToArray<string>();
         }
 
-        List<String> ExecuteReader(OleDbCommand Command)
+        public OleDbCommand GetCommand(string SCommand)
+        {
+            return new OleDbCommand(SCommand, Conn);
+        }
+
+        public List<String> ExecuteReader(OleDbCommand Command)
         {
             OleDbDataReader Results = Command.ExecuteReader();
             List<String> LResults = new List<string> { };
             while (Results.Read()) { LResults.Add(Results[0].ToString()); }
+            Results.Close();
+            return LResults;
+        }
+        public List<String[]> ExecuteReaderBetter(OleDbCommand Command)
+        {
+            OleDbDataReader Results = Command.ExecuteReader();
+            List<String[]> LResults = new List<string[]> { };
+            while (Results.Read())
+            {
+                string[] Data = new string[Results.FieldCount];
+                for (int i = 0; i < Results.FieldCount; i++) { Data[i] = Results.GetValue(i).ToString(); }
+                LResults.Add(Data);
+            }
             Results.Close();
             return LResults;
         }

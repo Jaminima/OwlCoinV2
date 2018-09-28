@@ -84,5 +84,15 @@
       "Viewer": "@<SenderUser> Commands are available here: https://pastebin.com/H60Ydn1s\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2",
       "Moderator": "@<SenderUser> Mod Commands here:https://pastebin.com/tPPjRE1f"
     }
+  },
+  "EventMessages":{
+	"Raffle":{
+		"Start":"/me PogChamp a Raffle has begun for @<Amount> Owlcoin PogChamp it will end in 60 Seconds. Enter by typing \"!join\" OpieOP",
+		"45Sec":"/me The Raffle for @<Amount> Owlcoin will end in 45 Seconds. Enter by typing \"!join\" FeelsGoodMan",
+		"30Sec":"/me The Raffle for @<Amount> Owlcoin will end in 30 Seconds. Enter by typing \"!join\" FeelsGoodMan",
+		"15Sec":"/me The Raffle for @<Amount> Owlcoin will end in 15 Seconds. Enter by typing \"!join\" FeelsGoodMan",
+		"Win":" The Raffle ended and @<TargetUser> won @<Amount> @<CurrencyName> FeelsGoodMan",
+		"NoEntry":"No one entered the raffle LUL"
+	}
   }
 }
