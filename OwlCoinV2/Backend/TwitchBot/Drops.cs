@@ -18,7 +18,7 @@ namespace OwlCoinV2.Backend.TwitchBot
             int WatchingGiveOCLastRunMin = -1;
             while (true)
             {
-                if (DateTime.Now.Minute % 15 == 0 && RaffleLastRunMin!=DateTime.Now.Minute)
+                if (DateTime.Now.Minute % 1 == 0 && RaffleLastRunMin!=DateTime.Now.Minute && IsLive())
                 {
                     Raffles++;
                     RaffleLastRunMin = DateTime.Now.Minute;
@@ -137,6 +137,25 @@ namespace OwlCoinV2.Backend.TwitchBot
             WebResponse Res = Req.GetResponse();
             string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
             return D;
+        }
+
+        public static bool IsLive()
+        {
+            WebRequest Req = WebRequest.Create("https://api.twitch.tv/helix/streams?user_login="+Shared.ConfigHandler.Config["ChannelName"]);
+            Req.Method = "GET";
+            Req.Headers.Add("Client-ID", Shared.ConfigHandler.Config["TwitchBot"]["ClientId"].ToString());
+            Req.Headers.Add("Authorization", "OAuth " + Shared.ConfigHandler.Config["TwitchBot"]["AccessToken"].ToString());
+            WebResponse Res = Req.GetResponse();
+            string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
+            Newtonsoft.Json.Linq.JObject JD=Newtonsoft.Json.Linq.JObject.Parse(D);
+            if (JD["data"].Count()!= 0)
+            {
+                if (JD["data"][0]["type"].ToString() == "live")
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
     }

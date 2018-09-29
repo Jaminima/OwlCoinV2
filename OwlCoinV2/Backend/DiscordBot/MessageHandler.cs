@@ -134,6 +134,7 @@ namespace OwlCoinV2.Backend.DiscordBot
 
         public static string ParseConfigString(string ConfString, SocketUser e, string TargetUserID = null, int Amount = -1, int NewBal = -1, string OtherString = "")
         {
+            ConfString = ConfString.Replace("/me", "");
             ConfString = ConfString.Replace("@<OtherString>", OtherString);
             if (e != null) { ConfString = ConfString.Replace("@<SenderUser>", "<@" + e.Id+">"); }
             ConfString = ConfString.Replace("@<CurrencyName>", Shared.ConfigHandler.Config["CurrencyName"].ToString());

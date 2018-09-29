@@ -29,6 +29,8 @@ namespace OwlCoinV2.Backend.TwitchBot
             AwardForInteraction(e);
             if (Command.StartsWith(Prefix))
             {
+                if (!CommandDelayPassed(e) && !e.ChatMessage.IsModerator&&!e.ChatMessage.IsBroadcaster) { return; }
+
                 Command = Command.Remove(0, Prefix.Length);
 
                 //if (Command == "echo")
@@ -111,6 +113,11 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Commands.Viewer.Duel.Deny(e, SegmentedMessage);
                 }
 
+                if (Command == "fish")
+                {
+                    Commands.Viewer.Commands.Fish(e,SegmentedMessage);
+                }
+
                 if (Command == "help")
                 {
                     Commands.Viewer.Commands.Help(e, SegmentedMessage);
@@ -149,6 +156,28 @@ namespace OwlCoinV2.Backend.TwitchBot
             }
             UserInteraction.Add(new string[] { e.ChatMessage.UserId, DateTime.Now.Ticks.ToString() });
             Shared.Data.Accounts.GiveUser( e.ChatMessage.UserId, Shared.IDType.Twitch, int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Chatting"].ToString()));
+        }
+
+        static List<String[]> CommandInteraction = new List<string[]> { };
+        static bool CommandDelayPassed(OnMessageReceivedArgs e)
+        {
+            foreach (string[] Pair in CommandInteraction)
+            {
+                if (Pair[0] == e.ChatMessage.UserId)
+                {
+                    TimeSpan T= TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(Pair[1]));
+                    Console.WriteLine(T.TotalSeconds);
+                    if (T.TotalSeconds >= int.Parse(Shared.ConfigHandler.Config["MessageDelay"].ToString()))
+                    {
+                        CommandInteraction.Remove(Pair);
+                        CommandInteraction.Add(new string[] { e.ChatMessage.UserId, DateTime.Now.Ticks.ToString() });
+                        return true;
+                    }
+                    else { return false; }
+                }
+            }
+            CommandInteraction.Add(new string[] { e.ChatMessage.UserId, DateTime.Now.Ticks.ToString() });
+            return true;
         }
 
         public static void NotLongEnough(OnMessageReceivedArgs e)

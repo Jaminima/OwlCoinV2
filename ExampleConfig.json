@@ -22,6 +22,7 @@
   "CurrencyName": "Owlcoin",
   "CurrencyAbreviation": "OwC",
   "GambleWinChance": 40,
+  "MessageDelay":5,
   "Songs": {
     "Cost": {
       "Viewer": 500,
@@ -33,6 +34,24 @@
   },
   "Duel": {
     "MinBet": 100
+  },
+  "Fish":{
+	"Cost":0,
+	"MinTime":1,
+	"MaxTime":5,
+	"Items":[
+		{"Chance":10,"Name":"Chest o' Owlcoin","Reward":500},
+		{"Chance":15,"Name":"Wallet","Reward":250},
+		{"Chance":5,"Name":"HarbonT Relic","Reward":1000},
+		{"Chance":10,"Name":"Dead Nan","Reward":0},
+		{"Chance":5,"Name":"harbonTREE leaf","Reward":5000},
+		{"Chance":15,"Name":"harbonDOC prototype Glasses","Reward":750},
+		{"Chance":10,"Name":"Twitch Prime Subscription","Reward":1000},
+		{"Chance":10,"Name":"Single OwlCoin","Reward":1},
+		{"Chance":5,"Name":"Soggy Wank Sock","Reward":0},
+		{"Chance":5,"Name":"Hot Gamer Girl","Reward":2500},
+		{"Chance":10,"Name":"Can of Tango","Reward":500}
+	]
   },
   "Slots": {
     "MinBet": 100,
@@ -93,6 +112,11 @@
       "Current": "@<SenderUser> Current Song is: @<OtherString>",
       "CurrentFailed": "@<SenderUser> An Error Occured while fetching data! Please try again soon."
     },
+	"Fish":{
+		"GoneFishing":"/me @<SenderUser> Has cast a line.",
+		"Fished":"/me @<SenderUser> Has caught a @<OtherString> worth @<Amount> @<CurrencyName>!",
+		"AlreadyFishing":"@<SenderUser> You are already fishing!"
+	},
     "Moderator": {
       "SetTitle": "@<SenderUser> Set Title to: @<OtherString>",
       "SetGame": "@<SenderUser> Game Set to: @<OtherString>",

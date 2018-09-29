@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TwitchLib.Client;
 using TwitchLib.Client.Models;
 using TwitchLib.Client.Events;
+using System.Threading;
 
 namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
 {
@@ -239,6 +240,43 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             {
                 MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString(), e.ChatMessage));
             }
+        }
+
+        public static List<String> Fishermen = new List<string> { };
+        public static void Fish(OnMessageReceivedArgs e, string[] SegmentedMessage)
+        {
+            if (!Drops.IsLive()) { return; }
+            if (SegmentedMessage.Length == 1)
+            {
+                if (Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch) < int.Parse(Shared.ConfigHandler.Config["Fish"]["Cost"].ToString()))
+                { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString(), null); return; }
+                if (Fishermen.Contains(e.ChatMessage.UserId))
+                { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Fish"]["AlreadyFishing"].ToString(),null); return; }
+                int TotalChance = 0;
+                foreach (Newtonsoft.Json.Linq.JToken Item in Shared.ConfigHandler.Config["Fish"]["Items"])
+                { TotalChance += int.Parse(Item["Chance"].ToString()); }
+                int ChosenI = random.Next(0, TotalChance); Newtonsoft.Json.Linq.JToken ChosenItem=new Newtonsoft.Json.Linq.JObject();
+                foreach (Newtonsoft.Json.Linq.JToken Item in Shared.ConfigHandler.Config["Fish"]["Items"])
+                {
+                    ChosenI-= int.Parse(Item["Chance"].ToString());
+                    if (ChosenI <= 0) { ChosenItem = Item; break; }
+                }
+                int MinTime = int.Parse(Shared.ConfigHandler.Config["Fish"]["MinTime"].ToString());
+                int MaxTime = int.Parse(Shared.ConfigHandler.Config["Fish"]["MaxTime"].ToString());
+                int WaitTime = random.Next(MinTime,MaxTime);
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Fish"]["GoneFishing"].ToString(), null, WaitTime);
+                Fishermen.Add(e.ChatMessage.UserId);
+                new Thread(() => Fishing(e, WaitTime, ChosenItem)).Start();
+            }
+        }
+
+        static void Fishing(OnMessageReceivedArgs e,int WaitTime,Newtonsoft.Json.Linq.JToken Item)
+        {
+            System.Threading.Thread.Sleep(WaitTime * 60000);
+            int Reward = int.Parse(Item["Reward"].ToString());
+            Shared.Data.Accounts.GiveUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Reward);
+            MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Fish"]["Fished"].ToString(), null, Reward, -1, Item["Name"].ToString());
+            Fishermen.Remove(e.ChatMessage.UserId);
         }
 
     }
