@@ -8,8 +8,8 @@ namespace OwlCoinV2.Backend
 {
     public static class Init
     {
-        public static Shared.Data.SQL SQLInstance = new Shared.Data.SQL("C:/Users/oscar/Desktop/OwlCoinV2/ExampleDatabase");
-        //public static Shared.Data.SQL SQLInstance = new Shared.Data.SQL("C:/Users/Administrator/Desktop/OwlCoinV2/Data/ExampleDatabase");
+        //public static Shared.Data.SQL SQLInstance = new Shared.Data.SQL("C:/Users/oscar/Desktop/OwlCoinV2/ExampleDatabase");
+        public static Shared.Data.SQL SQLInstance = new Shared.Data.SQL("C:/Users/Administrator/Desktop/OwlCoinV2/Data/ExampleDatabase");
         public static void Start()
         {
             Shared.ConfigHandler.LoadConfig();
