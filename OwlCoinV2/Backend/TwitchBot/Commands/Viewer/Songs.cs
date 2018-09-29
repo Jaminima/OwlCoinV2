@@ -33,27 +33,28 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
 
         public static void Queue(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " View queue here: https://beta.nightbot.tv/t/harbonator/song_requests");
+            MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Queue"].ToString(), null);
         }
 
         public static void Playlist(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " View playlist here: https://beta.nightbot.tv/t/harbonator/song_requests/playlist");
+            MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Playlist"].ToString(), null);
         }
 
         public static void Current(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
             Newtonsoft.Json.Linq.JObject SongData=GetSongData();
-            if (SongData == null) { Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " An Error Occured while fetching data! Please try again soon."); return; }
+            if (SongData == null)
+            { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["CurrentFailed"].ToString(), null); return; }
             string Name = SongData["_currentSong"]["track"]["title"].ToString();
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Current song is: " + Name);
+            MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Current"].ToString(), null,-1,-1,Name);
         }
 
         public static Newtonsoft.Json.Linq.JObject GetSongData()
         {
             WebRequest Req = WebRequest.Create("https://api.nightbot.tv/1/song_requests/queue");
             Req.Method = "GET";
-            Req.Headers.Add("Nightbot-Channel", "5ab3cf2fd4eb1704dd2dd5e5");
+            Req.Headers.Add("Nightbot-Channel", Shared.ConfigHandler.Config["NightBot"]["ChannelID"].ToString());
             try {
                 WebResponse Res = Req.GetResponse();
                 string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();

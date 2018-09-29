@@ -21,7 +21,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
                 else if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])) { return; }
                 else { Amount = int.Parse(SegmentedMessage[2]); }
                 Shared.Data.Accounts.GiveUser(TheirID, Shared.IDType.Twitch, Amount);
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " gave @" + SegmentedMessage[1].Replace("@", "") + " " + SegmentedMessage[2] + " owlcoin!");
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Give"].ToString(), SegmentedMessage[1].Replace("@", ""), Amount);
             }
             else { NotMod(e); }
         }
@@ -32,7 +32,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
             {
                 string Game = e.ChatMessage.Message.Replace(SegmentedMessage[0]+" ", "");
                 new Thread(async () =>await Bot.TwitchA.Channels.v5.UpdateChannelAsync(UserHandler.UserFromUsername(e.ChatMessage.Channel).Matches[0].Id, null, Game)).Start();
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Updated game to: "+Game);
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["SetGame"].ToString(), null,-1,-1,Game);
             }
             else { NotMod(e); }
         }
@@ -43,7 +43,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
             {
                 string Name = e.ChatMessage.Message.Replace(SegmentedMessage[0] + " ", "");
                 new Thread(async () => await Bot.TwitchA.Channels.v5.UpdateChannelAsync(UserHandler.UserFromUsername(e.ChatMessage.Channel).Matches[0].Id, Name)).Start();
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Updated title to: " + Name);
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["SetTitle"].ToString(), null, -1, -1, Name);
             }
             else { NotMod(e); }
         }

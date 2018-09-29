@@ -140,7 +140,7 @@ namespace OwlCoinV2.Backend.TwitchBot
                     int MinsSince = (int)(int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(Pair[1])).TotalMinutes); ;
                     if (MinsSince > 10)
                     {
-                        Shared.Data.Accounts.GiveUser(e.ChatMessage.UserId, Shared.IDType.Twitch, 300);
+                        Shared.Data.Accounts.GiveUser(e.ChatMessage.UserId, Shared.IDType.Twitch, int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Chatting"].ToString()));
                         UserInteraction.Remove(Pair);
                         UserInteraction.Add(new string[] { e.ChatMessage.UserId, DateTime.Now.Ticks.ToString() });
                     }
@@ -148,22 +148,22 @@ namespace OwlCoinV2.Backend.TwitchBot
                 }
             }
             UserInteraction.Add(new string[] { e.ChatMessage.UserId, DateTime.Now.Ticks.ToString() });
-            Shared.Data.Accounts.GiveUser( e.ChatMessage.UserId, Shared.IDType.Twitch, 300);
+            Shared.Data.Accounts.GiveUser( e.ChatMessage.UserId, Shared.IDType.Twitch, int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Chatting"].ToString()));
         }
 
         public static void NotLongEnough(OnMessageReceivedArgs e)
         {
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@"+e.ChatMessage.Username+" are missing parameters or have too many!");
+            SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["MissingParameters"].ToString(), null);
         }
 
         public static void InvalidParameter(OnMessageReceivedArgs e)
         {
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@"+e.ChatMessage.Username+" have one or more invalid parameter!");
+            SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["InvalidParameters"].ToString(), null);
         }
 
         public static void NegativeValue(OnMessageReceivedArgs e)
         {
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " You wanna not do -ve's dad!");
+            SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NegativeValue"].ToString(), null);
         }
 
         public static void SendMessage(OnMessageReceivedArgs e,string Message)
@@ -172,11 +172,11 @@ namespace OwlCoinV2.Backend.TwitchBot
         }
         public static void SendMessage(OnMessageReceivedArgs e, string Message, string TargetUsername = null, int Amount = -1, int NewBal = -1, string OtherString = "")
         {
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel,ParseConfigString(Message,e.ChatMessage,TargetUsername,Amount,NewBal));
+            Bot.TwitchC.SendMessage(e.ChatMessage.Channel,ParseConfigString(Message,e.ChatMessage,TargetUsername,Amount,NewBal,OtherString));
         }
         public static void SendMessage(string Channel, string Message, string TargetUsername = null, int Amount = -1, int NewBal = -1, string OtherString = "")
         {
-            Bot.TwitchC.SendMessage(Channel, ParseConfigString(Message,null, TargetUsername, Amount, NewBal));
+            Bot.TwitchC.SendMessage(Channel, ParseConfigString(Message,null, TargetUsername, Amount, NewBal,OtherString));
         }
 
         public static string ParseConfigString(string ConfString,ChatMessage e,string TargetUsername=null,int Amount=-1,int NewBal=-1,string OtherString="")
