@@ -13,12 +13,13 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
 
         public static async Task StartDuel(SocketMessage Message, string[] SegmentedMessage)
         {
+            int MinBet = int.Parse(Shared.ConfigHandler.Config["Duel"]["MinBet"].ToString());
             if (SegmentedMessage.Length != 3) { MessageHandler.NotLongEnough(Message); return; }
             string TheirID = MessageHandler.GetDiscordID(SegmentedMessage[1]);
-            if (Shared.InputVerification.ContainsLetter(TheirID)) { await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> That user doesnt exist!"); return; }
+            if (Shared.InputVerification.ContainsLetter(TheirID)) { await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NoUser"].ToString()); return; }
             if (TheirID == Message.Author.Id.ToString())
             {
-                await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, You can't duel yourself");
+                await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["Self"].ToString());
                 return;
             }
             int amount, myCoins, theirCoins;
@@ -30,28 +31,28 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             }
             else { if (myCoins > theirCoins) { amount = theirCoins; } }
             amount = Math.Abs(amount);
-            if (amount < 100) { await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> Minimum duel is 100 owlcoin!"); return; }
+            if (amount < MinBet) { await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["BetTooLow"].ToString()); return; }
             if (amount <= myCoins)
             {
                 if (amount <= theirCoins)
                 {
                     if (Duels.duels.Add(new Shared.Duel(Message.Author.Id.ToString(), TheirID, amount)))
                     {
-                        await Message.Channel.SendMessageAsync("<@" + TheirID + ">, <@" + Message.Author.Id + "> wants to duel you for " + amount + " Owlcoins, you can !accept or !deny within 2 minutes");
+                        await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["Start"].ToString(), TheirID, amount);
                     }
                     else
                     {
-                        await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, this person is already in a duel");
+                        await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["AlreadyInDuel"].ToString(),TheirID);
                     }
                 }
                 else
                 {
-                    await Message.Channel.SendMessageAsync("<@" + TheirID + "> only has " + theirCoins + " Owlcoins");
+                    await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["OtherNotEnough"].ToString());
                 }
             }
             else
             {
-                await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, you only have " + myCoins + " Owlcoins");
+                await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString());
             }
         }
 
@@ -60,7 +61,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             Shared.Duel duel = Duels.duels.SingleOrDefault(d => d.target == Message.Author.Id.ToString());
             if (duel == null)
             {
-                await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, You are not in a duel");
+                await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["NotInDuel"].ToString(), null);
                 return;
             }
             Duels.duels.Remove(duel);
@@ -68,22 +69,24 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             int dueleeCoins = Shared.Data.Accounts.GetBalance(duel.duelee, Shared.IDType.Discord);
             if (targetCoins < duel.amount)
             {
-                await Message.Channel.SendMessageAsync("<@" + duel.target + "> only has " + targetCoins + " Owlcoins");
+                await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["OtherNotEnough"].ToString(), Message.Author.Id.ToString());
             }
             if (dueleeCoins < duel.amount)
             {
-                await Message.Channel.SendMessageAsync("<@" + duel.duelee + "> only has " + dueleeCoins + " Owlcoins");
+                await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["OtherNotEnough"].ToString(), Message.Author.Id.ToString());
             }
             Shared.Data.EventResponse Response;
             if (random.Next(100) < 50)
             {
                 Response = Shared.Data.Accounts.PayUser(duel.target, Shared.IDType.Discord, duel.duelee, Shared.IDType.Discord, duel.amount);
-                await Message.Channel.SendMessageAsync("<@" + duel.duelee + "> won " + duel.amount + " Owlcoins in a duel against <@" + duel.target + "> and now has " + (dueleeCoins + duel.amount) + " Owlcoins!");
+                await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["Won"].ToString(), duel.target, duel.amount);
+                //await Message.Channel.SendMessageAsync("<@" + duel.duelee + "> won " + duel.amount + " Owlcoins in a duel against <@" + duel.target + "> and now has " + (dueleeCoins + duel.amount) + " Owlcoins!");
             }
             else
             {
                 Response = Shared.Data.Accounts.PayUser(duel.duelee, Shared.IDType.Discord, duel.target, Shared.IDType.Discord, duel.amount);
-                await Message.Channel.SendMessageAsync("<@" + duel.target + "> won " + duel.amount + " Owlcoins in a duel against <@" + duel.duelee + "> and now has " + (targetCoins + duel.amount) + " Owlcoins!");
+                await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["Lose"].ToString(), duel.duelee, duel.amount);
+                //await Message.Channel.SendMessageAsync("<@" + duel.target + "> won " + duel.amount + " Owlcoins in a duel against <@" + duel.duelee + "> and now has " + (targetCoins + duel.amount) + " Owlcoins!");
             }
             if (!Response.Success)
             {
@@ -95,11 +98,11 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
         {
             if (Duels.duels.RemoveWhere(duel => duel.target == Message.Author.Id.ToString()) == 1)
             {
-                await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, You have denied the duel");
+                await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["Denied"].ToString(), null);
             }
             else
             {
-                await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, You are not in a duel");
+                await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["NotInDuel"].ToString(), null);
             }
         }
     }

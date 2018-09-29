@@ -11,11 +11,11 @@ namespace OwlCoinV2.Backend.DiscordBot
     public static class MessageHandler
     {
 
-        public static Task HandleMessage(SocketMessage Message)
+        public static async Task HandleMessage(SocketMessage Message)
         {
             //new Thread(async () => await Proccesor(Message)).Start();
-            Proccesor(Message);
-            return null;
+            await Proccesor(Message);
+            return;
         }
 
         public static async Task Proccesor(SocketMessage Message)
@@ -97,7 +97,7 @@ namespace OwlCoinV2.Backend.DiscordBot
                     int MinsSince = (int)(int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(Pair[1])).TotalMinutes); ;
                     if (MinsSince > 10)
                     {
-                        Shared.Data.Accounts.GiveUser(Message.Author.Id.ToString(), Shared.IDType.Discord, 300);
+                        Shared.Data.Accounts.GiveUser(Message.Author.Id.ToString(), Shared.IDType.Discord, int.Parse(Shared.ConfigHandler.Config["Rewards"]["Discord"]["Chatting"].ToString()));
                         UserInteraction.Remove(Pair);
                         UserInteraction.Add(new string[] { Message.Author.Id.ToString(), DateTime.Now.Ticks.ToString() });
                     }
@@ -110,12 +110,12 @@ namespace OwlCoinV2.Backend.DiscordBot
 
         public static async void NotLongEnough(SocketMessage Message)
         {
-            await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, you are missing parameters or have too many!");
+            await SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["MissingParameters"].ToString());
         }
 
         public static async void InvalidParameter(SocketMessage Message)
         {
-            await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + ">, you have one or more invalid parameter!");
+            await SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["InvalidParameters"].ToString());
         }
 
         public static string GetDiscordID(string message)
@@ -126,5 +126,23 @@ namespace OwlCoinV2.Backend.DiscordBot
             }
             return message;
         }
+
+        public static async Task SendMessage(SocketMessage e,string Message, string TargetUserID = null, int Amount = -1, int NewBal = -1, string OtherString = "")
+        {
+            await e.Channel.SendMessageAsync(ParseConfigString(Message,e.Author, TargetUserID, Amount, NewBal, OtherString));
+        }
+
+        public static string ParseConfigString(string ConfString, SocketUser e, string TargetUserID = null, int Amount = -1, int NewBal = -1, string OtherString = "")
+        {
+            ConfString = ConfString.Replace("@<OtherString>", OtherString);
+            if (e != null) { ConfString = ConfString.Replace("@<SenderUser>", "<@" + e.Id+">"); }
+            ConfString = ConfString.Replace("@<CurrencyName>", Shared.ConfigHandler.Config["CurrencyName"].ToString());
+            ConfString = ConfString.Replace("@<TargetUser>", "<@" + TargetUserID+">");
+            ConfString = ConfString.Replace("@<Amount>", Amount.ToString());
+            ConfString = ConfString.Replace("@<NewBalance>", NewBal.ToString());
+            ConfString = ConfString.Replace("@<Prefix>", Shared.ConfigHandler.Config["Prefix"].ToString());
+            return ConfString;
+        }
+
     }
 }

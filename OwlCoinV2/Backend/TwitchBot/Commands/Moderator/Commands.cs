@@ -50,7 +50,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
 
         public static void NotMod(OnMessageReceivedArgs e)
         {
-            Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " you are not a Moderator!");
+            MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotMod"].ToString(),null);
         }
 
     }

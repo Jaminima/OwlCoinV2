@@ -23,7 +23,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Moderator
                 else if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])) { return; }
                 else { Amount = int.Parse(SegmentedMessage[2]); }
                 Shared.Data.Accounts.GiveUser(TheirID, Shared.IDType.Discord, Amount);
-                await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> gave <@" + TheirID + "> " + SegmentedMessage[2] + " owlcoin!");
+                await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Give"].ToString(), TheirID, Amount);
             }
             else { await NotMod(Message); }
         }
@@ -42,7 +42,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Moderator
 
         public static async Task NotMod(SocketMessage Message)
         {
-             await Message.Channel.SendMessageAsync("<@" + Message.Author.Id + "> you are not a Moderator!");
+            await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotMod"].ToString());
         }
 
     }

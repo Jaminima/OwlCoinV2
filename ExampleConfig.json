@@ -19,7 +19,7 @@
   },
   "ChannelName": "harbonator",
   "Prefix": "!",
-  "CurrencyName": "OwlcoinV2",
+  "CurrencyName": "Owlcoin",
   "CurrencyAbreviation": "OwC",
   "GambleWinChance": 40,
   "Songs": {
@@ -31,8 +31,8 @@
   "Roulette": {
     "MinBet": 100
   },
-  "Duel":{
-	"MinBet":100
+  "Duel": {
+    "MinBet": 100
   },
   "Slots": {
     "MinBet": 100,
@@ -51,13 +51,14 @@
     "Errors": {
       "NoUser": "@<SenderUser> That User Doesnt Exist!",
       "NotEnough": "@<SenderUser> You dont have enough @<CurrencyName>!",
-	  "OtherNotEnough":"@<SenderUser> @<TargetUser> doesnt have enough @<CurrencyName>",
+      "OtherNotEnough": "@<SenderUser> @<TargetUser> doesnt have enough @<CurrencyName>",
       "Self": "@<SenderUser> You cant do that to yourself!",
       "BetTooLow": "@<SenderUser> The minimum bet is @<Amount> @<CurrencyName>!",
       "TooFast": "@<SenderUser> You cant do that so quickly! Please wait @<Amount> mins.",
-	  "MissingParameters":"@<SenderUser> you are missing parameters or have too many!",
-	  "InvalidParameters":"@<SenderUser> you have one or more invalid parameter!",
-	  "NegativeValue":"@<SenderUser> You have enetered a negative, please dont do that!"
+      "MissingParameters": "@<SenderUser> you are missing parameters or have too many!",
+      "InvalidParameters": "@<SenderUser> you have one or more invalid parameters!",
+      "NegativeValue": "@<SenderUser> You have enetered a negative, please dont do that!",
+	  "NotMod":"@<SenderUser> You are not a moderator!"
     },
     "Pay": {
       "PaymentComplete": "@<SenderUser> Payment of @<Amount> @<CurrencyName> Complete, New Balance: @<NewBalance> @<CurrencyName>!"
@@ -70,62 +71,65 @@
       "Win": "@<SenderUser> Won @<Amount> @<CurrencyName> in roulette!",
       "Lose": "@<SenderUser> Lost @<Amount> @<CurrencyName> in roulette!"
     },
-	"Slots":{
-		"Win":"@<SenderUser> You got @<OtherString> and won @<Amount> @<CurrencyName>!",
-		"Lose":"@<SenderUser> You got @<OtherString> and lost @<Amount> @<CurrencyName>!"
-	},
+    "Slots": {
+      "Win": "@<SenderUser> You got @<OtherString> and won @<Amount> @<CurrencyName>!",
+      "Lose": "@<SenderUser> You got @<OtherString> and lost @<Amount> @<CurrencyName>!"
+    },
     "Age": {
       "Self": "@<SenderUser> Your account is @<OtherString> old!",
       "Other": "@<SenderUser> @<TargetUser>'s account is @<OtherString> old!"
     },
-	"Duel":{
-		"Start":"@<TargetUser> @<SenderUser> Wants to duel you for @<Amount> @<CurrencyName>! Use @<Prefix>accept or @<Prefix>deny.",
-		"Won":"@<SenderUser> Won @<Amount> @<CurrencyName> against @<TargetUser>!",
-		"Lose":"@<SenderUser> Lost @<Amount> @<CurrencyName> against @<TargetUser>!",
-		"Denied":"@<SenderUser> You have denied the duel!",
-		"AlreadyInDuel":"@<SenderUser> @<TargetUser> Is already in a duel!",
-		"NotInDuel":"@<SenderUser> You are not in a duel!"
-	},
-	"Songs":{
-		"Queue":"@<SenderUser> View queue here: https://beta.nightbot.tv/t/harbonator/song_requests",
-		"Playlist":"@<SenderUser> View playlist here: https://beta.nightbot.tv/t/harbonator/song_requests/playlist",
-		"Current":"@<SenderUser> Current Song is: @<OtherString>",
-		"CurrentFailed":"@<SenderUser> An Error Occured while fetching data! Please try again soon."
-	},
-	"Moderator":{
-		"SetTitle":"@<SenderUser> Set Title to: @<OtherString>",
-		"SetGame":"@<SenderUser> Game Set to: @<OtherString>",
-		"Give":"@<SenderUser> Gave @<Amount> @<CurrencyName> too @<TargetUser>"
-	},
+    "Duel": {
+      "Start": "@<TargetUser> @<SenderUser> Wants to duel you for @<Amount> @<CurrencyName>! Use @<Prefix>accept or @<Prefix>deny.",
+      "Won": "@<SenderUser> Won @<Amount> @<CurrencyName> against @<TargetUser>!",
+      "Lose": "@<SenderUser> Lost @<Amount> @<CurrencyName> against @<TargetUser>!",
+      "Denied": "@<SenderUser> You have denied the duel!",
+      "AlreadyInDuel": "@<SenderUser> @<TargetUser> Is already in a duel!",
+      "NotInDuel": "@<SenderUser> You are not in a duel!"
+    },
+    "Songs": {
+      "Queue": "@<SenderUser> View queue here: https://beta.nightbot.tv/t/harbonator/song_requests",
+      "Playlist": "@<SenderUser> View playlist here: https://beta.nightbot.tv/t/harbonator/song_requests/playlist",
+      "Current": "@<SenderUser> Current Song is: @<OtherString>",
+      "CurrentFailed": "@<SenderUser> An Error Occured while fetching data! Please try again soon."
+    },
+    "Moderator": {
+      "SetTitle": "@<SenderUser> Set Title to: @<OtherString>",
+      "SetGame": "@<SenderUser> Game Set to: @<OtherString>",
+      "Give": "@<SenderUser> Gave @<Amount> @<CurrencyName> too @<TargetUser>"
+    },
     "Help": {
       "Viewer": "@<SenderUser> Commands are available here: https://pastebin.com/H60Ydn1s\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2",
       "Moderator": "@<SenderUser> Mod Commands here:https://pastebin.com/tPPjRE1f"
     }
   },
-  "Rewards":{
-	"Twitch":{
-		"Watching":{
-			"Viewer":100,
-			"Subscriber":300
-		},
-		"Chatting":300,
-		"GiftedSub":1000,
-		"Subbed":1000,
-		"ReSubbed":1000
+  "Rewards": {
+    "Twitch": {
+      "Watching": {
+        "Viewer": 100,
+        "Subscriber": 300
+      },
+      "Chatting": 300,
+      "GiftedSub": 1000,
+      "Subbed": 1000,
+      "ReSubbed": 1000
+    },
+	"Discord":{
+		"Chatting":300
 	}
   },
-  "EventMessages":{
-	"Raffle":{
-		"Start":"/me PogChamp a Raffle has begun for @<Amount> Owlcoin PogChamp it will end in 60 Seconds. Enter by typing \"!join\" OpieOP",
-		"45Sec":"/me The Raffle for @<Amount> Owlcoin will end in 45 Seconds. Enter by typing \"!join\" FeelsGoodMan",
-		"30Sec":"/me The Raffle for @<Amount> Owlcoin will end in 30 Seconds. Enter by typing \"!join\" FeelsGoodMan",
-		"15Sec":"/me The Raffle for @<Amount> Owlcoin will end in 15 Seconds. Enter by typing \"!join\" FeelsGoodMan",
-		"Win":" The Raffle ended and @<TargetUser> won @<Amount> @<CurrencyName> FeelsGoodMan",
-		"NoEntry":"No one entered the raffle LUL"
-	},
-	"GiftedSub":"@<SenderUser> Gifted a sub too @<TargetUser> and received @<Amount> Owlcoin!",
-	"Subbed":"@<SenderUser> Subbed for the first time and received @<Amount> Owlcoin!",
-	"ReSubbed":"@<SenderUser> Resubbed for the first time and received @<Amount> Owlcoin!",
-	"Hosted":""
+  "EventMessages": {
+    "Raffle": {
+      "Start": "/me PogChamp a Raffle has begun for @<Amount> Owlcoin PogChamp it will end in 60 Seconds. Enter by typing \"!join\" OpieOP",
+      "45Sec": "/me The Raffle for @<Amount> Owlcoin will end in 45 Seconds. Enter by typing \"!join\" FeelsGoodMan",
+      "30Sec": "/me The Raffle for @<Amount> Owlcoin will end in 30 Seconds. Enter by typing \"!join\" FeelsGoodMan",
+      "15Sec": "/me The Raffle for @<Amount> Owlcoin will end in 15 Seconds. Enter by typing \"!join\" FeelsGoodMan",
+      "Win": " The Raffle ended and @<TargetUser> won @<Amount> @<CurrencyName> FeelsGoodMan",
+      "NoEntry": "No one entered the raffle LUL"
+    },
+    "GiftedSub": "@<SenderUser> Gifted a sub too @<TargetUser> and received @<Amount> Owlcoin!",
+    "Subbed": "@<SenderUser> Subbed for the first time and received @<Amount> Owlcoin!",
+    "ReSubbed": "@<SenderUser> Resubbed for the first time and received @<Amount> Owlcoin!",
+    "Hosted": ""
   }
 }
