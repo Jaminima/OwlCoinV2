@@ -248,10 +248,11 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             if (!Drops.IsLive()) { return; }
             if (SegmentedMessage.Length == 1)
             {
-                if (Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch) < int.Parse(Shared.ConfigHandler.Config["Fish"]["Cost"].ToString()))
-                { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString(), null); return; }
+                int Cost = int.Parse(Shared.ConfigHandler.Config["Fish"]["Cost"].ToString());
                 if (Fishermen.Contains(e.ChatMessage.UserId))
-                { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Fish"]["AlreadyFishing"].ToString(),null); return; }
+                { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Fish"]["AlreadyFishing"].ToString(), null); return; }
+                if (Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId, Shared.IDType.Twitch) < Cost)
+                { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString(), null); return; }
                 int TotalChance = 0;
                 foreach (Newtonsoft.Json.Linq.JToken Item in Shared.ConfigHandler.Config["Fish"]["Items"])
                 { TotalChance += int.Parse(Item["Chance"].ToString()); }
@@ -264,8 +265,9 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 int MinTime = int.Parse(Shared.ConfigHandler.Config["Fish"]["MinTime"].ToString());
                 int MaxTime = int.Parse(Shared.ConfigHandler.Config["Fish"]["MaxTime"].ToString());
                 int WaitTime = random.Next(MinTime,MaxTime);
-                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Fish"]["GoneFishing"].ToString(), null, WaitTime);
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Fish"]["GoneFishing"].ToString());
                 Fishermen.Add(e.ChatMessage.UserId);
+                Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch,Cost);
                 new Thread(() => Fishing(e, WaitTime, ChosenItem)).Start();
             }
         }

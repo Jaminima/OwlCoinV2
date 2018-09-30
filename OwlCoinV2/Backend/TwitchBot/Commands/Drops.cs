@@ -7,7 +7,7 @@ using System.Threading;
 using System.Net;
 using System.IO;
 
-namespace OwlCoinV2.Backend.TwitchBot
+namespace OwlCoinV2.Backend.TwitchBot.Commands
 {
     public static class Drops
     {
@@ -18,7 +18,7 @@ namespace OwlCoinV2.Backend.TwitchBot
             int WatchingGiveOCLastRunMin = -1;
             while (true)
             {
-                if (DateTime.Now.Minute % 1 == 0 && RaffleLastRunMin!=DateTime.Now.Minute && IsLive())
+                if (DateTime.Now.Minute % 15 == 0 && RaffleLastRunMin!=DateTime.Now.Minute && IsLive())
                 {
                     Raffles++;
                     RaffleLastRunMin = DateTime.Now.Minute;
@@ -42,19 +42,19 @@ namespace OwlCoinV2.Backend.TwitchBot
             RaffleParticipant = new List<string> { };
             try
             {
-                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(),Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["Start"].ToString(),null,PayOutAmount);
+                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(),null,Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["Start"].ToString(),null,PayOutAmount);
                 System.Threading.Thread.Sleep(15000);
-                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["45Sec"].ToString(), null, PayOutAmount);
+                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), null, Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["45Sec"].ToString(), null, PayOutAmount);
                 System.Threading.Thread.Sleep(15000);
-                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["30Sec"].ToString(), null, PayOutAmount);
+                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), null, Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["30Sec"].ToString(), null, PayOutAmount);
                 System.Threading.Thread.Sleep(15000);
-                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["15Sec"].ToString(), null, PayOutAmount);
+                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), null, Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["15Sec"].ToString(), null, PayOutAmount);
                 System.Threading.Thread.Sleep(15000);
             }
             catch (Exception E) { Console.WriteLine(E); return null; }
             if (RaffleParticipant.Count == 0)
             {
-                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["NoEntry"].ToString(), null, PayOutAmount);
+                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), null, Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["NoEntry"].ToString(), null, PayOutAmount);
             }
             else if (!IsMega||RaffleParticipant.Count==1)
             {
@@ -81,7 +81,7 @@ namespace OwlCoinV2.Backend.TwitchBot
         public static void PayOut(string Winner,int Amount)
         {
             Shared.Data.Accounts.GiveUser(Winner, Shared.IDType.Twitch, Amount);
-            MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["Win"].ToString(), UserHandler.UserFromUserID(Winner).Name, Amount);
+            MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), null, Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["Win"].ToString(), UserHandler.UserFromUserID(Winner).Name, Amount);
         }
 
         public static void WatchingGiveOC()

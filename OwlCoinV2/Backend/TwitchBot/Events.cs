@@ -17,7 +17,7 @@ namespace OwlCoinV2.Backend.TwitchBot
             Shared.Data.UserData.CreateUser(Id, Shared.IDType.Twitch);
             int Reward = int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["GiftedSub"].ToString());
             Shared.Data.Accounts.GiveUser(Id, Shared.IDType.Twitch, Reward);
-            MessageHandler.SendMessage(e.Channel, Shared.ConfigHandler.Config["EventMessages"]["GiftedSub"].ToString(), e.GiftedSubscription.MsgParamRecipientDisplayName, Reward);
+            MessageHandler.SendMessage(e.Channel,e.GiftedSubscription.DisplayName, Shared.ConfigHandler.Config["EventMessages"]["GiftedSub"].ToString(), e.GiftedSubscription.MsgParamRecipientDisplayName, Reward);
         }
 
         public static void Subbed(object sender, OnNewSubscriberArgs e)
@@ -25,14 +25,14 @@ namespace OwlCoinV2.Backend.TwitchBot
             Shared.Data.UserData.CreateUser(e.Subscriber.UserId, Shared.IDType.Twitch);
             int Reward = int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Subbed"].ToString());
             Shared.Data.Accounts.GiveUser(e.Subscriber.UserId, Shared.IDType.Twitch, Reward);
-            MessageHandler.SendMessage(e.Channel, Shared.ConfigHandler.Config["EventMessages"]["GiftedSub"].ToString(),null, Reward);
+            MessageHandler.SendMessage(e.Channel, e.Subscriber.DisplayName, Shared.ConfigHandler.Config["EventMessages"]["Subbed"].ToString(),null, Reward);
         }
         public static void ReSubbed(object sender,OnReSubscriberArgs e)
         {
             Shared.Data.UserData.CreateUser(e.ReSubscriber.UserId, Shared.IDType.Twitch);
             int Reward = int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["ReSubbed"].ToString());
             Shared.Data.Accounts.GiveUser(e.ReSubscriber.UserId, Shared.IDType.Twitch, Reward);
-            MessageHandler.SendMessage(e.Channel, Shared.ConfigHandler.Config["EventMessages"]["GiftedSub"].ToString(), null, Reward);
+            MessageHandler.SendMessage(e.Channel,e.ReSubscriber.DisplayName, Shared.ConfigHandler.Config["EventMessages"]["ReSubbed"].ToString(),null, Reward);
         }
         //static List<String[]> Hosts = new List<string[]> { };
         //public static void Hosting(object sender,OnBeingHostedArgs e)

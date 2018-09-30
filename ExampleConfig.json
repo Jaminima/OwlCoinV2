@@ -151,9 +151,9 @@
       "Win": " The Raffle ended and @<TargetUser> won @<Amount> @<CurrencyName> FeelsGoodMan",
       "NoEntry": "No one entered the raffle LUL"
     },
-    "GiftedSub": "@<SenderUser> Gifted a sub too @<TargetUser> and received @<Amount> Owlcoin!",
-    "Subbed": "@<SenderUser> Subbed for the first time and received @<Amount> Owlcoin!",
-    "ReSubbed": "@<SenderUser> Resubbed for the first time and received @<Amount> Owlcoin!",
+    "GiftedSub": "@<TargetUser> Gifted a sub too @<OtherString> and received @<Amount> Owlcoin!",
+    "Subbed": "@<TargetUser> Subbed for the first time and received @<Amount> Owlcoin!",
+    "ReSubbed": "@<TargetUser> Resubbed and received @<Amount> Owlcoin!",
     "Hosted": ""
   }
 }

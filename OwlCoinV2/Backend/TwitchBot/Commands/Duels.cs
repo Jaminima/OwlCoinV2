@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OwlCoinV2.Backend.TwitchBot
+namespace OwlCoinV2.Backend.TwitchBot.Commands
 {
     class Duels
     {

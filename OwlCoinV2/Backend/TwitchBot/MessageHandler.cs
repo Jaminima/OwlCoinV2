@@ -29,7 +29,6 @@ namespace OwlCoinV2.Backend.TwitchBot
             AwardForInteraction(e);
             if (Command.StartsWith(Prefix))
             {
-                if (!CommandDelayPassed(e) && !e.ChatMessage.IsModerator&&!e.ChatMessage.IsBroadcaster) { return; }
 
                 Command = Command.Remove(0, Prefix.Length);
 
@@ -38,10 +37,18 @@ namespace OwlCoinV2.Backend.TwitchBot
                 //    if (SegmentedMessage.Length < 2) { NotLongEnough(e); return; }
                 //    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, e.ChatMessage.Message.Remove(0, Command.Length + Prefix.Length + 1));
                 //}
-
+                
                 if (Command == "join")
                 {
                     Commands.Viewer.Commands.JoinRaffle(e);
+                    return;
+                }
+
+                if (!CommandDelayPassed(e) && !e.ChatMessage.IsModerator && !e.ChatMessage.IsBroadcaster) { return; }
+
+                if (Newtonsoft.Json.Linq.JObject.Parse(Shared.ConfigHandler.Config["CommandResponses"]["SimpleEcho"].ToString()).ContainsKey(Command))
+                {
+                    SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["SimpleEcho"][Command].ToString(), null);
                 }
 
                 if (Command == "pay"||Command=="giveowlcoin")
@@ -166,7 +173,6 @@ namespace OwlCoinV2.Backend.TwitchBot
                 if (Pair[0] == e.ChatMessage.UserId)
                 {
                     TimeSpan T= TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(Pair[1]));
-                    Console.WriteLine(T.TotalSeconds);
                     if (T.TotalSeconds >= int.Parse(Shared.ConfigHandler.Config["MessageDelay"].ToString()))
                     {
                         CommandInteraction.Remove(Pair);
@@ -203,15 +209,26 @@ namespace OwlCoinV2.Backend.TwitchBot
         {
             Bot.TwitchC.SendMessage(e.ChatMessage.Channel,ParseConfigString(Message,e.ChatMessage,TargetUsername,Amount,NewBal,OtherString));
         }
-        public static void SendMessage(string Channel, string Message, string TargetUsername = null, int Amount = -1, int NewBal = -1, string OtherString = "")
+        public static void SendMessage(string Channel, string Message,string SenderUserName, string TargetUsername = null, int Amount = -1, int NewBal = -1, string OtherString = "")
         {
-            Bot.TwitchC.SendMessage(Channel, ParseConfigString(Message,null, TargetUsername, Amount, NewBal,OtherString));
+            Bot.TwitchC.SendMessage(Channel, ParseConfigString(Message,SenderUserName, TargetUsername, Amount, NewBal,OtherString));
         }
 
         public static string ParseConfigString(string ConfString,ChatMessage e,string TargetUsername=null,int Amount=-1,int NewBal=-1,string OtherString="")
         {
             ConfString = ConfString.Replace("@<OtherString>", OtherString);
             if (e != null) { ConfString = ConfString.Replace("@<SenderUser>", "@" + e.Username); }
+            ConfString = ConfString.Replace("@<CurrencyName>", Shared.ConfigHandler.Config["CurrencyName"].ToString());
+            ConfString = ConfString.Replace("@<TargetUser>", "@" + TargetUsername);
+            ConfString = ConfString.Replace("@<Amount>", Amount.ToString());
+            ConfString = ConfString.Replace("@<NewBalance>", NewBal.ToString());
+            ConfString = ConfString.Replace("@<Prefix>", Shared.ConfigHandler.Config["Prefix"].ToString());
+            return ConfString;
+        }
+        public static string ParseConfigString(string ConfString, string SenderUsername, string TargetUsername = null, int Amount = -1, int NewBal = -1, string OtherString = "")
+        {
+            ConfString = ConfString.Replace("@<OtherString>", OtherString);
+            ConfString = ConfString.Replace("@<SenderUser>", "@" + SenderUsername);
             ConfString = ConfString.Replace("@<CurrencyName>", Shared.ConfigHandler.Config["CurrencyName"].ToString());
             ConfString = ConfString.Replace("@<TargetUser>", "@" + TargetUsername);
             ConfString = ConfString.Replace("@<Amount>", Amount.ToString());
