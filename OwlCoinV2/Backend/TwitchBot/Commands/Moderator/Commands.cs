@@ -48,6 +48,17 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
             else { NotMod(e); }
         }
 
+        public static void RefreshConfig(OnMessageReceivedArgs e, string[] SegmentedMessage)
+        {
+            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator||e.ChatMessage.Username=="jccjaminima")
+            {
+                Shared.ConfigHandler.LoadConfig();
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["RefreshConfig"].ToString(), null);
+                return;
+            }
+            NotMod(e);
+        }
+
         public static void NotMod(OnMessageReceivedArgs e)
         {
             MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotMod"].ToString(),null);

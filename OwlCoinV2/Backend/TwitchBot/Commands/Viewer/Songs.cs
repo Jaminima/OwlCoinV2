@@ -46,7 +46,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             Newtonsoft.Json.Linq.JObject SongData=GetSongData();
             if (SongData == null)
             { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["CurrentFailed"].ToString(), null); return; }
-            string Name = SongData["_currentSong"]["track"]["title"].ToString();
+            string Name = SongData["_currentSong"]["track"]["title"].ToString()+" - "+SongData["_currentSong"]["track"]["url"];
             MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Current"].ToString(), null,-1,-1,Name);
         }
 

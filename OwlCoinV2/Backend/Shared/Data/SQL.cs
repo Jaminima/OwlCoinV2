@@ -103,7 +103,7 @@ namespace OwlCoinV2.Backend.Shared.Data
 
         void Execute()
         {
-            try { Command.ExecuteNonQuery(); /*RestartConn();*/ } catch (Exception E) { Console.WriteLine(E); }
+            try { Command.ExecuteNonQuery(); /*RestartConn();*/ } catch (Exception E) { Console.WriteLine(E+E.StackTrace); }
         }
     }
 }

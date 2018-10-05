@@ -44,12 +44,12 @@ namespace OwlCoinV2.Backend.DiscordBot
                     await SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["SimpleEcho"][Command].ToString());
                 }
 
-                if (Command == "pay" || Command == "giveowlcoin")
+                if (Command == "pay" || Command == "give" + Shared.ConfigHandler.Config["CurrencyName"].ToString().ToLower())
                 {
                     await Commands.Viewer.Commands.Pay(Message, SegmentedMessage);
                 }
 
-                if (Command == "owlcoin" || Command == "bal" || Command == "balance"||Command=="owc")
+                if (Command == Shared.ConfigHandler.Config["CurrencyName"].ToString().ToLower() || Command == "bal" || Command == "balance" || Command == Shared.ConfigHandler.Config["CurrencyAbreviation"].ToString().ToLower())
                 {
                     await Commands.Viewer.Commands.OwlCoin(Message, SegmentedMessage);
                 }
@@ -84,9 +84,19 @@ namespace OwlCoinV2.Backend.DiscordBot
                     await Commands.Moderator.Commands.GivePoints(Message, SegmentedMessage);
                 }
 
+                if (Command == "refresh" || Command == "refreshconfig")
+                {
+                    await Commands.Moderator.Commands.RefreshConfig(Message, SegmentedMessage);
+                }
+
                 if (Command == "help")
                 {
                     await Commands.Viewer.Commands.Help(Message, SegmentedMessage);
+                }
+
+                if (Command == "notifications" || Command == "notification")
+                {
+                    await Commands.Viewer.Commands.Notifications(Message, SegmentedMessage);
                 }
 
             }

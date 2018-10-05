@@ -136,5 +136,36 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             await MessageHandler.SendMessage(Message, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Viewer"].ToString(), Message.Author));
         }
 
+        public static async Task Notifications(SocketMessage Message,string[] SegmentedMessage)
+        {
+            if (SegmentedMessage.Length != 2) { MessageHandler.NotLongEnough(Message); return; }
+            Shared.ConfigHandler.LoadConfig();
+            Newtonsoft.Json.Linq.JArray JA = Newtonsoft.Json.Linq.JArray.Parse(Shared.ConfigHandler.Config["Notifications"]["DiscordUsers"].ToString());
+            if (SegmentedMessage[1].ToLower() == "on")
+            {
+                if (JA.ToString().Contains(Message.Author.Id.ToString())) {
+                    await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Notifications"]["Already"].ToString(),null,-1,-1,"On"); }
+                else
+                {
+                    await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Notifications"]["Set"].ToString(), null, -1, -1, "On");
+                    JA.Add(Message.Author.Id.ToString());
+                }
+            }
+            else if (SegmentedMessage[1].ToLower() == "off")
+            {
+                if (!JA.ToString().Contains(Message.Author.Id.ToString()))
+                {
+                    await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Notifications"]["Already"].ToString(), null, -1, -1, "Off");
+                }
+                else
+                {
+                    await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Notifications"]["Set"].ToString(), null, -1, -1, "Off");
+                    for (int i = 0; i < JA.Count; i++) { if (JA[i].ToString() == Message.Author.Id.ToString()) { JA.RemoveAt(i); break; } }
+                }
+            }
+            Shared.ConfigHandler.Config["Notifications"]["DiscordUsers"] = JA;
+            Shared.ConfigHandler.SaveConfig();
+        }
+
     }
 }

@@ -12,25 +12,26 @@ namespace OwlCoinV2.Backend.TwitchBot
         public static void Start()
         {
             int LoopStartDelay = int.Parse(Shared.ConfigHandler.Config["AutoMessages"]["LoopStartDelay"].ToString());
-            new Thread(() => StartLoop(LoopStartDelay)).Start();
+            int Items = Shared.ConfigHandler.Config["AutoMessages"]["Messages"].Count();
+            new Thread(() => StartLoop(LoopStartDelay,Items)).Start();
         }
 
-        static void StartLoop(int StartupDealy)
+        static void StartLoop(int StartupDealy,int Items)
         {
-            foreach (Newtonsoft.Json.Linq.JObject Message in Shared.ConfigHandler.Config["AutoMessages"]["Messages"])
+            for (int i=0;i<Items;i++)
             {
-                new Thread(() => MessageLoop(Message["Text"].ToString(), int.Parse(Message["Delay"].ToString()))).Start();
+                new Thread(() => MessageLoop(i)).Start();
                 System.Threading.Thread.Sleep(StartupDealy * 60000);
             }
         }
 
-        static void MessageLoop(string Message,int Delay)
+        static void MessageLoop(int i)
         {
             while (true)
             {
                 if (Commands.Drops.IsLive())
-                { MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), Message, null); }
-                System.Threading.Thread.Sleep(Delay * 60000);
+                { MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), Shared.ConfigHandler.Config["AutoMessages"]["Messages"][i]["Text"].ToString(), null,null); }
+                System.Threading.Thread.Sleep(int.Parse(Shared.ConfigHandler.Config["AutoMessages"]["Messages"][i]["Delay"].ToString()) * 60000);
             }
         }
     }

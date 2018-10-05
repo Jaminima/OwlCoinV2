@@ -1,7 +1,7 @@
 {
   "TwitchBot": {
-    "Username": "OwlCoinbot",
-    "0AuthToken": "",
+    "Username": "",
+    "0AuthToken": "oauth:",
     "ClientId": "",
     "AccessToken": ""
   },
@@ -11,18 +11,18 @@
   },
   "StreamLabs": {
     "RefreshToken": "",
-	"ClientId":"",
-	"ClientSecret":""
+    "ClientId": "",
+    "ClientSecret": ""
   },
-  "NightBot":{
-	"ChannelID":""
+  "NightBot": {
+    "ChannelID": ""
   },
   "ChannelName": "harbonator",
   "Prefix": "!",
   "CurrencyName": "Owlcoin",
   "CurrencyAbreviation": "OwC",
   "GambleWinChance": 40,
-  "MessageDelay":5,
+  "MessageDelay": 0,
   "Songs": {
     "Cost": {
       "Viewer": 500,
@@ -35,23 +35,75 @@
   "Duel": {
     "MinBet": 100
   },
-  "Fish":{
-	"Cost":0,
-	"MinTime":1,
-	"MaxTime":5,
-	"Items":[
-		{"Chance":10,"Name":"Chest o' Owlcoin","Reward":500},
-		{"Chance":15,"Name":"Wallet","Reward":250},
-		{"Chance":5,"Name":"HarbonT Relic","Reward":1000},
-		{"Chance":10,"Name":"Dead Nan","Reward":0},
-		{"Chance":5,"Name":"harbonTREE leaf","Reward":5000},
-		{"Chance":15,"Name":"harbonDOC prototype Glasses","Reward":750},
-		{"Chance":10,"Name":"Twitch Prime Subscription","Reward":1000},
-		{"Chance":10,"Name":"Single OwlCoin","Reward":1},
-		{"Chance":5,"Name":"Soggy Wank Sock","Reward":0},
-		{"Chance":5,"Name":"Hot Gamer Girl","Reward":2500},
-		{"Chance":10,"Name":"Can of Tango","Reward":500}
-	]
+  "Fish": {
+    "Cost": {
+      "Viewer": 500,
+      "Subscriber": 250
+    },
+    "MinTime": 1,
+    "MaxTime": 5,
+    "Items": [
+      {
+        "Chance": 10,
+        "Name": "Chest o' Owlcoin",
+        "Reward": 500
+      },
+      {
+        "Chance": 15,
+        "Name": "Wallet",
+        "Reward": 250
+      },
+      {
+        "Chance": 5,
+        "Name": "harbonT Relic",
+        "Reward": 1000
+      },
+      {
+        "Chance": 10,
+        "Name": "Dead Nan",
+        "Reward": 0
+      },
+      {
+        "Chance": 5,
+        "Name": "harbonTREE leaf",
+        "Reward": 5000
+      },
+      {
+        "Chance": 15,
+        "Name": "harbonDOC prototype Glasses",
+        "Reward": 750
+      },
+      {
+        "Chance": 10,
+        "Name": "Twitch Prime Subscription",
+        "Reward": 1000
+      },
+      {
+        "Chance": 10,
+        "Name": "Single OwlCoin",
+        "Reward": 1
+      },
+      {
+        "Chance": 5,
+        "Name": "Soggy Wank Sock",
+        "Reward": 0
+      },
+      {
+        "Chance": 5,
+        "Name": "Hot Gamer Girl",
+        "Reward": 2500
+      },
+      {
+        "Chance": 10,
+        "Name": "Can of Tango",
+        "Reward": 500
+      },
+      {
+        "Chance": 1,
+        "Name": "harbonTREE Branch",
+        "Reward": 25000
+      }
+    ]
   },
   "Slots": {
     "MinBet": 100,
@@ -67,6 +119,13 @@
     ]
   },
   "CommandResponses": {
+    "SimpleEcho": {
+      "discord": "@<SenderUser> https://discord.gg/EkKSPMV",
+      "merch": "@<SenderUser> https://teespring.com/en-GB/stores/harbonator-merch - for NA shipping: https://teespring.com/en-GB/stores/harbonator-merch-na-edition",
+      "twitter": "@<SenderUser> https://twitter.com/TheHarbonator",
+      "youtube": "@<SenderUser> https://www.youtube.com/user/TheHarbonator",
+      "snapchat": "@<SenderUser> https://www.snapchat.com/add/harbonator"
+    },
     "Errors": {
       "NoUser": "@<SenderUser> That User Doesnt Exist!",
       "NotEnough": "@<SenderUser> You dont have enough @<CurrencyName>!",
@@ -77,7 +136,7 @@
       "MissingParameters": "@<SenderUser> you are missing parameters or have too many!",
       "InvalidParameters": "@<SenderUser> you have one or more invalid parameters!",
       "NegativeValue": "@<SenderUser> You have enetered a negative, please dont do that!",
-	  "NotMod":"@<SenderUser> You are not a moderator!"
+      "NotMod": "@<SenderUser> You are not a moderator!"
     },
     "Pay": {
       "PaymentComplete": "@<SenderUser> Payment of @<Amount> @<CurrencyName> Complete, New Balance: @<NewBalance> @<CurrencyName>!"
@@ -112,15 +171,20 @@
       "Current": "@<SenderUser> Current Song is: @<OtherString>",
       "CurrentFailed": "@<SenderUser> An Error Occured while fetching data! Please try again soon."
     },
-	"Fish":{
-		"GoneFishing":"/me @<SenderUser> Has cast a line.",
-		"Fished":"/me @<SenderUser> Has caught a @<OtherString> worth @<Amount> @<CurrencyName>!",
-		"AlreadyFishing":"@<SenderUser> You are already fishing!"
-	},
+    "Fish": {
+      "GoneFishing": "/me @<SenderUser> Has cast a line.",
+      "Fished": "/me @<SenderUser> Has caught a @<OtherString> worth @<Amount> @<CurrencyName>!",
+      "AlreadyFishing": "@<SenderUser> You are already fishing!"
+    },
+    "Notifications": {
+      "Already": "@<SenderUser> You already have notifications turned @<OtherString>!",
+      "Set": "@<SenderUser> Your stream notifications are now turned @<OtherString>!"
+    },
     "Moderator": {
       "SetTitle": "@<SenderUser> Set Title to: @<OtherString>",
       "SetGame": "@<SenderUser> Game Set to: @<OtherString>",
-      "Give": "@<SenderUser> Gave @<Amount> @<CurrencyName> too @<TargetUser>"
+      "Give": "@<SenderUser> Gave @<Amount> @<CurrencyName> too @<TargetUser>",
+      "RefreshConfig": "@<SenderUser> Refreshed The Config!"
     },
     "Help": {
       "Viewer": "@<SenderUser> Commands are available here: https://pastebin.com/H60Ydn1s\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2",
@@ -138,9 +202,9 @@
       "Subbed": 1000,
       "ReSubbed": 1000
     },
-	"Discord":{
-		"Chatting":300
-	}
+    "Discord": {
+      "Chatting": 300
+    }
   },
   "EventMessages": {
     "Raffle": {
@@ -151,9 +215,40 @@
       "Win": " The Raffle ended and @<TargetUser> won @<Amount> @<CurrencyName> FeelsGoodMan",
       "NoEntry": "No one entered the raffle LUL"
     },
-    "GiftedSub": "@<TargetUser> Gifted a sub too @<OtherString> and received @<Amount> Owlcoin!",
-    "Subbed": "@<TargetUser> Subbed for the first time and received @<Amount> Owlcoin!",
-    "ReSubbed": "@<TargetUser> Resubbed and received @<Amount> Owlcoin!",
+    "GiftedSub": "@<SenderUser> Gifted a sub too @<TargetUser> and received @<Amount> Owlcoin!",
+    "Subbed": "@<SenderUser> Subbed for the first time and received @<Amount> Owlcoin!",
+    "ReSubbed": "@<SenderUser> Resubbed and received @<Amount> Owlcoin!",
     "Hosted": ""
+  },
+  "AutoMessages": {
+    "LoopStartDelay": 10,
+    "Messages": [
+      {
+        "Text": "Amazon prime allows you to subscribe to the Harbonator for FREE. 1. Click here and link your account: https://twitch.amazon.com/prime 2. Click the subscribe button and select your Amazon Prime as payment method. Its is that simple to support your favourite streamer :))))).",
+        "Delay": 45
+      },
+      {
+        "Text": ":pick: harbonT Don't mind me, just mining some Owlcoin :pick: harbonT",
+        "Delay": 60
+      },
+      {
+        "Text": "If you clip a good play or a stupid moment please post it in my discords #twitch_chat_and_clips channel.",
+        "Delay": 60
+      },
+      {
+        "Text": "Consider getting the BTTV and FrankerFaceZ plugins to be able to see extra emotes!",
+        "Delay": 40
+      },
+      {
+        "Text": "harbonTREE harbonSLEEPER harbonDOC harbonFLEX harbonSOCIETY harbonCITO harbonPRIDE harbonHANDS harbonHANDSUP harbonHOP harbonPRIME harbonYIKES harbonFUTURE harbonHYPER harbonLURK harbonBLESS harbonHEY harbonA harbonMEGA1 harbonMEGA2 harbonMEGA3 harbonMEGA4",
+        "Delay": 20
+      }
+    ]
+  },
+  "Notifications": {
+    "DiscordUsers": [
+      "300712019466911744"
+    ],
+    "DiscordMessage": "The stream has started! https://twitch.tv/harbonator"
   }
 }

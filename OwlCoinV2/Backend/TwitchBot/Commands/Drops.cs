@@ -42,19 +42,19 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
             RaffleParticipant = new List<string> { };
             try
             {
-                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(),null,Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["Start"].ToString(),null,PayOutAmount);
+                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(),Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["Start"].ToString(), null, null,PayOutAmount);
                 System.Threading.Thread.Sleep(15000);
-                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), null, Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["45Sec"].ToString(), null, PayOutAmount);
+                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["45Sec"].ToString(), null, null, PayOutAmount);
                 System.Threading.Thread.Sleep(15000);
-                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), null, Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["30Sec"].ToString(), null, PayOutAmount);
+                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["30Sec"].ToString(), null, null, PayOutAmount);
                 System.Threading.Thread.Sleep(15000);
-                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), null, Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["15Sec"].ToString(), null, PayOutAmount);
+                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["15Sec"].ToString(), null, null, PayOutAmount);
                 System.Threading.Thread.Sleep(15000);
             }
             catch (Exception E) { Console.WriteLine(E); return null; }
             if (RaffleParticipant.Count == 0)
             {
-                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), null, Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["NoEntry"].ToString(), null, PayOutAmount);
+                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["NoEntry"].ToString(), null, null, PayOutAmount);
             }
             else if (!IsMega||RaffleParticipant.Count==1)
             {
@@ -63,13 +63,13 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
             }
             else
             {
-                int UsersCount = Rnd.Next(1,2);
+                int UsersCount = Rnd.Next(1,2+1);
                 string Winner="";
                 List<String> Winners = new List<string> { "" };
                 for (int i = 0; i < UsersCount; i++)
                 {
                     while (Winners.Contains(Winner))
-                    { Winner = RaffleParticipant[Rnd.Next(0, RaffleParticipant.Count - 1)]; }
+                    { Winner = RaffleParticipant[Rnd.Next(0, RaffleParticipant.Count)]; }
                     Winners.Add(Winner);
                     PayOut(Winner, (int)Math.Floor((decimal)PayOutAmount / UsersCount));
                 }
@@ -81,7 +81,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
         public static void PayOut(string Winner,int Amount)
         {
             Shared.Data.Accounts.GiveUser(Winner, Shared.IDType.Twitch, Amount);
-            MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), null, Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["Win"].ToString(), UserHandler.UserFromUserID(Winner).Name, Amount);
+            MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), Shared.ConfigHandler.Config["EventMessages"]["Raffle"]["Win"].ToString(), null, UserHandler.UserFromUserID(Winner).Name, Amount);
         }
 
         public static void WatchingGiveOC()
@@ -141,21 +141,28 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
 
         public static bool IsLive()
         {
-            WebRequest Req = WebRequest.Create("https://api.twitch.tv/helix/streams?user_login="+Shared.ConfigHandler.Config["ChannelName"]);
-            Req.Method = "GET";
-            Req.Headers.Add("Client-ID", Shared.ConfigHandler.Config["TwitchBot"]["ClientId"].ToString());
-            Req.Headers.Add("Authorization", "OAuth " + Shared.ConfigHandler.Config["TwitchBot"]["AccessToken"].ToString());
-            WebResponse Res = Req.GetResponse();
-            string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
-            Newtonsoft.Json.Linq.JObject JD=Newtonsoft.Json.Linq.JObject.Parse(D);
-            if (JD["data"].Count()!= 0)
+            try
             {
-                if (JD["data"][0]["type"].ToString() == "live")
+                WebRequest Req = WebRequest.Create("https://api.twitch.tv/helix/streams?user_login=" + Shared.ConfigHandler.Config["ChannelName"]);
+                Req.Method = "GET";
+                Req.Headers.Add("Client-ID", Shared.ConfigHandler.Config["TwitchBot"]["ClientId"].ToString());
+                Req.Headers.Add("Authorization", "OAuth " + Shared.ConfigHandler.Config["TwitchBot"]["AccessToken"].ToString());
+                WebResponse Res = Req.GetResponse();
+                string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
+                Newtonsoft.Json.Linq.JObject JD = Newtonsoft.Json.Linq.JObject.Parse(D);
+                if (JD["data"].Count() != 0)
                 {
-                    return true;
+                    if (JD["data"][0]["type"].ToString() == "live")
+                    {
+                        return true;
+                    }
                 }
+                return false;
             }
-            return false;
+            catch (Exception E) {
+                Console.WriteLine(E);
+                return false;
+            }
         }
 
     }

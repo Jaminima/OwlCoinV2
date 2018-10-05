@@ -40,6 +40,17 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Moderator
             return false;
         }
 
+        public static async Task RefreshConfig(SocketMessage Message, string[] SegmentedMessage)
+        {
+            if (IsMod(Message).Result||Message.Author.Id.ToString()== "300712019466911744")
+            {
+                Shared.ConfigHandler.LoadConfig();
+                await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["RefreshConfig"].ToString(), null);
+                return;
+            }
+            await NotMod(Message);
+        }
+
         public static async Task NotMod(SocketMessage Message)
         {
             await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotMod"].ToString());

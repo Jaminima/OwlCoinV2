@@ -229,6 +229,7 @@
   <ItemGroup>
     <Compile Include="Backend\DiscordBot\Bot.cs" />
     <Compile Include="Backend\DiscordBot\Commands\Moderator\Commands.cs" />
+    <Compile Include="Backend\DiscordBot\Commands\NotificationHandler.cs" />
     <Compile Include="Backend\DiscordBot\Commands\Viewer\Commands.cs" />
     <Compile Include="Backend\DiscordBot\Commands\Viewer\Duel.cs" />
     <Compile Include="Backend\Shared\InputVerification.cs" />

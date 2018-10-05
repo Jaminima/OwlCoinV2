@@ -51,7 +51,7 @@ namespace OwlCoinV2.Backend.TwitchBot
                     SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["SimpleEcho"][Command].ToString(), null);
                 }
 
-                if (Command == "pay"||Command=="giveowlcoin")
+                if (Command == "pay"||Command=="give"+Shared.ConfigHandler.Config["CurrencyName"].ToString().ToLower())
                 {
                     Commands.Viewer.Commands.Pay(e, SegmentedMessage);
                 }
@@ -123,6 +123,11 @@ namespace OwlCoinV2.Backend.TwitchBot
                 if (Command == "fish")
                 {
                     Commands.Viewer.Commands.Fish(e,SegmentedMessage);
+                }
+
+                if (Command == "refresh" || Command == "refreshconfig")
+                {
+                    Commands.Moderator.Commands.RefreshConfig(e, SegmentedMessage);
                 }
 
                 if (Command == "help")
