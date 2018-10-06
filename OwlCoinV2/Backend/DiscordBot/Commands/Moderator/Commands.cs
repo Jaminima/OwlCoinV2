@@ -29,7 +29,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Moderator
         }
 
         public static async Task<bool> IsMod(SocketMessage Message)
-        { 
+        {
             foreach (SocketRole Role in ((SocketGuildUser)Message.Author).Roles)
             {
                 if (Role.Name == "Mod")

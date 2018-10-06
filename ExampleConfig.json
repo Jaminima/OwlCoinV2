@@ -6,8 +6,8 @@
     "AccessToken": ""
   },
   "DiscordBot": {
-    "Token": "",
-    "AuthToken": ""
+    "Token": 
+    "AuthToken": 
   },
   "StreamLabs": {
     "RefreshToken": "",
@@ -177,7 +177,7 @@
       "AlreadyFishing": "@<SenderUser> You are already fishing!"
     },
     "Notifications": {
-      "Already": "@<SenderUser> You already have notifications turned @<OtherString>!",
+      "Already": "@<SenderUser> You already have stream notifications turned @<OtherString>!",
       "Set": "@<SenderUser> Your stream notifications are now turned @<OtherString>!"
     },
     "Moderator": {
@@ -247,8 +247,10 @@
   },
   "Notifications": {
     "DiscordUsers": [
+      "165910220395118592",
+      "142365660553412608",
       "300712019466911744"
     ],
-    "DiscordMessage": "The stream has started! https://twitch.tv/harbonator"
+    "DiscordMessage": "The stream has started! https://twitch.tv/harbonator\nDisable these messages using `!notifications off`."
   }
 }

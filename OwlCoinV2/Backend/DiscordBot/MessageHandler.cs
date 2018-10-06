@@ -39,6 +39,13 @@ namespace OwlCoinV2.Backend.DiscordBot
                 //    await Message.Channel.SendMessageAsync(Message.Content.Remove(0, Command.Length + Prefix.Length + 1));
                 //}
 
+                if (Command == "notifications" || Command == "notification")
+                {
+                    await Commands.Viewer.Commands.Notifications(Message, SegmentedMessage);
+                }
+
+                if (Message.Channel.GetType() == typeof(SocketDMChannel)) { return; }
+
                 if (Newtonsoft.Json.Linq.JObject.Parse(Shared.ConfigHandler.Config["CommandResponses"]["SimpleEcho"].ToString()).ContainsKey(Command))
                 {
                     await SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["SimpleEcho"][Command].ToString());
@@ -93,12 +100,6 @@ namespace OwlCoinV2.Backend.DiscordBot
                 {
                     await Commands.Viewer.Commands.Help(Message, SegmentedMessage);
                 }
-
-                if (Command == "notifications" || Command == "notification")
-                {
-                    await Commands.Viewer.Commands.Notifications(Message, SegmentedMessage);
-                }
-
             }
         }
         static List<string[]> UserInteraction = new List<string[]> { };

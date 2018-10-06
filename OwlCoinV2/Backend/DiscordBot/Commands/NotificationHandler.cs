@@ -19,11 +19,11 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands
         static bool StreamLive = false;
         public static async Task LiveEvent()
         {
-            System.Threading.Thread.Sleep(10000);
+            System.Threading.Thread.Sleep(5000);
             while (true)
             {
                 Shared.ConfigHandler.LoadConfig();
-                    bool IsLive = TwitchBot.Commands.Drops.IsLive();
+                bool IsLive = TwitchBot.Commands.Drops.IsLive();
                 if (StreamLive != IsLive && UserList.Count != 0)
                 {
                     StreamLive = IsLive;
@@ -47,7 +47,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands
                         }
                     }
                 }
-                System.Threading.Thread.Sleep(10000);
+                System.Threading.Thread.Sleep(60000);
             }
         }
     }
