@@ -131,9 +131,9 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
         {
             if (await Moderator.Commands.IsMod(Message))
             {
-                await MessageHandler.SendMessage(Message, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Moderator"].ToString(), Message.Author));
+                await MessageHandler.SendMessage(Message, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Discord"]["Moderator"].ToString(), Message.Author));
             }
-            await MessageHandler.SendMessage(Message, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Viewer"].ToString(), Message.Author));
+            await MessageHandler.SendMessage(Message, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Discord"]["Viewer"].ToString(), Message.Author));
         }
 
         public static async Task Notifications(SocketMessage Message,string[] SegmentedMessage)

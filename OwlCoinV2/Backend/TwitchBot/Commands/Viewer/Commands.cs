@@ -114,9 +114,9 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
         {
             if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
             {
-                MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Moderator"].ToString(), e.ChatMessage));
+                MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Twitch"]["Moderator"].ToString(), e.ChatMessage));
             }
-            MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Viewer"].ToString(), e.ChatMessage));
+            MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Twitch"]["Viewer"].ToString(), e.ChatMessage));
         }
 
         public static void AccountAge(OnMessageReceivedArgs e, string[] SegmentedMessage)
