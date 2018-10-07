@@ -7,7 +7,7 @@
   },
   "DiscordBot": {
     "Token": "",
-    "AuthToken": 
+    "AuthToken": ""
   },
   "StreamLabs": {
     "RefreshToken": "",
@@ -15,7 +15,10 @@
     "ClientSecret": ""
   },
   "NightBot": {
-    "ChannelID": ""
+    "ChannelID": "",
+    "ClientId": "",
+    "ClientSecret": "",
+    "RefreshToken": ""
   },
   "ChannelName": "harbonator",
   "Prefix": "!",
@@ -132,7 +135,7 @@
       "OtherNotEnough": "@<SenderUser> @<TargetUser> doesnt have enough @<CurrencyName>",
       "Self": "@<SenderUser> You cant do that to yourself!",
       "BetTooLow": "@<SenderUser> The minimum bet is @<Amount> @<CurrencyName>!",
-      "TooFast": "@<SenderUser> You cant do that so quickly! Please wait @<Amount> mins.",
+      "TooFast": "@<SenderUser> You cant do that so quickly! Please wait @<Amount> @<OtherString>.",
       "MissingParameters": "@<SenderUser> you are missing parameters or have too many!",
       "InvalidParameters": "@<SenderUser> you have one or more invalid parameters!",
       "NegativeValue": "@<SenderUser> You have enetered a negative, please dont do that!",
@@ -166,6 +169,10 @@
       "NotInDuel": "@<SenderUser> You are not in a duel!"
     },
     "Songs": {
+      "Request": {
+        "Success": "@<SenderUser> @<OtherString> Has been queued and is in position @<Amount>!",
+        "Failed": "@<SenderUser> @<OtherString>"
+      },
       "Queue": "@<SenderUser> View queue here: https://beta.nightbot.tv/t/harbonator/song_requests",
       "Playlist": "@<SenderUser> View playlist here: https://beta.nightbot.tv/t/harbonator/song_requests/playlist",
       "Current": "@<SenderUser> Current Song is: @<OtherString>",
@@ -187,15 +194,14 @@
       "RefreshConfig": "@<SenderUser> Refreshed The Config!"
     },
     "Help": {
-		"Discord":{
-			"Viewer": "@<SenderUser> Commands are available here: https://pastebin.com/wfF6m3nq\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2",
-			"Moderator": "@<SenderUser> Mod Commands here:https://pastebin.com/cfQ2ShTM"
-		},
-		"Twitch":{
-			"Viewer": "@<SenderUser> Commands are available here: https://pastebin.com/H60Ydn1s\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2",
-			"Moderator": "@<SenderUser> Mod Commands here:https://pastebin.com/tPPjRE1f"
-		}
-      
+      "Discord": {
+        "Viewer": "@<SenderUser> Commands are available here: https://pastebin.com/wfF6m3nq\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2",
+        "Moderator": "@<SenderUser> Mod Commands here:https://pastebin.com/cfQ2ShTM"
+      },
+      "Twitch": {
+        "Viewer": "@<SenderUser> Commands are available here: https://pastebin.com/H60Ydn1s\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2",
+        "Moderator": "@<SenderUser> Mod Commands here:https://pastebin.com/tPPjRE1f"
+      }
     }
   },
   "Rewards": {
@@ -254,10 +260,6 @@
   },
   "Notifications": {
     "DiscordUsers": [
-      "165910220395118592",
-      "142365660553412608",
-      "300712019466911744",
-      "209507598175567872"
     ],
     "DiscordMessage": "The stream has started! https://twitch.tv/harbonator\nDisable these messages using `!notifications off`."
   }

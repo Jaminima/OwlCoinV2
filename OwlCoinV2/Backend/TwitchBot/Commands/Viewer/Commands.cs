@@ -64,9 +64,17 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             if (e.ChatMessage.IsSubscriber) { Required = int.Parse(Shared.ConfigHandler.Config["Songs"]["Cost"]["Subscriber"].ToString()); }
             if (MyBal >= Required)
             {
-                MyBal -= Required;
-                Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Required);
-                Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "!sr" + e.ChatMessage.Message.Remove(0,Shared.ConfigHandler.Config["Prefix"].ToString().Length+1));
+                Newtonsoft.Json.Linq.JToken Result = Nightbot.Requests.RequestSong(
+                    e.ChatMessage.Message.Replace(Shared.ConfigHandler.Config["Prefix"].ToString()+"r ","")
+                    .Replace(Shared.ConfigHandler.Config["Prefix"].ToString() + "sr ", "")
+                    );
+                if (Result["status"].ToString() == "200")
+                {
+                    MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Request"]["Success"].ToString(), null, int.Parse(Result["item"]["_position"].ToString()), -1, Result["item"]["track"]["title"].ToString());
+                    Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Required);
+                }
+                else { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Request"]["Failed"].ToString(), null, -1, -1, Result["message"].ToString()); }
+                //Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "!sr" + e.ChatMessage.Message.Remove(0, Shared.ConfigHandler.Config["Prefix"].ToString().Length + 1));
             }
             else { MessageHandler.SendMessage(e,MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString(),e.ChatMessage)); }
         }
@@ -165,7 +173,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                     {
                         string Mins = "min";
                         if (MinsLeft != 1) { Mins = Mins + "s"; }
-                        MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage,null,MinsLeft));
+                        MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage,null,MinsLeft,-1,"Mins"));
                         return;
                     }
                     LastRequested.Remove(Pair);
@@ -183,7 +191,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 SoundURL = Init.SQLInstance.Select("Alerts", "SoundUrl", "AlertID=" + AlertID)[0];
             int Cost = int.Parse(Init.SQLInstance.Select("Alerts", "Cost", "AlertID=" + AlertID)[0]);
             int TSinceLast = (int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(LastReq)).TotalSeconds);
-            if (TSinceLast < 120&&LastReq!="0") { MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage, null, (120 - TSinceLast))); return; }
+            if (TSinceLast < 120&&LastReq!="0") { MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage, null, (120 - TSinceLast),-1,"Seconds")); return; }
             if (Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Cost))
             {
                 if (Streamlabs.Alert.SendRequest(ImageURL, SoundURL))

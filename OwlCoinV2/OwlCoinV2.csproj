@@ -254,6 +254,7 @@
     <Compile Include="Backend\TwitchBot\Commands\Duels.cs" />
     <Compile Include="Backend\TwitchBot\Events.cs" />
     <Compile Include="Backend\TwitchBot\MessageHandler.cs" />
+    <Compile Include="Backend\TwitchBot\Nightbot\Requests.cs" />
     <Compile Include="Backend\TwitchBot\Streamlabs\Alert.cs" />
     <Compile Include="Backend\TwitchBot\UserHandler.cs" />
     <Compile Include="Backend\WebHandler\HTTPServer.cs" />
