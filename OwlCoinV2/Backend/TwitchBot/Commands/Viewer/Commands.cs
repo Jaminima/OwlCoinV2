@@ -168,12 +168,12 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             {
                 if (Pair[0] == e.ChatMessage.UserId)
                 {
-                    int MinsLeft = 10-(int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(Pair[1])).TotalMinutes);
+                    int MinsLeft = int.Parse(Shared.ConfigHandler.Config["Alerts"]["CoolDown"]["User"].ToString())-(int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(Pair[1])).TotalSeconds);
                     if (MinsLeft>0)
                     {
                         string Mins = "min";
                         if (MinsLeft != 1) { Mins = Mins + "s"; }
-                        MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage,null,MinsLeft,-1,"Mins"));
+                        MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage,null,MinsLeft,-1,"Seconds"));
                         return;
                     }
                     LastRequested.Remove(Pair);
@@ -191,7 +191,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 SoundURL = Init.SQLInstance.Select("Alerts", "SoundUrl", "AlertID=" + AlertID)[0];
             int Cost = int.Parse(Init.SQLInstance.Select("Alerts", "Cost", "AlertID=" + AlertID)[0]);
             int TSinceLast = (int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(LastReq)).TotalSeconds);
-            if (TSinceLast < 120&&LastReq!="0") { MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage, null, (120 - TSinceLast),-1,"Seconds")); return; }
+            if (TSinceLast < int.Parse(Shared.ConfigHandler.Config["Alerts"]["CoolDown"]["Global"].ToString()) && LastReq!="0") { MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage, null, (120 - TSinceLast),-1,"Seconds")); return; }
             if (Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Cost))
             {
                 if (Streamlabs.Alert.SendRequest(ImageURL, SoundURL))

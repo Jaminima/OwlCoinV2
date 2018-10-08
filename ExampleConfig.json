@@ -26,6 +26,12 @@
   "CurrencyAbreviation": "OwC",
   "GambleWinChance": 40,
   "MessageDelay": 0,
+  "Alerts":{
+	"CoolDown":{
+		"Global":0,
+		"User":600
+	}
+  },
   "Songs": {
     "Cost": {
       "Viewer": 500,
@@ -260,6 +266,11 @@
   },
   "Notifications": {
     "DiscordUsers": [
+      "165910220395118592",
+      "142365660553412608",
+      "300712019466911744",
+      "203985432076222464",
+      "346692523382669315"
     ],
     "DiscordMessage": "The stream has started! https://twitch.tv/harbonator\nDisable these messages using `!notifications off`."
   }
