@@ -26,11 +26,11 @@
   "CurrencyAbreviation": "OwC",
   "GambleWinChance": 40,
   "MessageDelay": 0,
-  "Alerts":{
-	"CoolDown":{
-		"Global":0,
-		"User":600
-	}
+  "Alerts": {
+    "CoolDown": {
+      "Global": 0,
+      "User": 600
+    }
   },
   "Songs": {
     "Cost": {
@@ -197,7 +197,12 @@
       "SetTitle": "@<SenderUser> Set Title to: @<OtherString>",
       "SetGame": "@<SenderUser> Game Set to: @<OtherString>",
       "Give": "@<SenderUser> Gave @<Amount> @<CurrencyName> too @<TargetUser>",
-      "RefreshConfig": "@<SenderUser> Refreshed The Config!"
+      "RefreshConfig": "@<SenderUser> Refreshed The Config!",
+      "Play": "@<SenderUser> Music has been Resumed.",
+      "Pause": "@<SenderUser> Music has been Paused.",
+      "Skip": "@<SenderUser> Current song has been skipped.",
+      "Volume": "@<SenderUser> Volume has been set.",
+      "NightBotError": "@<SenderUser> An error occured while performing the request!"
     },
     "Help": {
       "Discord": {

@@ -40,18 +40,26 @@ namespace OwlCoinV2.Backend.TwitchBot.Nightbot
             }
         }
 
-        public static Newtonsoft.Json.Linq.JToken RequestSong(string Url)
+        public static Newtonsoft.Json.Linq.JToken GenericExecute(string URL,string Method)
         {
-            WebRequest Req = WebRequest.Create("https://api.nightbot.tv/1/song_requests/queue");
-            Req.Method = "POST";
+            return GenericExecute(URL, "",Method);
+        }
+
+        public static Newtonsoft.Json.Linq.JToken GenericExecute(string URL,string Data,string Method)
+        {
+            WebRequest Req = WebRequest.Create(URL);
+            Req.Method = Method;
             Req.Headers.Add("Authorization", "Bearer " + GetAuthToken());
-            byte[] PostData = Encoding.UTF8.GetBytes("q="+Url);
             Req.ContentType = "application/x-www-form-urlencoded";
-            Req.ContentLength = PostData.Length;
-            Stream PostStream = Req.GetRequestStream();
-            PostStream.Write(PostData, 0, PostData.Length);
-            PostStream.Flush();
-            PostStream.Close();
+            if (Data != "")
+            {
+                byte[] PostData = Encoding.UTF8.GetBytes(Data);
+                Req.ContentLength = PostData.Length;
+                Stream PostStream = Req.GetRequestStream();
+                PostStream.Write(PostData, 0, PostData.Length);
+                PostStream.Flush();
+                PostStream.Close();
+            }
             try
             {
                 WebResponse Res = Req.GetResponse();
@@ -63,6 +71,32 @@ namespace OwlCoinV2.Backend.TwitchBot.Nightbot
             {
                 return Newtonsoft.Json.Linq.JToken.Parse(new StreamReader(E.Response.GetResponseStream()).ReadToEnd());
             }
+        }
+        static int PrevVolume = 10;
+        public static Newtonsoft.Json.Linq.JToken PauseSong()
+        {
+            PrevVolume = int.Parse(GenericExecute("https://api.nightbot.tv/1/song_requests", "GET")["settings"]["volume"].ToString());
+            return GenericExecute("https://api.nightbot.tv/1/song_requests", "volume=0","PUT");
+        }
+
+        public static Newtonsoft.Json.Linq.JToken PlaySong()
+        {
+            return GenericExecute("https://api.nightbot.tv/1/song_requests", "volume="+PrevVolume,"PUT");
+        }
+
+        public static Newtonsoft.Json.Linq.JToken SkipSong()
+        {
+            return GenericExecute("https://api.nightbot.tv/1/song_requests/queue/skip","POST");
+        }
+
+        public static Newtonsoft.Json.Linq.JToken SetVolume(int Volume)
+        {
+            return GenericExecute("https://api.nightbot.tv/1/song_requests", "volume=" + Volume, "PUT");
+        }
+
+        public static Newtonsoft.Json.Linq.JToken RequestSong(string Url)
+        {
+            return GenericExecute("https://api.nightbot.tv/1/song_requests/queue", "q=" + Url,"POST");
         }
 
     }

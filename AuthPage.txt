@@ -1,5 +1,5 @@
 curl -X GET 'https://id.twitch.tv/oauth2/authorize?client_id=obav1xhsi7jl5dx7a2ydqhxbvc4nt1&redirect_uri=https://www.google.co.uk&response_type=token+id_token&scope=channel_subscriptions+channel_editor+openid+chat_login'
 
-https://api.nightbot.tv/oauth2/authorize?response_type=code&client_id=0bf148a036929ca19f87db18c8ff370f&redirect_uri=https://www.google.co.uk&scope=song_requests_queue
+https://api.nightbot.tv/oauth2/authorize?response_type=code&client_id=0bf148a036929ca19f87db18c8ff370f&redirect_uri=https://www.twitch.tv/harbonator&scope=song_requests_queue+song_requests
 
 curl -X POST "https://api.nightbot.tv/oauth2/token" -d "client_id=0bf148a036929ca19f87db18c8ff370f" -d "client_secret=b81b739fab07368ea210bbc97176f621" -d "grant_type=authorization_code" -d "redirect_uri=https://www.twitch.tv/harbonator" -d "code=a754807edbb6afbbe195c3c805f6b4148b5046bf"

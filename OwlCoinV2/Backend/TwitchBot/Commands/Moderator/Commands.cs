@@ -59,6 +59,66 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
             NotMod(e);
         }
 
+        public static void Play(OnMessageReceivedArgs e, string[] SegmentedMessage)
+        {
+            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
+            {
+                Newtonsoft.Json.Linq.JToken Result= Nightbot.Requests.PlaySong();
+                if (Result["status"].ToString() == "200") { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Play"].ToString(), null); }
+                else { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["NightBotError"].ToString(), null);
+                    Console.WriteLine(Result["message"].ToString());
+                }
+                return;
+            }
+            NotMod(e);
+        }
+
+        public static void Pause(OnMessageReceivedArgs e, string[] SegmentedMessage)
+        {
+            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
+            {
+                Newtonsoft.Json.Linq.JToken Result = Nightbot.Requests.PauseSong();
+                if (Result["status"].ToString() == "200") { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Pause"].ToString(), null); }
+                else { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["NightBotError"].ToString(), null);
+                    Console.WriteLine(Result["message"].ToString());
+                }
+                return;
+            }
+            NotMod(e);
+        }
+
+        public static void Skip(OnMessageReceivedArgs e, string[] SegmentedMessage)
+        {
+            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
+            {
+                Newtonsoft.Json.Linq.JToken Result = Nightbot.Requests.SkipSong();
+                if (Result["status"].ToString() == "200") { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Skip"].ToString(), null); }
+                else { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["NightBotError"].ToString(), null);
+                    Console.WriteLine(Result["message"].ToString());
+                }
+                return;
+            }
+            NotMod(e);
+        }
+
+        public static void Volume(OnMessageReceivedArgs e, string[] SegmentedMessage)
+        {
+            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
+            {
+                if (SegmentedMessage.Length != 2) { MessageHandler.NotLongEnough(e); return; }
+                int Volume = int.Parse(SegmentedMessage[1]);
+                Newtonsoft.Json.Linq.JToken Result = Nightbot.Requests.SetVolume(Volume);
+                if (Result["status"].ToString() == "200") { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Volume"].ToString(), null); }
+                else
+                {
+                    MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["NightBotError"].ToString(), null);
+                    Console.WriteLine(Result["message"].ToString());
+                }
+                return;
+            }
+            NotMod(e);
+        }
+
         public static void NotMod(OnMessageReceivedArgs e)
         {
             MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotMod"].ToString(),null);
