@@ -73,9 +73,12 @@ namespace OwlCoinV2.Backend.TwitchBot.Nightbot
             }
         }
         static int PrevVolume = 10;
+
+        public static Newtonsoft.Json.Linq.JToken GetQueue() { return GenericExecute("https://api.nightbot.tv/1/song_requests", "GET"); }
+
         public static Newtonsoft.Json.Linq.JToken PauseSong()
         {
-            PrevVolume = int.Parse(GenericExecute("https://api.nightbot.tv/1/song_requests", "GET")["settings"]["volume"].ToString());
+            PrevVolume = int.Parse(GetQueue()["settings"]["volume"].ToString());
             return GenericExecute("https://api.nightbot.tv/1/song_requests", "volume=0","PUT");
         }
 
@@ -96,7 +99,26 @@ namespace OwlCoinV2.Backend.TwitchBot.Nightbot
 
         public static Newtonsoft.Json.Linq.JToken RequestSong(string Url)
         {
-            return GenericExecute("https://api.nightbot.tv/1/song_requests/queue", "q=" + Url,"POST");
+            return GenericExecute("https://api.nightbot.tv/1/song_requests/queue", "q=" + Url, "POST");
+        }
+
+        public static Newtonsoft.Json.Linq.JToken RemoveItem(int i)
+        {
+            Newtonsoft.Json.Linq.JToken Song = GetSongFromPos(i);
+            if (Song["status"].ToString() != "200") { return Song; }
+            return RemoveID(Song["_id"].ToString());
+        }
+
+        public static Newtonsoft.Json.Linq.JToken RemoveID(string ID)
+        {
+            return GenericExecute("https://api.nightbot.tv/1/song_requests/queue/" + ID, "DELETE");
+        }
+
+        public static Newtonsoft.Json.Linq.JToken GetSongFromPos(int i)
+        {
+            Newtonsoft.Json.Linq.JToken CurrentQueue = GenericExecute("https://api.nightbot.tv/1/song_requests/queue", "GET");
+            if (CurrentQueue["queue"].Count() < i || i <= 0) { return Newtonsoft.Json.Linq.JToken.Parse("{\"message\":\"Out of range!\",\"status\":400}"); }
+            return CurrentQueue["queue"][i - 1];
         }
 
     }

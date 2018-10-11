@@ -17,7 +17,7 @@ namespace OwlCoinV2.Backend.TwitchBot
         static Thread TwitchThread;
         public static void Start()
         {
-            TwitchThread = new Thread(()=>StartUp());
+            TwitchThread = new Thread(() => StartUp());
             TwitchThread.Start();
         }
 

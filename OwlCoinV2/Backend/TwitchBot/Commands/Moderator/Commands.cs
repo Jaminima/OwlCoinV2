@@ -101,6 +101,24 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
             NotMod(e);
         }
 
+        public static void Remove(OnMessageReceivedArgs e, string[] SegmentedMessage)
+        {
+            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
+            {
+                int Item = 0;
+                try { Item = int.Parse(SegmentedMessage[2]); } catch { MessageHandler.InvalidParameter(e); return; }
+                Newtonsoft.Json.Linq.JToken Result = Nightbot.Requests.RemoveItem(Item);
+                if (Result["status"].ToString() == "200") { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["RemoveSong"].ToString(), null); }
+                else
+                {
+                    MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["NightBotError"].ToString(), null);
+                    Console.WriteLine(Result["message"].ToString());
+                }
+                return;
+            }
+            NotMod(e);
+        }
+
         public static void Volume(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
             if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)

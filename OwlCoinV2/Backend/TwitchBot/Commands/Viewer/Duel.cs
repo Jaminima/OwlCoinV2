@@ -91,7 +91,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             else
             {
                 Response = Shared.Data.Accounts.PayUser(duel.duelee, Shared.IDType.Twitch, duel.target, Shared.IDType.Twitch, duel.amount);
-                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["Win"].ToString(), UserHandler.UserFromUserID(duel.duelee).Name,duel.amount);
+                MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["Won"].ToString(), UserHandler.UserFromUserID(duel.duelee).Name,duel.amount);
                 //Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + UserHandler.UserFromUserID(duel.target).Name + " won " + duel.amount + " Owlcoins in a duel against @" + UserHandler.UserFromUserID(duel.duelee).Name + " and now has " + (targetCoins + duel.amount) + " Owlcoins!");
             }
             if (!Response.Success)

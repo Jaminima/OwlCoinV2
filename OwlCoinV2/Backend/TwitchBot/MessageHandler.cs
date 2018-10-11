@@ -135,25 +135,7 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Commands.Viewer.Commands.Help(e, SegmentedMessage);
                 }
 
-                if (Command == "play")
-                {
-                    Commands.Moderator.Commands.Play(e,SegmentedMessage);
-                }
-
-                if (Command == "pause")
-                {
-                    Commands.Moderator.Commands.Pause(e, SegmentedMessage);
-                }
-
-                if (Command == "skip")
-                {
-                    Commands.Moderator.Commands.Skip(e, SegmentedMessage);
-                }
-
-                if (Command == "volume")
-                {
-                    Commands.Moderator.Commands.Volume(e, SegmentedMessage);
-                }
+                
 
             }
             else

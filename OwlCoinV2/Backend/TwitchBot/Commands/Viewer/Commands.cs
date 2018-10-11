@@ -70,11 +70,12 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                     );
                 if (Result["status"].ToString() == "200")
                 {
+                    try { Songs.PreviousSongRequests.Remove(e.ChatMessage.UserId); } catch { }
+                    Songs.PreviousSongRequests.Add(e.ChatMessage.UserId,Result["item"]["_id"].ToString());
                     MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Request"]["Success"].ToString(), null, int.Parse(Result["item"]["_position"].ToString()), -1, Result["item"]["track"]["title"].ToString());
                     Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Required);
                 }
                 else { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Request"]["Failed"].ToString(), null, -1, -1, Result["message"].ToString()); }
-                //Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "!sr" + e.ChatMessage.Message.Remove(0, Shared.ConfigHandler.Config["Prefix"].ToString().Length + 1));
             }
             else { MessageHandler.SendMessage(e,MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString(),e.ChatMessage)); }
         }
