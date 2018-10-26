@@ -192,7 +192,8 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 SoundURL = Init.SQLInstance.Select("Alerts", "SoundUrl", "AlertID=" + AlertID)[0];
             int Cost = int.Parse(Init.SQLInstance.Select("Alerts", "Cost", "AlertID=" + AlertID)[0]);
             int TSinceLast = (int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(LastReq)).TotalSeconds);
-            if (TSinceLast < int.Parse(Shared.ConfigHandler.Config["Alerts"]["CoolDown"]["Global"].ToString()) && LastReq!="0") { MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage, null, (120 - TSinceLast),-1,"Seconds")); return; }
+            int GlobalTime = int.Parse(Shared.ConfigHandler.Config["Alerts"]["CoolDown"]["Global"].ToString());
+            if (TSinceLast < GlobalTime && LastReq!="0") { MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage, null, (GlobalTime - TSinceLast),-1,"Seconds")); return; }
             if (Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Cost))
             {
                 if (Streamlabs.Alert.SendRequest(ImageURL, SoundURL))
