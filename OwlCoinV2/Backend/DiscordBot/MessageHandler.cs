@@ -24,7 +24,7 @@ namespace OwlCoinV2.Backend.DiscordBot
             string Command = SegmentedMessage[0].ToLower();
             string Prefix = Shared.ConfigHandler.Config["Prefix"].ToString();
 
-            Shared.Data.UserData.CreateUser(Message.Author.Id.ToString(), Shared.IDType.Discord);
+            Shared.Data.EventResponse CreateUser = Shared.Data.UserData.CreateUser(Message.Author.Id.ToString(), Shared.IDType.Discord);
             Shared.Data.UserData.MergeAccounts(Message.Author.Id.ToString());
 
             await AwardForInteraction(Message);
@@ -38,6 +38,10 @@ namespace OwlCoinV2.Backend.DiscordBot
                 //    if (SegmentedMessage.Length < 2) { NotLongEnough(Message); return; }
                 //    await Message.Channel.SendMessageAsync(Message.Content.Remove(0, Command.Length + Prefix.Length + 1));
                 //}
+
+                //if (Command == "join") { await AudioBot.Bot.JoinVoice(Message); }
+                //if (Command == "play") {
+                //    await AudioBot.Bot.PlaySong(Message); }
 
                 if (Command == "notifications" || Command == "notification")
                 {

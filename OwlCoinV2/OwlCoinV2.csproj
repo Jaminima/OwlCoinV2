@@ -227,6 +227,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\DiscordBot\AudioBot\Bot.cs" />
     <Compile Include="Backend\DiscordBot\Bot.cs" />
     <Compile Include="Backend\DiscordBot\Commands\Moderator\Commands.cs" />
     <Compile Include="Backend\DiscordBot\Commands\NotificationHandler.cs" />
