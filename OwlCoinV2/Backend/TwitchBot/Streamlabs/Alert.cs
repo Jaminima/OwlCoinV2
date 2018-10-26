@@ -20,6 +20,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Streamlabs
                 "&sound_href=" + SoundUrl);
             //byte[] PostData = Encoding.UTF8.GetBytes("access_token=" + Shared.ConfigHandler.Config["StreamLabs"]["access_token"].ToString() + "&type=donation&image_href=" + ImageUrl + "&sound_href=" + SoundUrl);
             Req.ContentLength = PostData.Length;
+            Req.Timeout = 500;
             Stream PostStream = Req.GetRequestStream();
             PostStream.Write(PostData, 0, PostData.Length);
             PostStream.Flush();
@@ -28,7 +29,9 @@ namespace OwlCoinV2.Backend.TwitchBot.Streamlabs
             try
             {
                 Res = Req.GetResponse();
-                //Console.WriteLine(new StreamReader(Res.GetResponseStream()).ReadToEnd());
+                Newtonsoft.Json.Linq.JToken Data=Newtonsoft.Json.Linq.JToken.Parse(new StreamReader(Res.GetResponseStream()).ReadToEnd());
+                if (Data == null) { return false; }
+                //Console.WriteLine(Data);
                 return true;
             }
             catch (WebException E)
