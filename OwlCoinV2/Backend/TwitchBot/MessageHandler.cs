@@ -51,6 +51,11 @@ namespace OwlCoinV2.Backend.TwitchBot
                     SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["SimpleEcho"][Command].ToString(), null);
                 }
 
+                if (Command == "uptime")
+                {
+                    Commands.Viewer.Commands.Uptime(e, SegmentedMessage);
+                }
+
                 if (Command == "pay"||Command=="give"+Shared.ConfigHandler.Config["CurrencyName"].ToString().ToLower())
                 {
                     Commands.Viewer.Commands.Pay(e, SegmentedMessage);

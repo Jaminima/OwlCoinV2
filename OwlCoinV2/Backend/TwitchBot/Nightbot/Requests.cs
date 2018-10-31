@@ -105,7 +105,6 @@ namespace OwlCoinV2.Backend.TwitchBot.Nightbot
         public static Newtonsoft.Json.Linq.JToken RemoveItem(int i)
         {
             Newtonsoft.Json.Linq.JToken Song = GetSongFromPos(i);
-            if (Song["status"].ToString() != "200") { return Song; }
             return RemoveID(Song["_id"].ToString());
         }
 
@@ -117,6 +116,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Nightbot
         public static Newtonsoft.Json.Linq.JToken GetSongFromPos(int i)
         {
             Newtonsoft.Json.Linq.JToken CurrentQueue = GenericExecute("https://api.nightbot.tv/1/song_requests/queue", "GET");
+            if (CurrentQueue["status"].ToString() != "200") { return Newtonsoft.Json.Linq.JToken.Parse("{\"message\":\"Error occured\",\"status\":400}"); }
             if (CurrentQueue["queue"].Count() < i || i <= 0) { return Newtonsoft.Json.Linq.JToken.Parse("{\"message\":\"Out of range!\",\"status\":400}"); }
             return CurrentQueue["queue"][i - 1];
         }
