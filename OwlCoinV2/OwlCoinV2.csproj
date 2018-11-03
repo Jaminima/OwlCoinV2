@@ -258,7 +258,6 @@
     <Compile Include="Backend\TwitchBot\Nightbot\Requests.cs" />
     <Compile Include="Backend\TwitchBot\Streamlabs\Alert.cs" />
     <Compile Include="Backend\TwitchBot\UserHandler.cs" />
-    <Compile Include="Backend\WebHandler\HTTPServer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

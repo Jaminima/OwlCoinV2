@@ -79,7 +79,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             if (random.Next(100) < 50)
             {
                 Response = Shared.Data.Accounts.PayUser(duel.target, Shared.IDType.Discord, duel.duelee, Shared.IDType.Discord, duel.amount);
-                await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["Lose"].ToString(), duel.target, duel.amount);
+                await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Duel"]["Lose"].ToString(), duel.duelee, duel.amount);
                 //await Message.Channel.SendMessageAsync("<@" + duel.duelee + "> won " + duel.amount + " Owlcoins in a duel against <@" + duel.target + "> and now has " + (dueleeCoins + duel.amount) + " Owlcoins!");
             }
             else

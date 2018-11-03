@@ -12,8 +12,8 @@ namespace OwlCoinV2.Backend
         public static void Start()
         {
             Shared.ConfigHandler.LoadConfig();
-            //TwitchBot.Bot.Start();
-            //DiscordBot.Bot.Start();
+            TwitchBot.Bot.Start();
+            DiscordBot.Bot.Start();
         }
 
     }
