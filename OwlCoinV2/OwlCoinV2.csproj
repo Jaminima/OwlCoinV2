@@ -233,6 +233,7 @@
     <Compile Include="Backend\DiscordBot\Commands\Viewer\Commands.cs" />
     <Compile Include="Backend\DiscordBot\Commands\Viewer\Duel.cs" />
     <Compile Include="Backend\Shared\InputVerification.cs" />
+    <Compile Include="Backend\Shared\WebRequests.cs" />
     <Compile Include="Backend\TwitchBot\AutoMessage.cs" />
     <Compile Include="Backend\TwitchBot\Commands\Viewer\Duel.cs" />
     <Compile Include="Backend\DiscordBot\Duels.cs" />

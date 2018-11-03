@@ -10,11 +10,11 @@ namespace OwlCoinV2.Backend.Shared.Data
 {
     public static class UserData
     {
-        public static EventResponse CreateUser(string ID,IDType IDVariant)
+        public static EventResponse CreateUser(string ID, IDType IDVariant)
         {
             EventResponse Response = new EventResponse();
-            bool UserExists=false;
-            if (UserData.UserExists(ID,IDVariant))
+            bool UserExists = false;
+            if (UserData.UserExists(ID, IDVariant))
             { UserExists = true; }
 
             if (UserExists) { Response.Message = "User already exists"; return Response; }
@@ -96,23 +96,26 @@ namespace OwlCoinV2.Backend.Shared.Data
             return Response;
         }
 
-        public static EventResponse AddID(string CurrentID, IDType CurrentIDVariant,string NewID, IDType NewIDVariant)
+        public static EventResponse AddID(string CurrentID, IDType CurrentIDVariant, string NewID, IDType NewIDVariant)
         {
             EventResponse Response = new EventResponse();
 
             bool UserExists = false;
-            if (UserData.UserExists(CurrentID,CurrentIDVariant))
+            if (UserData.UserExists(CurrentID, CurrentIDVariant))
             { UserExists = true; }
 
             if (!UserExists) { Response.Message = "User doesnt exist"; return Response; }
 
-            try
+            Newtonsoft.Json.Linq.JToken User = GetUser(CurrentID, CurrentIDVariant)["Data"];
+            User[NewIDVariant.ToString() + "Id"] = NewID;
+            Newtonsoft.Json.Linq.JToken D = WebRequests.POST(ConfigHandler.Config["API"]["URL"].ToString() + ":" + ConfigHandler.Config["API"]["Port"] + "/update/user", null, User.ToString());
+
+            if (D["Status"].ToString() == "200")
             {
-                Init.SQLInstance.Update("UserData",CurrentIDVariant.ToString()+"ID="+CurrentID,NewIDVariant.ToString()+"ID="+NewID);
                 Response.Success = true;
                 Response.Message = "Set " + NewIDVariant.ToString() + "ID";
             }
-            catch { Response.Message = "Error occured while setting " + NewIDVariant.ToString() + "ID"; }
+            else { Response.Message = "Error occured while setting " + NewIDVariant.ToString() + "ID"; }
 
             return Response;
         }
@@ -130,7 +133,15 @@ namespace OwlCoinV2.Backend.Shared.Data
 
         public static Boolean UserExists(string ID, IDType IDVariant)
         {
-            return Init.SQLInstance.Select("UserData", IDVariant.ToString() + "ID").Contains<String>(ID.ToString());
+            return GetUser(ID, IDVariant)["Status"].ToString() == "200";
+        }
+
+        public static Newtonsoft.Json.Linq.JToken GetUser(string ID, IDType IDVariant)
+        {
+            Dictionary<string, string> Headers = new Dictionary<string, string> { };
+            Headers.Add(IDVariant.ToString() + "Id", ID);
+            Newtonsoft.Json.Linq.JToken Response = WebRequests.POST(ConfigHandler.Config["API"]["URL"].ToString() + ":" + ConfigHandler.Config["API"]["Port"] + "/user", Headers);
+            return Response;
         }
 
     }
