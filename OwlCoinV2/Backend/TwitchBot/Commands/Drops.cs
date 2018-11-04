@@ -87,6 +87,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
         public static void WatchingGiveOC()
         {
             string ChannelID = UserHandler.UserFromUsername(Shared.ConfigHandler.Config["ChannelName"].ToString()).Matches[0].Id;
+            if (!IsLive()) { return; }
             List<String> Subs = GetSubs();
             foreach (string UserId in GetWatching())
             {
