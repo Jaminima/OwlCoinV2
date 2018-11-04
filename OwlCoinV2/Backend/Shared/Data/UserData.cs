@@ -27,7 +27,9 @@ namespace OwlCoinV2.Backend.Shared.Data
                     {
                         if (UserData.UserExists(Connection["id"].ToString(), IDType.Twitch))
                         {
-                            Newtonsoft.Json.Linq.JToken User = GetUser(Connection["id"].ToString(), IDType.Twitch)["Data"];
+                            Newtonsoft.Json.Linq.JToken R = UserData.GetUser(ID, IDVariant);
+                            if (R["Status"].ToString() != "200") { Response.Message = Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["WhoKnows"].ToString(); return Response; }
+                            Newtonsoft.Json.Linq.JToken User = R["Data"];
                             if (User["TwitchId"].ToString() == "")
                             {
                                 User["DiscordId"] = ID.ToString();
@@ -59,7 +61,9 @@ namespace OwlCoinV2.Backend.Shared.Data
         public static EventResponse MergeAccounts(string DiscordID)
         {
             EventResponse Response = new EventResponse();
-            Newtonsoft.Json.Linq.JToken User = GetUser(DiscordID, IDType.Discord)["Data"];
+            Newtonsoft.Json.Linq.JToken R = UserData.GetUser(DiscordID, Shared.IDType.Twitch);
+            if (R["Status"].ToString() != "200") { Response.Message = Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["WhoKnows"].ToString(); return Response; }
+            Newtonsoft.Json.Linq.JToken User = R["Data"];
             if (User["TwitchId"].ToString() == "")
             {
                 foreach (Newtonsoft.Json.Linq.JObject Connection in GetConnections(DiscordID)["connected_accounts"])
@@ -68,13 +72,19 @@ namespace OwlCoinV2.Backend.Shared.Data
                     {
                         if (UserData.UserExists(Connection["id"].ToString(), IDType.Twitch))
                         {
-                            User = GetUser(Connection["id"].ToString(), IDType.Twitch)["Data"];
+                            R = UserData.GetUser(Connection["id"].ToString(), IDType.Twitch);
+                            if (R["Status"].ToString() != "200") { Response.Message = Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["WhoKnows"].ToString(); return Response; }
+                            User = R["Data"];
                             if (User["DiscordId"].ToString() == "")
                             {
                                 Accounts.GiveUser(Connection["id"].ToString(), IDType.Twitch, Accounts.GetBalance(DiscordID, IDType.Discord));
-                                User = GetUser(DiscordID, IDType.Discord)["Data"];
+                                R = UserData.GetUser(DiscordID, Shared.IDType.Discord);
+                                if (R["Status"].ToString() != "200") { Response.Message = Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["WhoKnows"].ToString(); return Response; }
+                                User = R["Data"];
                                 WebRequests.POST("/delete/user/"+User["UserId"].ToString());
-                                User = GetUser(Connection["id"].ToString(),IDType.Twitch)["Data"];
+                                R = UserData.GetUser(Connection["id"].ToString(), IDType.Twitch);
+                                if (R["Status"].ToString() != "200") { Response.Message = Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["WhoKnows"].ToString(); return Response; }
+                                User = R["Data"];
                                 User["DiscordId"] = DiscordID.ToString();
                                 WebRequests.POST("/update/user", null, User.ToString());
                             }
@@ -96,7 +106,9 @@ namespace OwlCoinV2.Backend.Shared.Data
 
             if (!UserExists) { Response.Message = "User doesnt exist"; return Response; }
 
-            Newtonsoft.Json.Linq.JToken User = GetUser(CurrentID, CurrentIDVariant)["Data"];
+            Newtonsoft.Json.Linq.JToken R = UserData.GetUser(CurrentID, CurrentIDVariant);
+            if (R["Status"].ToString() != "200") { Response.Message = Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["WhoKnows"].ToString(); return Response; }
+            Newtonsoft.Json.Linq.JToken User = R["Data"];
             User[NewIDVariant.ToString() + "Id"] = NewID;
             Newtonsoft.Json.Linq.JToken D = WebRequests.POST("/update/user", null, User.ToString());
 

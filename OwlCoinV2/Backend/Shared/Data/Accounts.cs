@@ -11,7 +11,9 @@ namespace OwlCoinV2.Backend.Shared.Data
         public static int GetBalance(string ID, IDType IDVariant)
         {
             UserData.CreateUser(ID, IDVariant);
-            Newtonsoft.Json.Linq.JToken User = UserData.GetUser(ID, IDVariant)["Data"];
+            Newtonsoft.Json.Linq.JToken R = UserData.GetUser(ID, IDVariant);
+            if (R["Status"].ToString() != "200") { return -1; }
+            Newtonsoft.Json.Linq.JToken User = R["Data"];
             return int.Parse(User["Account"]["Balance"].ToString());
         }
 
@@ -21,7 +23,9 @@ namespace OwlCoinV2.Backend.Shared.Data
             Amount = Math.Abs(Amount);
             bool Response = false;
             
-            Newtonsoft.Json.Linq.JToken User = UserData.GetUser(ID, IDVariant)["Data"];
+            Newtonsoft.Json.Linq.JToken R = UserData.GetUser(ID, IDVariant);
+            if (R["Status"].ToString() != "200") { return false; }
+            Newtonsoft.Json.Linq.JToken User = R["Data"];
             Dictionary<string,string> Headers = new Dictionary<string,string> { };
             Headers.Add("Value", Amount.ToString());
             Newtonsoft.Json.Linq.JToken Resp=WebRequests.POST("/account/give/" + User["UserId"].ToString(), Headers);
@@ -35,7 +39,9 @@ namespace OwlCoinV2.Backend.Shared.Data
             Amount = Math.Abs(Amount);
             bool Response = false;
 
-            Newtonsoft.Json.Linq.JToken User = UserData.GetUser(ID, IDVariant)["Data"];
+            Newtonsoft.Json.Linq.JToken R = UserData.GetUser(ID, IDVariant);
+            if (R["Status"].ToString() != "200") { return false; }
+            Newtonsoft.Json.Linq.JToken User = R["Data"];
             Dictionary<string, string> Headers = new Dictionary<string, string> { };
             Headers.Add("Value", Amount.ToString());
             Newtonsoft.Json.Linq.JToken Resp = WebRequests.POST("/account/take/" + User["UserId"].ToString(), Headers);
@@ -49,7 +55,9 @@ namespace OwlCoinV2.Backend.Shared.Data
             Amount = Math.Abs(Amount);
             bool Response = false;
 
-            Newtonsoft.Json.Linq.JToken User = UserData.GetUser(ID, IDVariant)["Data"];
+            Newtonsoft.Json.Linq.JToken R = UserData.GetUser(ID, IDVariant);
+            if (R["Status"].ToString() != "200") { return false; }
+            Newtonsoft.Json.Linq.JToken User = R["Data"];
             Dictionary<string, string> Headers = new Dictionary<string, string> { };
             Headers.Add("Value", Amount.ToString());
             Newtonsoft.Json.Linq.JToken Resp = WebRequests.POST("/account/set/" + User["UserId"].ToString(), Headers);
@@ -66,8 +74,10 @@ namespace OwlCoinV2.Backend.Shared.Data
 
             if (UserData.UserExists(MyID, MyIDType) && UserData.UserExists(TheirID, TheirIDType))
             {
-                Newtonsoft.Json.Linq.JToken MyUser = UserData.GetUser(MyID, MyIDType)["Data"],
-                    TheirUser=UserData.GetUser(TheirID,TheirIDType)["Data"];
+                Newtonsoft.Json.Linq.JToken MyUser = UserData.GetUser(MyID, MyIDType),
+                    TheirUser=UserData.GetUser(TheirID,TheirIDType);
+                if (MyUser["Status"].ToString() != "200" || TheirUser["Status"].ToString() != "200") { Response.Message = Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["WhoKnows"].ToString(); return Response; }
+                MyUser = MyUser["Data"]; TheirUser = TheirUser["Data"];
                 if (MyUser["UserId"].ToString() == TheirUser["UserId"].ToString()) { Response.Message= Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["Self"].ToString(); return Response; }
                 int MyBal = int.Parse(MyUser["Account"]["Balance"].ToString()),
                     TheirBal = int.Parse(TheirUser["Account"]["Balance"].ToString());
