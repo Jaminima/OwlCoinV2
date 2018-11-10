@@ -232,8 +232,8 @@ namespace OwlCoinV2.Backend.TwitchBot
             if (e != null) { ConfString = ConfString.Replace("@<SenderUser>", "@" + e.Username); }
             ConfString = ConfString.Replace("@<CurrencyName>", Shared.ConfigHandler.Config["CurrencyName"].ToString());
             ConfString = ConfString.Replace("@<TargetUser>", "@" + TargetUsername);
-            ConfString = ConfString.Replace("@<Amount>", Amount.ToString());
-            ConfString = ConfString.Replace("@<NewBalance>", NewBal.ToString());
+            ConfString = ConfString.Replace("@<Amount>", Amount.ToString("N0"));
+            ConfString = ConfString.Replace("@<NewBalance>", NewBal.ToString("N0"));
             ConfString = ConfString.Replace("@<Prefix>", Shared.ConfigHandler.Config["Prefix"].ToString());
             return ConfString;
         }
@@ -243,8 +243,8 @@ namespace OwlCoinV2.Backend.TwitchBot
             ConfString = ConfString.Replace("@<SenderUser>", "@" + SenderUsername);
             ConfString = ConfString.Replace("@<CurrencyName>", Shared.ConfigHandler.Config["CurrencyName"].ToString());
             ConfString = ConfString.Replace("@<TargetUser>", "@" + TargetUsername);
-            ConfString = ConfString.Replace("@<Amount>", Amount.ToString());
-            ConfString = ConfString.Replace("@<NewBalance>", NewBal.ToString());
+            ConfString = ConfString.Replace("@<Amount>", Amount.ToString("N0"));
+            ConfString = ConfString.Replace("@<NewBalance>", NewBal.ToString("N0"));
             ConfString = ConfString.Replace("@<Prefix>", Shared.ConfigHandler.Config["Prefix"].ToString());
             return ConfString;
         }

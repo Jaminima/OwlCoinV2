@@ -230,6 +230,8 @@
   },
   "Rewards": {
     "Twitch": {
+		"Exceptions":[
+		],
       "Watching": {
         "Viewer": 100,
         "Subscriber": 300

@@ -91,8 +91,11 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
             List<String> Subs = GetSubs();
             foreach (string UserId in GetWatching())
             {
-                if (Subs.Contains(UserId)) { Shared.Data.Accounts.GiveUser(UserId, Shared.IDType.Twitch, int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Watching"]["Subscriber"].ToString())); }
-                else { Shared.Data.Accounts.GiveUser(UserId, Shared.IDType.Twitch, int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Watching"]["Viewer"].ToString())); }
+                if (!Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Exceptions"].Contains(UserId))
+                {
+                    if (Subs.Contains(UserId)) { Shared.Data.Accounts.GiveUser(UserId, Shared.IDType.Twitch, int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Watching"]["Subscriber"].ToString())); }
+                    else { Shared.Data.Accounts.GiveUser(UserId, Shared.IDType.Twitch, int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Watching"]["Viewer"].ToString())); }
+                }
             }
         }
 

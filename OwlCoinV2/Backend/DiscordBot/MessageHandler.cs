@@ -155,8 +155,8 @@ namespace OwlCoinV2.Backend.DiscordBot
             if (e != null) { ConfString = ConfString.Replace("@<SenderUser>", "<@" + e.Id+">"); }
             ConfString = ConfString.Replace("@<CurrencyName>", Shared.ConfigHandler.Config["CurrencyName"].ToString());
             ConfString = ConfString.Replace("@<TargetUser>", "<@" + TargetUserID+">");
-            ConfString = ConfString.Replace("@<Amount>", Amount.ToString());
-            ConfString = ConfString.Replace("@<NewBalance>", NewBal.ToString());
+            ConfString = ConfString.Replace("@<Amount>", Amount.ToString("N0"));
+            ConfString = ConfString.Replace("@<NewBalance>", NewBal.ToString("N0"));
             ConfString = ConfString.Replace("@<Prefix>", Shared.ConfigHandler.Config["Prefix"].ToString());
             return ConfString;
         }
