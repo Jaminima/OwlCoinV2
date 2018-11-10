@@ -23,8 +23,8 @@ namespace OwlCoinV2.Backend.DiscordBot
             await DiscordClient.StartAsync();
             await DiscordClient.SetGameAsync("!help");
             Console.WriteLine("DiscordBot Started");
-            //new Thread(() => Duels.Handler()).Start();
-            //new Thread(async () => await Commands.NotificationHandler.LiveEvent()).Start();
+            new Thread(() => Duels.Handler()).Start();
+            new Thread(async () => await Commands.NotificationHandler.LiveEvent()).Start();
         }
 
     }

@@ -1,11 +1,12 @@
 {
-	"API":{
-		"URL":"http://localhost",
-		"Port":80
-	},
+  "API": {
+    "URL": "http://localhost",
+    "Port": 80,
+    "AuthToken": ""
+  },
   "TwitchBot": {
-    "Username": "OwlCoinbot",
-    "0AuthToken": "",
+    "Username": "",
+    "0AuthToken": "oauth:",
     "ClientId": "",
     "AccessToken": ""
   },
@@ -140,6 +141,7 @@
       "snapchat": "@<SenderUser> https://www.snapchat.com/add/harbonator"
     },
     "Errors": {
+      "WhoKnows": "@<SenderUser> Some error occured for some reason...",
       "NoUser": "@<SenderUser> That User Doesnt Exist!",
       "NotEnough": "@<SenderUser> You dont have enough @<CurrencyName>!",
       "OtherNotEnough": "@<SenderUser> @<TargetUser> doesnt have enough @<CurrencyName>",
@@ -259,10 +261,6 @@
     "LoopStartDelay": 10,
     "Messages": [
       {
-        "Text": "Please fill out this review form https://goo.gl/forms/H8zsEVrB9LfHvnfp1",
-        "Delay": 35
-      },
-      {
         "Text": "Amazon prime allows you to subscribe to the Harbonator for FREE. 1. Click here and link your account: https://twitch.amazon.com/prime 2. Click the subscribe button and select your Amazon Prime as payment method. Its is that simple to support your favourite streamer :))))).",
         "Delay": 45
       },
@@ -285,10 +283,9 @@
     ]
   },
   "Notifications": {
+    "LastLive": "10/11/2018 22:09:06",
+    "MinimumDownTime": 30,
     "DiscordUsers": [
-      "165910220395118592",
-      "300712019466911744",
-      "203985432076222464"
     ],
     "DiscordMessage": "The stream has started! https://twitch.tv/harbonator\nDisable these messages using `!notifications off`."
   }
