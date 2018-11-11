@@ -1,0 +1,28 @@
+{
+	"API": {
+    "URL": "http://54.38.214.166",
+    "Port": 80,
+    "AuthToken": ""
+  },
+  "TwitchBot": {
+    "Username": "",
+    "0AuthToken": "oauth:",
+    "ClientId": "",
+    "AccessToken": ""
+  },
+  "DiscordBot": {
+    "Token": "",
+    "AuthToken": ""
+  },
+  "StreamLabs": {
+    "RefreshToken": "",
+    "ClientId": "",
+    "ClientSecret": ""
+  },
+  "NightBot": {
+    "ChannelID": "",
+    "ClientId": "",
+    "ClientSecret": "",
+    "RefreshToken": ""
+  }
+}
