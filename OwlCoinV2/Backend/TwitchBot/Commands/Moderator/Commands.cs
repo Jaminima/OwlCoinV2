@@ -123,8 +123,8 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
         {
             if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
             {
-                if (SegmentedMessage.Length != 2) { MessageHandler.NotLongEnough(e); return; }
-                int Volume = int.Parse(SegmentedMessage[1]);
+                if (SegmentedMessage.Length != 3) { MessageHandler.NotLongEnough(e); return; }
+                int Volume = int.Parse(SegmentedMessage[2]);
                 Newtonsoft.Json.Linq.JToken Result = Nightbot.Requests.SetVolume(Volume);
                 if (Result["status"].ToString() == "200") { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Volume"].ToString(), null); }
                 else
