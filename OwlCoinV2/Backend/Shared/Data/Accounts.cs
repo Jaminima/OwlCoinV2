@@ -8,17 +8,13 @@ namespace OwlCoinV2.Backend.Shared.Data
 {
     public static class Accounts
     {
-        public static void CreateAccount(string ID, IDType IDVariant)
-        {
-            string OwlCoinID = Init.SQLInstance.Select("UserData", "OwlCoinID", IDVariant.ToString() + "ID='" + ID + "'")[0];
-            Init.SQLInstance.Insert("Accounts", new string[] { "OwlCoinID", "Balance" }, new string[] { OwlCoinID, "500" });
-        }
-
         public static int GetBalance(string ID, IDType IDVariant)
         {
             UserData.CreateUser(ID, IDVariant);
-            string OwlCoinID = Init.SQLInstance.Select("UserData", "OwlCoinID", IDVariant.ToString() + "ID='" + ID + "'")[0];
-            return int.Parse(Init.SQLInstance.Select("Accounts", "Balance", "OwlCoinID=" + OwlCoinID)[0]);
+            Newtonsoft.Json.Linq.JToken R = UserData.GetUser(ID, IDVariant);
+            if (R["Status"].ToString() != "200") { return -1; }
+            Newtonsoft.Json.Linq.JToken User = R["Data"];
+            return int.Parse(User["Account"]["Balance"].ToString());
         }
 
         public static bool GiveUser(string ID, IDType IDVariant,int Amount)
@@ -26,13 +22,14 @@ namespace OwlCoinV2.Backend.Shared.Data
             UserData.CreateUser(ID, IDVariant);
             Amount = Math.Abs(Amount);
             bool Response = false;
-
-            UserData.CreateUser(ID, IDVariant);
-            string OCID = Init.SQLInstance.Select("UserData", "OwlCoinID", IDVariant.ToString() + "ID='" + ID + "'")[0];
-            int Bal = int.Parse(Init.SQLInstance.Select("Accounts", "Balance", "OwlCoinID=" + OCID)[0]);
-            Bal += Amount;
-            Init.SQLInstance.Update("Accounts", "OwlCoinID=" + OCID, "Balance=" + Bal);
-            Response = true;
+            
+            Newtonsoft.Json.Linq.JToken R = UserData.GetUser(ID, IDVariant);
+            if (R["Status"].ToString() != "200") { return false; }
+            Newtonsoft.Json.Linq.JToken User = R["Data"];
+            Dictionary<string,string> Headers = new Dictionary<string,string> { };
+            Headers.Add("Value", Amount.ToString());
+            Newtonsoft.Json.Linq.JToken Resp=WebRequests.POST("/account/give/" + User["UserId"].ToString(), Headers);
+            Response = Resp["Status"].ToString()=="200";
             return Response;
         }
 
@@ -42,15 +39,29 @@ namespace OwlCoinV2.Backend.Shared.Data
             Amount = Math.Abs(Amount);
             bool Response = false;
 
+            Newtonsoft.Json.Linq.JToken R = UserData.GetUser(ID, IDVariant);
+            if (R["Status"].ToString() != "200") { return false; }
+            Newtonsoft.Json.Linq.JToken User = R["Data"];
+            Dictionary<string, string> Headers = new Dictionary<string, string> { };
+            Headers.Add("Value", Amount.ToString());
+            Newtonsoft.Json.Linq.JToken Resp = WebRequests.POST("/account/take/" + User["UserId"].ToString(), Headers);
+            Response = Resp["Status"].ToString() == "200";
+            return Response;
+        }
+
+        public static bool SetUser(string ID, IDType IDVariant, int Amount)
+        {
             UserData.CreateUser(ID, IDVariant);
-            string OCID = Init.SQLInstance.Select("UserData", "OwlCoinID", IDVariant.ToString() + "ID='" + ID + "'")[0];
-            int Bal = int.Parse(Init.SQLInstance.Select("Accounts", "Balance", "OwlCoinID=" + OCID)[0]);
-            Bal -= Amount;
-            if (Bal >= 0)
-            {
-                Init.SQLInstance.Update("Accounts", "OwlCoinID=" + OCID, "Balance=" + Bal);
-                Response = true;
-            }
+            Amount = Math.Abs(Amount);
+            bool Response = false;
+
+            Newtonsoft.Json.Linq.JToken R = UserData.GetUser(ID, IDVariant);
+            if (R["Status"].ToString() != "200") { return false; }
+            Newtonsoft.Json.Linq.JToken User = R["Data"];
+            Dictionary<string, string> Headers = new Dictionary<string, string> { };
+            Headers.Add("Value", Amount.ToString());
+            Newtonsoft.Json.Linq.JToken Resp = WebRequests.POST("/account/set/" + User["UserId"].ToString(), Headers);
+            Response = Resp["Status"].ToString() == "200";
             return Response;
         }
 
@@ -63,16 +74,19 @@ namespace OwlCoinV2.Backend.Shared.Data
 
             if (UserData.UserExists(MyID, MyIDType) && UserData.UserExists(TheirID, TheirIDType))
             {
-                string MyOCID = Init.SQLInstance.Select("UserData", "OwlCoinID", MyIDType.ToString() + "ID='" + MyID + "'")[0],
-                    TheirOCID = Init.SQLInstance.Select("UserData", "OwlCoinID", TheirIDType.ToString() + "ID='" + TheirID + "'")[0];
-                if (MyOCID == TheirOCID) { Response.Message= Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["Self"].ToString(); return Response; }
-                int MyBal = int.Parse(Init.SQLInstance.Select("Accounts", "Balance", "OwlCoinID=" + MyOCID)[0]),
-                    TheirBal = int.Parse(Init.SQLInstance.Select("Accounts", "Balance", "OwlCoinID=" + TheirOCID)[0]);
+                Newtonsoft.Json.Linq.JToken MyUser = UserData.GetUser(MyID, MyIDType),
+                    TheirUser=UserData.GetUser(TheirID,TheirIDType);
+                if (MyUser["Status"].ToString() != "200" || TheirUser["Status"].ToString() != "200") { Response.Message = Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["WhoKnows"].ToString(); return Response; }
+                MyUser = MyUser["Data"]; TheirUser = TheirUser["Data"];
+                if (MyUser["UserId"].ToString() == TheirUser["UserId"].ToString()) { Response.Message= Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["Self"].ToString(); return Response; }
+                int MyBal = int.Parse(MyUser["Account"]["Balance"].ToString()),
+                    TheirBal = int.Parse(TheirUser["Account"]["Balance"].ToString());
                 if (MyBal >= Amount)
                 {
-                    TheirBal += Amount; MyBal -= Amount;
-                    Init.SQLInstance.Update("Accounts", "OwlCoinID=" + MyOCID, "Balance=" + MyBal);
-                    Init.SQLInstance.Update("Accounts", "OwlCoinID=" + TheirOCID, "Balance=" + TheirBal);
+                    Dictionary<string, string> Headers = new Dictionary<string, string> { };
+                    Headers.Add("Value", Amount.ToString());
+                    WebRequests.POST("/account/take/"+MyUser["UserId"],Headers);
+                    WebRequests.POST("/account/give/"+TheirUser["UserId"],Headers);
                     Response.Message = " Payment of "+Amount+" Owlcoin Complete, New Balance: "+MyBal+" Owlcoin!";
                     Response.Success = true;
                 }

@@ -14,9 +14,9 @@ namespace OwlCoinV2.Backend.TwitchBot.Nightbot
         {
             Shared.ConfigHandler.LoadConfig();
             WebRequest Req = WebRequest.Create("https://api.nightbot.tv/oauth2/token");
-            byte[] PostData = Encoding.UTF8.GetBytes("client_id=" + Shared.ConfigHandler.Config["NightBot"]["ClientId"] +
-                "&client_secret=" + Shared.ConfigHandler.Config["NightBot"]["ClientSecret"] +
-                "&grant_type=refresh_token&redirect_uri=https://www.twitch.tv/harbonator&refresh_token=" + Shared.ConfigHandler.Config["NightBot"]["RefreshToken"]);
+            byte[] PostData = Encoding.UTF8.GetBytes("client_id=" + Shared.ConfigHandler.LoginConfig["NightBot"]["ClientId"] +
+                "&client_secret=" + Shared.ConfigHandler.LoginConfig["NightBot"]["ClientSecret"] +
+                "&grant_type=refresh_token&redirect_uri=https://www.twitch.tv/harbonator&refresh_token=" + Shared.ConfigHandler.LoginConfig["NightBot"]["RefreshToken"]);
             Req.Method = "POST";
             Req.ContentType = "application/x-www-form-urlencoded";
             Req.ContentLength = PostData.Length;
@@ -29,7 +29,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Nightbot
                 WebResponse Res = Req.GetResponse();
                 string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
                 Newtonsoft.Json.Linq.JObject JD = Newtonsoft.Json.Linq.JObject.Parse(D);
-                Shared.ConfigHandler.Config["NightBot"]["RefreshToken"] = JD["refresh_token"];
+                Shared.ConfigHandler.LoginConfig["NightBot"]["RefreshToken"] = JD["refresh_token"];
                 Shared.ConfigHandler.SaveConfig();
                 return JD["access_token"].ToString();
             }
@@ -105,7 +105,6 @@ namespace OwlCoinV2.Backend.TwitchBot.Nightbot
         public static Newtonsoft.Json.Linq.JToken RemoveItem(int i)
         {
             Newtonsoft.Json.Linq.JToken Song = GetSongFromPos(i);
-            if (Song["status"].ToString() != "200") { return Song; }
             return RemoveID(Song["_id"].ToString());
         }
 
@@ -117,6 +116,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Nightbot
         public static Newtonsoft.Json.Linq.JToken GetSongFromPos(int i)
         {
             Newtonsoft.Json.Linq.JToken CurrentQueue = GenericExecute("https://api.nightbot.tv/1/song_requests/queue", "GET");
+            if (CurrentQueue["status"].ToString() != "200") { return Newtonsoft.Json.Linq.JToken.Parse("{\"message\":\"Error occured\",\"status\":400}"); }
             if (CurrentQueue["queue"].Count() < i || i <= 0) { return Newtonsoft.Json.Linq.JToken.Parse("{\"message\":\"Out of range!\",\"status\":400}"); }
             return CurrentQueue["queue"][i - 1];
         }

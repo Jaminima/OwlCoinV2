@@ -158,6 +158,18 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
 
             return Age;
         }
+        
+        static string TSpan(TimeSpan Span)
+        {
+            string sSpan = "";
+            if (Span.Days != 0) { if (Span.Days == 1) { sSpan += Span.Days + " Days "; } else { sSpan += Span.Days + " Days "; } }
+            if (Span.Hours != 0 && Span.Days == 0 && Span.Hours == 0) { sSpan += "and "; }
+            if (Span.Hours != 0) { if (Span.Hours == 1) { sSpan += Span.Hours + " Hours "; } else { sSpan += Span.Hours + " Hours "; } }
+            if (Span.Minutes != 0 && Span.Hours == 0) { sSpan += "and "; }
+            if (Span.Minutes != 0) { if (Span.Minutes == 1) { sSpan += Span.Minutes + " Minuntes "; } else { sSpan += Span.Minutes + " Minutes "; } }
+            if (Span.Seconds != 0) { if (Span.Seconds == 1) { sSpan += "and " + Span.Seconds + " Second "; } else { sSpan += "and " + Span.Seconds + " Seconds "; } }
+            return sSpan;
+        }
 
         static List<string[]> LastRequested = new List<string[]> { };
         static string LastReq = "0";
@@ -192,7 +204,8 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
                 SoundURL = Init.SQLInstance.Select("Alerts", "SoundUrl", "AlertID=" + AlertID)[0];
             int Cost = int.Parse(Init.SQLInstance.Select("Alerts", "Cost", "AlertID=" + AlertID)[0]);
             int TSinceLast = (int)(TimeSpan.FromTicks(DateTime.Now.Ticks - long.Parse(LastReq)).TotalSeconds);
-            if (TSinceLast < int.Parse(Shared.ConfigHandler.Config["Alerts"]["CoolDown"]["Global"].ToString()) && LastReq!="0") { MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage, null, (120 - TSinceLast),-1,"Seconds")); return; }
+            int GlobalTime = int.Parse(Shared.ConfigHandler.Config["Alerts"]["CoolDown"]["Global"].ToString());
+            if (TSinceLast < GlobalTime && LastReq!="0") { MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage, null, (GlobalTime - TSinceLast),-1,"Seconds")); return; }
             if (Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Cost))
             {
                 if (Streamlabs.Alert.SendRequest(ImageURL, SoundURL))
@@ -289,6 +302,14 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             Shared.Data.Accounts.GiveUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Reward);
             MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Fish"]["Fished"].ToString(), null, Reward, -1, Item["Name"].ToString());
             Fishermen.Remove(e.ChatMessage.UserId);
+        }
+
+        public static void Uptime(OnMessageReceivedArgs e, string[] SegmentedMessage)
+        {
+            TwitchLib.Api.Models.v5.Users.User Channel = UserHandler.UserFromUsername(e.ChatMessage.Channel).Matches[0];
+            TimeSpan? UpTime = Task.Run(async () => await Bot.TwitchA.Streams.v5.GetUptimeAsync(Channel.Id)).Result;
+            if (UpTime == null) { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Uptime"]["NotLive"].ToString(), null); return; }
+            MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Uptime"]["Live"].ToString(), null,-1,-1,TSpan(UpTime.Value));
         }
 
     }

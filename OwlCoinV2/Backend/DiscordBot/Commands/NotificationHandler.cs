@@ -27,7 +27,8 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands
                 if (StreamLive != IsLive && UserList.Count != 0)
                 {
                     StreamLive = IsLive;
-                    if (StreamLive)
+                    TimeSpan TSPan = (TimeSpan)(DateTime.Now - DateTime.Parse(Shared.ConfigHandler.Config["Notifications"]["LastLive"].ToString()));
+                    if (StreamLive&&(int)Math.Floor(TSPan.TotalMinutes)>=int.Parse(Shared.ConfigHandler.Config["Notifications"]["MinimumDownTime"].ToString()))
                     {
                         foreach (Newtonsoft.Json.Linq.JToken User in Shared.ConfigHandler.Config["Notifications"]["DiscordUsers"])
                         {
@@ -46,6 +47,11 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands
                             }
                         }
                     }
+                }
+                if (IsLive)
+                {
+                    Shared.ConfigHandler.Config["Notifications"]["LastLive"] = DateTime.Now.ToString();
+                    Shared.ConfigHandler.SaveConfig();
                 }
                 System.Threading.Thread.Sleep(60000);
             }

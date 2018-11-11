@@ -97,7 +97,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
         {
             WebRequest Req = WebRequest.Create("https://api.nightbot.tv/1/song_requests/queue");
             Req.Method = "GET";
-            Req.Headers.Add("Nightbot-Channel", Shared.ConfigHandler.Config["NightBot"]["ChannelID"].ToString());
+            Req.Headers.Add("Nightbot-Channel", Shared.ConfigHandler.LoginConfig["NightBot"]["ChannelID"].ToString());
             try {
                 WebResponse Res = Req.GetResponse();
                 string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();

@@ -24,10 +24,10 @@ namespace OwlCoinV2.Backend.TwitchBot
         public static void StartUp()
         {
             TwitchA = new TwitchAPI();
-            TwitchA.Settings.ClientId = Shared.ConfigHandler.Config["TwitchBot"]["ClientId"].ToString();
-            TwitchA.Settings.AccessToken = Shared.ConfigHandler.Config["TwitchBot"]["AccessToken"].ToString();
+            TwitchA.Settings.ClientId = Shared.ConfigHandler.LoginConfig["TwitchBot"]["ClientId"].ToString();
+            TwitchA.Settings.AccessToken = Shared.ConfigHandler.LoginConfig["TwitchBot"]["AccessToken"].ToString();
 
-            ConnectionCredentials credentials = new ConnectionCredentials(Shared.ConfigHandler.Config["TwitchBot"]["Username"].ToString(), Shared.ConfigHandler.Config["TwitchBot"]["0AuthToken"].ToString());
+            ConnectionCredentials credentials = new ConnectionCredentials(Shared.ConfigHandler.LoginConfig["TwitchBot"]["Username"].ToString(), Shared.ConfigHandler.LoginConfig["TwitchBot"]["0AuthToken"].ToString());
             TwitchC = new TwitchClient();
             TwitchC.Initialize(credentials, Shared.ConfigHandler.Config["ChannelName"].ToString());
             TwitchC.OnMessageReceived += MessageHandler.HandleMessage;

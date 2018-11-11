@@ -87,11 +87,15 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
         public static void WatchingGiveOC()
         {
             string ChannelID = UserHandler.UserFromUsername(Shared.ConfigHandler.Config["ChannelName"].ToString()).Matches[0].Id;
+            if (!IsLive()) { return; }
             List<String> Subs = GetSubs();
             foreach (string UserId in GetWatching())
             {
-                if (Subs.Contains(UserId)) { Shared.Data.Accounts.GiveUser(UserId, Shared.IDType.Twitch, int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Watching"]["Subscriber"].ToString())); }
-                else { Shared.Data.Accounts.GiveUser(UserId, Shared.IDType.Twitch, int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Watching"]["Viewer"].ToString())); }
+                if (!Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Exceptions"].Contains(UserId))
+                {
+                    if (Subs.Contains(UserId)) { Shared.Data.Accounts.GiveUser(UserId, Shared.IDType.Twitch, int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Watching"]["Subscriber"].ToString())); }
+                    else { Shared.Data.Accounts.GiveUser(UserId, Shared.IDType.Twitch, int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Watching"]["Viewer"].ToString())); }
+                }
             }
         }
 
@@ -132,8 +136,8 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
         {
             WebRequest Req = WebRequest.Create("https://api.twitch.tv/kraken/channels/" + Shared.ConfigHandler.Config["ChannelName"] + "/subscriptions?offset=" + Offset);
             Req.Method = "GET";
-            Req.Headers.Add("Client-ID", Shared.ConfigHandler.Config["TwitchBot"]["ClientId"].ToString());
-            Req.Headers.Add("Authorization", "OAuth " + Shared.ConfigHandler.Config["TwitchBot"]["AccessToken"].ToString());
+            Req.Headers.Add("Client-ID", Shared.ConfigHandler.LoginConfig["TwitchBot"]["ClientId"].ToString());
+            Req.Headers.Add("Authorization", "OAuth " + Shared.ConfigHandler.LoginConfig["TwitchBot"]["AccessToken"].ToString());
             WebResponse Res = Req.GetResponse();
             string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
             return D;
@@ -145,8 +149,8 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
             {
                 WebRequest Req = WebRequest.Create("https://api.twitch.tv/helix/streams?user_login=" + Shared.ConfigHandler.Config["ChannelName"]);
                 Req.Method = "GET";
-                Req.Headers.Add("Client-ID", Shared.ConfigHandler.Config["TwitchBot"]["ClientId"].ToString());
-                Req.Headers.Add("Authorization", "OAuth " + Shared.ConfigHandler.Config["TwitchBot"]["AccessToken"].ToString());
+                Req.Headers.Add("Client-ID", Shared.ConfigHandler.LoginConfig["TwitchBot"]["ClientId"].ToString());
+                Req.Headers.Add("Authorization", "OAuth " + Shared.ConfigHandler.LoginConfig["TwitchBot"]["AccessToken"].ToString());
                 WebResponse Res = Req.GetResponse();
                 string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
                 Newtonsoft.Json.Linq.JObject JD = Newtonsoft.Json.Linq.JObject.Parse(D);

@@ -1,4 +1,9 @@
 {
+  "API": {
+    "URL": "http://localhost",
+    "Port": 80,
+    "AuthToken": ""
+  },
   "TwitchBot": {
     "Username": "",
     "0AuthToken": "oauth:",
@@ -28,8 +33,8 @@
   "MessageDelay": 0,
   "Alerts": {
     "CoolDown": {
-      "Global": 0,
-      "User": 600
+      "Global": 60,
+      "User": 300
     }
   },
   "Songs": {
@@ -136,6 +141,7 @@
       "snapchat": "@<SenderUser> https://www.snapchat.com/add/harbonator"
     },
     "Errors": {
+      "WhoKnows": "@<SenderUser> Some error occured for some reason...",
       "NoUser": "@<SenderUser> That User Doesnt Exist!",
       "NotEnough": "@<SenderUser> You dont have enough @<CurrencyName>!",
       "OtherNotEnough": "@<SenderUser> @<TargetUser> doesnt have enough @<CurrencyName>",
@@ -153,6 +159,10 @@
     "Bal": {
       "Self": "@<SenderUser> You have @<Amount> @<CurrencyName>",
       "Other": "@<SenderUser> @<TargetUser> Has @<Amount> @<CurrencyName>"
+    },
+    "Uptime": {
+      "NotLive": "@<SenderUser> The stream is not live!",
+      "Live": "@<SenderUser> The stream has been live for @<OtherString>"
     },
     "Roulette": {
       "Win": "@<SenderUser> Won @<Amount> @<CurrencyName> in roulette!",
@@ -182,6 +192,8 @@
       "Queue": "@<SenderUser> View queue here: https://beta.nightbot.tv/t/harbonator/song_requests",
       "Playlist": "@<SenderUser> View playlist here: https://beta.nightbot.tv/t/harbonator/song_requests/playlist",
       "Current": "@<SenderUser> Current Song is: @<OtherString>",
+      "Cancel": "@<SenderUser> Your last requested song has been removed.",
+      "CancelFailed": "@<SenderUser> You dont have a queued song!",
       "CurrentFailed": "@<SenderUser> An Error Occured while fetching data! Please try again soon."
     },
     "Fish": {
@@ -202,6 +214,7 @@
       "Pause": "@<SenderUser> Music has been Paused.",
       "Skip": "@<SenderUser> Current song has been skipped.",
       "Volume": "@<SenderUser> Volume has been set.",
+      "RemoveSong": "@<SenderUser> Removed target song.",
       "NightBotError": "@<SenderUser> An error occured while performing the request!"
     },
     "Help": {
@@ -217,6 +230,8 @@
   },
   "Rewards": {
     "Twitch": {
+		"Exceptions":[
+		],
       "Watching": {
         "Viewer": 100,
         "Subscriber": 300
@@ -270,12 +285,9 @@
     ]
   },
   "Notifications": {
+    "LastLive": "10/11/2018 22:09:06",
+    "MinimumDownTime": 30,
     "DiscordUsers": [
-      "165910220395118592",
-      "142365660553412608",
-      "300712019466911744",
-      "203985432076222464",
-      "346692523382669315"
     ],
     "DiscordMessage": "The stream has started! https://twitch.tv/harbonator\nDisable these messages using `!notifications off`."
   }
