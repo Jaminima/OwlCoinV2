@@ -125,7 +125,7 @@ namespace OwlCoinV2.Backend.Shared.Data
         static Newtonsoft.Json.Linq.JObject GetConnections(string ID)
         {
             WebRequest Req = WebRequest.Create("https://discordapp.com/api/v6/users/" + ID + "/profile");
-            Req.Headers.Add("authorization", ConfigHandler.Config["DiscordBot"]["AuthToken"].ToString());
+            Req.Headers.Add("authorization", ConfigHandler.LoginConfig["DiscordBot"]["AuthToken"].ToString());
             Req.Method = "GET";
             WebResponse Res = Req.GetResponse();
             string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();

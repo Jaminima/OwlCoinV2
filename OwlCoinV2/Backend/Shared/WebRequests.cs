@@ -13,7 +13,7 @@ namespace OwlCoinV2.Backend.Shared
         public static Newtonsoft.Json.Linq.JToken GET(string URL)
         {
             if (CachedObjectExists(URL, null, null)) { return GetCachedResponse(URL, null, null); }
-            WebRequest Request = WebRequest.Create(ConfigHandler.Config["API"]["URL"].ToString() + ":" + ConfigHandler.Config["API"]["Port"] + URL);
+            WebRequest Request = WebRequest.Create(ConfigHandler.LoginConfig["API"]["URL"].ToString() + ":" + ConfigHandler.LoginConfig["API"]["Port"] + URL);
             Request.Method = "GET";
             WebResponse Response = Request.GetResponse();
             string D = new StreamReader(Response.GetResponseStream()).ReadToEnd();
@@ -25,11 +25,11 @@ namespace OwlCoinV2.Backend.Shared
         public static Newtonsoft.Json.Linq.JToken POST(string URL, Dictionary<string, string> Headers = null,string sPostData="")
         {
             if (CachedObjectExists(URL, Headers, sPostData)) { return GetCachedResponse(URL, Headers, sPostData); }
-            WebRequest Request = WebRequest.Create(ConfigHandler.Config["API"]["URL"].ToString() + ":" + ConfigHandler.Config["API"]["Port"] +URL);
+            WebRequest Request = WebRequest.Create(ConfigHandler.LoginConfig["API"]["URL"].ToString() + ":" + ConfigHandler.LoginConfig["API"]["Port"] +URL);
             Request.Method = "POST";
             byte[] PostData = Encoding.UTF8.GetBytes(sPostData);
             if (Headers != null) { foreach (KeyValuePair<string, string> Pair in Headers) { Request.Headers.Add(Pair.Key, Pair.Value); } }
-            Request.Headers.Add("AuthToken", ConfigHandler.Config["API"]["AuthToken"].ToString());
+            Request.Headers.Add("AuthToken", ConfigHandler.LoginConfig["API"]["AuthToken"].ToString());
             Request.ContentLength = PostData.Length;
             Stream PostStream = Request.GetRequestStream();
             PostStream.Write(PostData, 0, PostData.Length);
