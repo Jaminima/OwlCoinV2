@@ -121,10 +121,10 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
 
         public static void Help(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
-            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
-            {
-                MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Twitch"]["Moderator"].ToString(), e.ChatMessage));
-            }
+            //if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
+            //{
+            //    MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Twitch"]["Moderator"].ToString(), e.ChatMessage));
+            //}
             MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Twitch"]["Viewer"].ToString(), e.ChatMessage));
         }
 
