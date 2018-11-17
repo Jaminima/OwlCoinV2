@@ -80,8 +80,20 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             else { MessageHandler.SendMessage(e,MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString(),e.ChatMessage)); }
         }
 
+        static Dictionary<string, DateTime> RouletteDelay = new Dictionary<string, DateTime> { };
         public static void Roulette(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
+            if (RouletteDelay.ContainsKey(e.ChatMessage.UserId))
+            {
+                int Seconds = (int)(DateTime.Now - RouletteDelay[e.ChatMessage.UserId]).TotalSeconds,
+                    Delay = int.Parse(Shared.ConfigHandler.Config["Roulette"]["Delay"].ToString());
+                if (Seconds < Delay)
+                {
+                    MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), null, Delay - Seconds, -1, "Seconds");
+                    return;
+                }
+                RouletteDelay.Remove(e.ChatMessage.UserId);
+            }
             int MinBet = int.Parse(Shared.ConfigHandler.Config["Roulette"]["MinBet"].ToString());
             if (SegmentedMessage.Length != 2) { MessageHandler.NotLongEnough(e); return; }
             int coins, amount;
@@ -102,6 +114,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             }
             if (amount <= coins)
             {
+                RouletteDelay.Add(e.ChatMessage.UserId, DateTime.Now);
                 if (random.Next(100) < int.Parse(Shared.ConfigHandler.Config["GambleWinChance"].ToString()))
                 {
                     Shared.Data.Accounts.GiveUser(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch, amount);
