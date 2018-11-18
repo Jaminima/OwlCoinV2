@@ -53,6 +53,10 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             {
                 Moderator.Commands.Remove(e, SegmentedMessage);
             }
+            //if (SubCommand == "promote")
+            //{
+            //    Moderator.Commands.Promote(e, SegmentedMessage);
+            //}
         }
 
         public static void Queue(OnMessageReceivedArgs e, string[] SegmentedMessage)

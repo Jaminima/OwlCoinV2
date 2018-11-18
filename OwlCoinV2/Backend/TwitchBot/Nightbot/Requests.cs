@@ -113,6 +113,17 @@ namespace OwlCoinV2.Backend.TwitchBot.Nightbot
             return GenericExecute("https://api.nightbot.tv/1/song_requests/queue/" + ID, "DELETE");
         }
 
+        public static Newtonsoft.Json.Linq.JToken PromoteItem(int i)
+        {
+            Newtonsoft.Json.Linq.JToken Song = GetSongFromPos(i);
+            return RemoveID(Song["_id"].ToString());
+        }
+
+        public static Newtonsoft.Json.Linq.JToken PromoteID(string ID)
+        {
+            return GenericExecute("https://api.nightbot.tv/1/song_requests/queue/"+ ID+"/promote", "POST");
+        }
+
         public static Newtonsoft.Json.Linq.JToken GetSongFromPos(int i)
         {
             Newtonsoft.Json.Linq.JToken CurrentQueue = GenericExecute("https://api.nightbot.tv/1/song_requests/queue", "GET");
