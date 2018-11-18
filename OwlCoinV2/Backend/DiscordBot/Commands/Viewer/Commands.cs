@@ -48,8 +48,20 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             }
         }
 
+        static Dictionary<ulong, DateTime> RouletteDelay = new Dictionary<ulong, DateTime> { };
         public static async Task Roulette(SocketMessage Message, string[] SegmentedMessage)
         {
+            if (RouletteDelay.ContainsKey(Message.Author.Id))
+            {
+                int Seconds = (int)(DateTime.Now - RouletteDelay[Message.Author.Id]).TotalSeconds,
+                    Delay= int.Parse(Shared.ConfigHandler.Config["Roulette"]["Delay"].ToString());
+                if (Seconds < Delay)
+                {
+                    await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(),null,Delay-Seconds,-1,"Seconds");
+                    return;
+                }
+                RouletteDelay.Remove(Message.Author.Id);
+            }
             int MinBet = int.Parse(Shared.ConfigHandler.Config["Roulette"]["MinBet"].ToString());
             if (SegmentedMessage.Length != 2) { MessageHandler.NotLongEnough(Message); return; }
             int coins, amount;
@@ -66,6 +78,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             if (amount < MinBet) { await MessageHandler.SendMessage(Message,Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["BetTooLow"].ToString()); return; }
             if (amount <= coins)
             {
+                RouletteDelay.Add(Message.Author.Id, DateTime.Now);
                 if (random.Next(100) < int.Parse(Shared.ConfigHandler.Config["GambleWinChance"].ToString()))
                 {
                     Shared.Data.Accounts.GiveUser(Message.Author.Id.ToString(), Shared.IDType.Discord, amount);
@@ -129,10 +142,10 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
 
         public static async Task Help(SocketMessage Message, string[] SegmentedMessage)
         {
-            if (await Moderator.Commands.IsMod(Message))
-            {
-                await MessageHandler.SendMessage(Message, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Discord"]["Moderator"].ToString(), Message.Author));
-            }
+            //if (await Moderator.Commands.IsMod(Message))
+            //{
+            //    await MessageHandler.SendMessage(Message, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Discord"]["Moderator"].ToString(), Message.Author));
+            //}
             await MessageHandler.SendMessage(Message, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Help"]["Discord"]["Viewer"].ToString(), Message.Author));
         }
 

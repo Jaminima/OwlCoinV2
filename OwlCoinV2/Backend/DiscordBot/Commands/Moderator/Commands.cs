@@ -19,9 +19,13 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Moderator
             {
                 string TheirID = MessageHandler.GetDiscordID(SegmentedMessage[1]);
                 int Amount = 0;
-                if (SegmentedMessage[2].ToLower().EndsWith("k")) { Amount = int.Parse(SegmentedMessage[2].ToLower().Replace("k", "")) * 1000; }
-                else if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])) { return; }
-                else { Amount = int.Parse(SegmentedMessage[2]); }
+                try
+                {
+                    if (SegmentedMessage[2].ToLower().EndsWith("k")) { Amount = int.Parse(SegmentedMessage[2].ToLower().Replace("k", "")) * 1000; }
+                    else if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])) { return; }
+                    else { Amount = int.Parse(SegmentedMessage[2]); }
+                }
+                catch { MessageHandler.InvalidParameter(Message); }
                 Shared.Data.Accounts.GiveUser(TheirID, Shared.IDType.Discord, Amount);
                 await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Give"].ToString(), TheirID, Amount);
             }

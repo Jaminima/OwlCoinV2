@@ -1,30 +1,4 @@
 {
-  "API": {
-    "URL": "http://localhost",
-    "Port": 80,
-    "AuthToken": ""
-  },
-  "TwitchBot": {
-    "Username": "",
-    "0AuthToken": "oauth:",
-    "ClientId": "",
-    "AccessToken": ""
-  },
-  "DiscordBot": {
-    "Token": "",
-    "AuthToken": ""
-  },
-  "StreamLabs": {
-    "RefreshToken": "",
-    "ClientId": "",
-    "ClientSecret": ""
-  },
-  "NightBot": {
-    "ChannelID": "",
-    "ClientId": "",
-    "ClientSecret": "",
-    "RefreshToken": ""
-  },
   "ChannelName": "harbonator",
   "Prefix": "!",
   "CurrencyName": "Owlcoin",
@@ -44,7 +18,8 @@
     }
   },
   "Roulette": {
-    "MinBet": 100
+    "MinBet": 100,
+	"Delay":30
   },
   "Duel": {
     "MinBet": 100
@@ -114,7 +89,7 @@
       },
       {
         "Chance": 1,
-        "Name": "harbonTREE Branch",
+        "Name": "Prime Ad",
         "Reward": 25000
       }
     ]
@@ -219,19 +194,24 @@
     },
     "Help": {
       "Discord": {
-        "Viewer": "@<SenderUser> Commands are available here: https://pastebin.com/wfF6m3nq\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2",
+        "Viewer": "@<SenderUser> Commands are available here: http://owlcoin.tk\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2",
         "Moderator": "@<SenderUser> Mod Commands here:https://pastebin.com/cfQ2ShTM"
       },
       "Twitch": {
-        "Viewer": "@<SenderUser> Commands are available here: https://pastebin.com/H60Ydn1s\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2",
+        "Viewer": "@<SenderUser> Commands are available here: http://owlcoin.tk\nHave a bug? Report it here: https://goo.gl/forms/gDfHd701agXEieYu2",
         "Moderator": "@<SenderUser> Mod Commands here:https://pastebin.com/tPPjRE1f"
       }
     }
   },
   "Rewards": {
     "Twitch": {
-		"Exceptions":[
-		],
+      "Exceptions": [
+        "48220152",
+        "19264788",
+        "100135110",
+        "256488324",
+        "93914621"
+      ],
       "Watching": {
         "Viewer": 100,
         "Subscriber": 300
@@ -279,15 +259,18 @@
         "Delay": 40
       },
       {
-        "Text": "harbonTREE harbonSLEEPER harbonDOC harbonFLEX harbonSOCIETY harbonCITO harbonPRIDE harbonHANDS harbonHANDSUP harbonHOP harbonPRIME harbonYIKES harbonFUTURE harbonHYPER harbonLURK harbonBLESS harbonHEY harbonA harbonMEGA1 harbonMEGA2 harbonMEGA3 harbonMEGA4",
+        "Text": "harbonLICENCE harbonTREE harbonLOVE harbonSLEEPER harbonDOC harbonFLEX harbonSOCIETY harbonCITO harbonPRIDE harbonHANDS harbonHANDSUP harbonHOP harbonPRIME harbonYIKES harbonFUTURE harbonHYPER harbonLURK harbonBLESS harbonHEY harbonA harbonMEGA1 harbonMEGA2 harbonMEGA3 harbonMEGA4",
         "Delay": 20
       }
     ]
   },
   "Notifications": {
-    "LastLive": "10/11/2018 22:09:06",
+    "LastLive": "13/11/2018 12:27:43",
     "MinimumDownTime": 30,
     "DiscordUsers": [
+      "165910220395118592",
+      "300712019466911744",
+      "203985432076222464"
     ],
     "DiscordMessage": "The stream has started! https://twitch.tv/harbonator\nDisable these messages using `!notifications off`."
   }
