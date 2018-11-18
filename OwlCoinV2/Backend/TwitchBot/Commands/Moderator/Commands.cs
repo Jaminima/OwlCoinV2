@@ -17,9 +17,13 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
             if (e.ChatMessage.IsModerator||e.ChatMessage.IsBroadcaster)
             {
                 string TheirID = UserHandler.UserFromUsername(SegmentedMessage[1].Replace("@", "")).Matches[0].Id; int Amount = 0;
-                if (SegmentedMessage[2].ToLower().EndsWith("k")) { Amount = int.Parse(SegmentedMessage[2].ToLower().Replace("k", "")) * 1000; }
-                else if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])) { return; }
-                else { Amount = int.Parse(SegmentedMessage[2]); }
+                try
+                {
+                    if (SegmentedMessage[2].ToLower().EndsWith("k")) { Amount = int.Parse(SegmentedMessage[2].ToLower().Replace("k", "")) * 1000; }
+                    else if (Shared.InputVerification.ContainsLetter(SegmentedMessage[2])) { return; }
+                    else { Amount = int.Parse(SegmentedMessage[2]); }
+                }
+                catch { MessageHandler.InvalidParameter(e); }
                 Shared.Data.Accounts.GiveUser(TheirID, Shared.IDType.Twitch, Amount);
                 MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Give"].ToString(), SegmentedMessage[1].Replace("@", ""), Amount);
             }
