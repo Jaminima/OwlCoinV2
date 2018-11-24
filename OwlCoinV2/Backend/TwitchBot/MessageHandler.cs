@@ -135,6 +135,11 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Commands.Moderator.Commands.RefreshConfig(e, SegmentedMessage);
                 }
 
+                if (Command == "latestvid")
+                {
+                    SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["LatestVideo"].ToString(), null, -1, -1, Shared.APIIntergrations.Youtube.LatestVid());
+                }
+
                 if (Command == "help")
                 {
                     Commands.Viewer.Commands.Help(e, SegmentedMessage);

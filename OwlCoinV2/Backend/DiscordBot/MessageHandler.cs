@@ -96,6 +96,11 @@ namespace OwlCoinV2.Backend.DiscordBot
                     await Commands.Moderator.Commands.RefreshConfig(Message, SegmentedMessage);
                 }
 
+                if (Command == "latestvid")
+                {
+                    await SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["LatestVideo"].ToString(), null, -1, -1, Shared.APIIntergrations.Youtube.LatestVid());
+                }
+
                 if (Command == "help")
                 {
                     await Commands.Viewer.Commands.Help(Message, SegmentedMessage);

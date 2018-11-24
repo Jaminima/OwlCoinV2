@@ -64,7 +64,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             if (e.ChatMessage.IsSubscriber) { Required = int.Parse(Shared.ConfigHandler.Config["Songs"]["Cost"]["Subscriber"].ToString()); }
             if (MyBal >= Required)
             {
-                Newtonsoft.Json.Linq.JToken Result = Nightbot.Requests.RequestSong(
+                Newtonsoft.Json.Linq.JToken Result = Shared.APIIntergrations.Nightbot.Requests.RequestSong(
                     e.ChatMessage.Message.Replace(Shared.ConfigHandler.Config["Prefix"].ToString()+"r ","")
                     .Replace(Shared.ConfigHandler.Config["Prefix"].ToString() + "sr ", "")
                     );
@@ -221,7 +221,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             if (TSinceLast < GlobalTime && LastReq!="0") { MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["TooFast"].ToString(), e.ChatMessage, null, (GlobalTime - TSinceLast),-1,"Seconds")); return; }
             if (Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Cost))
             {
-                if (Streamlabs.Alert.SendRequest(ImageURL, SoundURL))
+                if (Shared.APIIntergrations.Streamlabs.Alert.SendRequest(ImageURL, SoundURL))
                 {
                     Bot.TwitchC.SendMessage(e.ChatMessage.Channel, "@" + e.ChatMessage.Username + " Alert sent!");
                     LastReq = DateTime.Now.Ticks.ToString();

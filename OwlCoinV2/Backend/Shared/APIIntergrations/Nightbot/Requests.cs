@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.IO;
 
-namespace OwlCoinV2.Backend.TwitchBot.Nightbot
+namespace OwlCoinV2.Backend.Shared.APIIntergrations.Nightbot
 {
     public static class Requests
     {

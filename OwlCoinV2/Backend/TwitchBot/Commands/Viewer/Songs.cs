@@ -81,10 +81,10 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
         public static Dictionary<String, String> PreviousSongRequests = new Dictionary<string, string> { };
         public static void CancelSong(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
-            Newtonsoft.Json.Linq.JToken QueueData = Nightbot.Requests.GetQueue();
+            Newtonsoft.Json.Linq.JToken QueueData = Shared.APIIntergrations.Nightbot.Requests.GetQueue();
             if (PreviousSongRequests.ContainsKey(e.ChatMessage.UserId))
             {
-                Newtonsoft.Json.Linq.JToken Data = Nightbot.Requests.RemoveID(PreviousSongRequests[e.ChatMessage.UserId]);
+                Newtonsoft.Json.Linq.JToken Data = Shared.APIIntergrations.Nightbot.Requests.RemoveID(PreviousSongRequests[e.ChatMessage.UserId]);
                 if (Data["status"].ToString() == "200")
                 {
                     int Required = int.Parse(Shared.ConfigHandler.Config["Songs"]["Cost"]["Viewer"].ToString());

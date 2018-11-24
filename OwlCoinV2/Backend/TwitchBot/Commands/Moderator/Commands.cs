@@ -67,7 +67,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
         {
             if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
             {
-                Newtonsoft.Json.Linq.JToken Result= Nightbot.Requests.PlaySong();
+                Newtonsoft.Json.Linq.JToken Result= Shared.APIIntergrations.Nightbot.Requests.PlaySong();
                 if (Result["status"].ToString() == "200") { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Play"].ToString(), null); }
                 else { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["NightBotError"].ToString(), null);
                     Console.WriteLine(Result["message"].ToString());
@@ -81,7 +81,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
         {
             if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
             {
-                Newtonsoft.Json.Linq.JToken Result = Nightbot.Requests.PauseSong();
+                Newtonsoft.Json.Linq.JToken Result = Shared.APIIntergrations.Nightbot.Requests.PauseSong();
                 if (Result["status"].ToString() == "200") { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Pause"].ToString(), null); }
                 else { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["NightBotError"].ToString(), null);
                     Console.WriteLine(Result["message"].ToString());
@@ -95,7 +95,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
         {
             if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
             {
-                Newtonsoft.Json.Linq.JToken Result = Nightbot.Requests.SkipSong();
+                Newtonsoft.Json.Linq.JToken Result = Shared.APIIntergrations.Nightbot.Requests.SkipSong();
                 if (Result["status"].ToString() == "200") { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Skip"].ToString(), null); }
                 else { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["NightBotError"].ToString(), null);
                     Console.WriteLine(Result["message"].ToString());
@@ -111,7 +111,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
             {
                 int Item = 0;
                 try { Item = int.Parse(SegmentedMessage[2]); } catch { MessageHandler.InvalidParameter(e); return; }
-                Newtonsoft.Json.Linq.JToken Result = Nightbot.Requests.RemoveItem(Item);
+                Newtonsoft.Json.Linq.JToken Result = Shared.APIIntergrations.Nightbot.Requests.RemoveItem(Item);
                 if (Result["status"].ToString() == "200") { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["RemoveSong"].ToString(), null); }
                 else
                 {
@@ -130,7 +130,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
                 if (SegmentedMessage.Length != 3) { MessageHandler.NotLongEnough(e); return; }
                 int Volume;
                 try { Volume = int.Parse(SegmentedMessage[2]); } catch { MessageHandler.InvalidParameter(e); return; }
-                Newtonsoft.Json.Linq.JToken Result = Nightbot.Requests.SetVolume(Volume);
+                Newtonsoft.Json.Linq.JToken Result = Shared.APIIntergrations.Nightbot.Requests.SetVolume(Volume);
                 if (Result["status"].ToString() == "200") { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Volume"].ToString(), null); }
                 else
                 {
@@ -148,7 +148,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
             {
                 int Item = 0;
                 try { Item = int.Parse(SegmentedMessage[2]); } catch { MessageHandler.InvalidParameter(e); return; }
-                Newtonsoft.Json.Linq.JToken Result = Nightbot.Requests.PromoteItem(Item);
+                Newtonsoft.Json.Linq.JToken Result = Shared.APIIntergrations.Nightbot.Requests.PromoteItem(Item);
                 if (Result["status"].ToString() == "200") { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["PromoteSong"].ToString(), null); }
                 else
                 {
