@@ -34,7 +34,7 @@ namespace OwlCoinV2.Backend.Shared
             if (Headers != null) { foreach (KeyValuePair<string, string> Pair in Headers) { Request.Headers.Add(Pair.Key, Pair.Value); } }
             if (AuthToken) { Request.Headers.Add("AuthorizationToken", GetAuthToken()); }
             Request.ContentLength = PostData.Length;
-            Stream PostStream = Request.GetRequestStream();
+            Stream PostStream = Request.GetRequestStream(); 
             PostStream.Write(PostData, 0, PostData.Length);
             PostStream.Flush();
             PostStream.Close();

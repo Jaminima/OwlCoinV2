@@ -75,7 +75,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             {
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(Message); return; }
             }
-            if (amount < MinBet) { await MessageHandler.SendMessage(Message,Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["BetTooLow"].ToString()); return; }
+            if (amount < MinBet) { await MessageHandler.SendMessage(Message,Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["BetTooLow"].ToString(),null,MinBet); return; }
             if (amount <= coins)
             {
                 RouletteDelay.Add(Message.Author.Id, DateTime.Now);
@@ -111,7 +111,7 @@ namespace OwlCoinV2.Backend.DiscordBot.Commands.Viewer
             {
                 if (!int.TryParse(SegmentedMessage[1], out amount)) { MessageHandler.InvalidParameter(Message); return; }
             }
-            if (amount < MinBet) { await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["BetTooLow"].ToString()); return; }
+            if (amount < MinBet) { await MessageHandler.SendMessage(Message, Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["BetTooLow"].ToString(),null,MinBet); return; }
             if (amount <= coins)
             {
                 string[] emotes = Shared.ConfigHandler.Config["Slots"]["Discord"].Select(e => e.ToString()).ToArray();
