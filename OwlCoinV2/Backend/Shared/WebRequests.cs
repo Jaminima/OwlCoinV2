@@ -21,15 +21,18 @@ namespace OwlCoinV2.Backend.Shared
             CacheResponse(URL, null, null, JD);
             return JD;
         }
-
+        
         public static Newtonsoft.Json.Linq.JToken POST(string URL, Dictionary<string, string> Headers = null,string sPostData="")
+        { return POST(URL, Headers, sPostData, true); }
+
+        public static Newtonsoft.Json.Linq.JToken POST(string URL, Dictionary<string, string> Headers, string sPostData,bool AuthToken = false,bool Caching=true)
         {
-            if (CachedObjectExists(URL, Headers, sPostData)) { return GetCachedResponse(URL, Headers, sPostData); }
-            WebRequest Request = WebRequest.Create(ConfigHandler.LoginConfig["API"]["URL"].ToString() + ":" + ConfigHandler.LoginConfig["API"]["Port"] +URL);
+            if (Caching) { if (CachedObjectExists(URL, Headers, sPostData)) { return GetCachedResponse(URL, Headers, sPostData); } }
+            WebRequest Request = WebRequest.Create(ConfigHandler.LoginConfig["API"]["URL"].ToString() + ":" + ConfigHandler.LoginConfig["API"]["Port"] + URL);
             Request.Method = "POST";
             byte[] PostData = Encoding.UTF8.GetBytes(sPostData);
             if (Headers != null) { foreach (KeyValuePair<string, string> Pair in Headers) { Request.Headers.Add(Pair.Key, Pair.Value); } }
-            Request.Headers.Add("AuthToken", ConfigHandler.LoginConfig["API"]["AuthToken"].ToString());
+            if (AuthToken) { Request.Headers.Add("AuthorizationToken", GetAuthToken()); }
             Request.ContentLength = PostData.Length;
             Stream PostStream = Request.GetRequestStream();
             PostStream.Write(PostData, 0, PostData.Length);
@@ -38,8 +41,19 @@ namespace OwlCoinV2.Backend.Shared
             WebResponse Response = Request.GetResponse();
             string D = new StreamReader(Response.GetResponseStream()).ReadToEnd();
             Newtonsoft.Json.Linq.JToken JD = Newtonsoft.Json.Linq.JToken.Parse(D);
-            CacheResponse(URL, Headers, sPostData, JD);
+            if (Caching) { CacheResponse(URL, Headers, sPostData, JD); }
             return JD;
+        }
+
+        public static string GetAuthToken()
+        {
+            Dictionary<string, string> Headers = new Dictionary<string, string> { };
+            Headers.Add("RefreshToken", ConfigHandler.LoginConfig["API"]["RefreshToken"].ToString());
+            Newtonsoft.Json.Linq.JToken AuthData = POST("/auth/token",Headers,"",false,false);
+            if (AuthData["Status"].ToString() != "200") { Console.WriteLine("RefreshToken Invalid!!!!!!!"); return null; }
+            ConfigHandler.LoginConfig["API"]["RefreshToken"] = AuthData["Data"]["RefreshToken"].ToString();
+            ConfigHandler.SaveConfig();
+            return AuthData["Data"]["AuthorizationToken"].ToString();
         }
 
         static List<CachedResponse> CachedResponses = new List<CachedResponse> { };
