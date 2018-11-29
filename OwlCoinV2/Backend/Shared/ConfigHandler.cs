@@ -18,8 +18,12 @@ namespace OwlCoinV2.Backend.Shared
 
         public static void SaveConfig()
         {
-            System.IO.File.WriteAllText("./Data/Config.json",Config.ToString());
-            System.IO.File.WriteAllText("./Data/Login.json", LoginConfig.ToString());
+            try
+            {
+                System.IO.File.WriteAllText("./Data/Config.json", Config.ToString());
+                System.IO.File.WriteAllText("./Data/Login.json", LoginConfig.ToString());
+            }
+            catch { System.Threading.Thread.Sleep(50); SaveConfig(); }
         }
 
     }

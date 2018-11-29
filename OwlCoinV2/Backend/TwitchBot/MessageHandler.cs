@@ -66,7 +66,7 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Commands.Viewer.Commands.OwlCoin(e, SegmentedMessage);
                 }
 
-                if (Command == "r"||Command=="sr")
+                if (Command == "r" || Command == "sr")
                 {
                     Commands.Viewer.Commands.SongRequest(e, SegmentedMessage);
                 }
