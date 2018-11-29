@@ -27,10 +27,10 @@ namespace OwlCoinV2.Backend.Shared.Data
                     {
                         if (UserData.UserExists(Connection["id"].ToString(), IDType.Twitch))
                         {
-                            Newtonsoft.Json.Linq.JToken R = UserData.GetUser(ID, IDVariant);
+                            Newtonsoft.Json.Linq.JToken R = UserData.GetUser(Connection["id"].ToString(), IDType.Twitch);
                             if (R["Status"].ToString() != "200") { Response.Message = Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["WhoKnows"].ToString(); return Response; }
                             Newtonsoft.Json.Linq.JToken User = R["Data"];
-                            if (User["TwitchId"].ToString() == "")
+                            if (User["DiscordId"].ToString() == "")
                             {
                                 User["DiscordId"] = ID.ToString();
                                 WebRequests.POST("/update/user", null, User.ToString());
