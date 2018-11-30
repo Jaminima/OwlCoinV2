@@ -142,7 +142,7 @@ namespace OwlCoinV2.Backend.Shared.Data
         {
             Dictionary<string, string> Headers = new Dictionary<string, string> { };
             Headers.Add(IDVariant.ToString() + "Id", ID);
-            Newtonsoft.Json.Linq.JToken Response = WebRequests.POST("/user", Headers,"",false);
+            Newtonsoft.Json.Linq.JToken Response = WebRequests.POST("/user", Headers,"",false,false);
             return Response;
         }
 
