@@ -9,19 +9,28 @@ namespace OwlCoinV2.Backend.Shared
     public static class ConfigHandler
     {
         public static Newtonsoft.Json.Linq.JObject Config,LoginConfig;
+        static DateTime LastSaved = DateTime.Now;
 
-        public static void LoadConfig()
+        public static void LoadConfig(bool WithLogin=false)
         {
-            Config = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText("./Data/Config.json"));
-            LoginConfig = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText("./Data/Login.json"));
+            try
+            {
+                Config = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText("./Data/Config.json"));
+                if (WithLogin) { LoginConfig = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText("./Data/Login.json")); }
+            }
+            catch { System.Threading.Thread.Sleep(50); LoadConfig(); }
         }
 
         public static void SaveConfig()
         {
             try
             {
-                System.IO.File.WriteAllText("./Data/Config.json", Config.ToString());
-                System.IO.File.WriteAllText("./Data/Login.json", LoginConfig.ToString());
+                if ((int)((TimeSpan)(DateTime.Now - LastSaved)).TotalSeconds > 15)
+                {
+                    System.IO.File.WriteAllText("./Data/Config.json", Config.ToString());
+                    System.IO.File.WriteAllText("./Data/Login.json", LoginConfig.ToString());
+                    LastSaved = DateTime.Now;
+                }
             }
             catch { System.Threading.Thread.Sleep(50); SaveConfig(); }
         }

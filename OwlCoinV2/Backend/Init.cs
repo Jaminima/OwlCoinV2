@@ -11,7 +11,7 @@ namespace OwlCoinV2.Backend
         public static Shared.Data.SQL SQLInstance = new Shared.Data.SQL("./Data/ExampleDatabase");
         public static void Start()
         {
-            Shared.ConfigHandler.LoadConfig();
+            Shared.ConfigHandler.LoadConfig(true);
             TwitchBot.Bot.Start();
             DiscordBot.Bot.Start();
         }
