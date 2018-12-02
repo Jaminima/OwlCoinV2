@@ -77,7 +77,7 @@ namespace OwlCoinV2.Backend.Shared
         static bool CachedObjectExists(string URL, Dictionary<string, string> Headers, string sPostData)
         {
             if ((Headers != null || sPostData != null) && !CompatiblePostURLs.Contains(URL)) { return false; }
-            foreach (CachedResponse Resp in CachedResponses) { if (ObjectMatches(URL,Headers,sPostData,Resp)&&(DateTime.Now-Resp.DateTime).TotalMilliseconds<2000) { return true; } }
+            foreach (CachedResponse Resp in CachedResponses) { if (ObjectMatches(URL,Headers,sPostData,Resp)&&(DateTime.Now-Resp.DateTime).TotalMilliseconds<750) { return true; } }
             return false;
         }
 

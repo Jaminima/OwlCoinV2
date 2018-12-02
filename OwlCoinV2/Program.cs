@@ -11,10 +11,17 @@ namespace OwlCoinV2
         static void Main(string[] args)
         {
             Backend.Init.Start();
-            //Console.WriteLine(System.IO.Directory.GetCurrentDirectory());
-            //Console.WriteLine(System.IO.File.Exists("./Data\\ExampleDatabase.accdb"));
-            //string[] S = System.IO.Directory.GetFiles("./Data");
+            AppDomain.CurrentDomain.UnhandledException+= new UnhandledExceptionEventHandler(ExceptionHandler);
             while (true) { Console.ReadLine(); }
         }
+
+        static void ExceptionHandler(object sender, UnhandledExceptionEventArgs args)
+        {
+            Exception e = (Exception)args.ExceptionObject;
+            System.IO.File.WriteAllText("./Error" + DateTime.Now.ToString() + ".log", e.ToString());
+            Console.WriteLine("MyHandler caught : " + e.Message);
+            Console.WriteLine("Runtime terminating: {0}", args.IsTerminating);
+        }
+
     }
 }
