@@ -15,24 +15,32 @@ namespace OwlCoinV2.Backend.Shared
         {
             try
             {
-                Config = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText("./Data/Config.json"));
-                if (WithLogin) { LoginConfig = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText("./Data/Login.json")); }
+                Config = LoadConfig("./Data/Config");
+                if (WithLogin) { LoginConfig = LoadConfig("./Data/Login"); }
             }
             catch { System.Threading.Thread.Sleep(50); LoadConfig(); }
+        }
+        public static Newtonsoft.Json.Linq.JObject LoadConfig(string Path)
+        {
+            return Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(Path+".json"));
         }
 
         public static void SaveConfig()
         {
             try
             {
-                if ((int)((TimeSpan)(DateTime.Now - LastSaved)).TotalSeconds > 15)
-                {
-                    System.IO.File.WriteAllText("./Data/Config.json", Config.ToString());
-                    System.IO.File.WriteAllText("./Data/Login.json", LoginConfig.ToString());
+                //if ((int)((TimeSpan)(DateTime.Now - LastSaved)).TotalSeconds > 15)
+                //{
+                    SaveConfig("./Data/Config", Config);
+                    SaveConfig("./Data/Login", LoginConfig);
                     LastSaved = DateTime.Now;
-                }
+                //}
             }
             catch { System.Threading.Thread.Sleep(50); SaveConfig(); }
+        }
+        public static void SaveConfig(string Path,Newtonsoft.Json.Linq.JObject Data)
+        {
+            System.IO.File.WriteAllText(Path+".json", Data.ToString());
         }
 
     }
