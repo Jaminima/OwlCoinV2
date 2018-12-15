@@ -27,7 +27,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
                 }
                 if (DateTime.Now.Minute != DonationLastRunMin)
                 {
-                    Shared.APIIntergrations.Streamlabs.Donations.CheckForNewDonation();
+                    //Shared.APIIntergrations.Streamlabs.Donations.CheckForNewDonation();
                     DonationLastRunMin = DateTime.Now.Minute;
                 }
                 if (DateTime.Now.Minute % 10 == 0&&WatchingGiveOCLastRunMin!=DateTime.Now.Minute)
@@ -96,7 +96,12 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
             List<String> Subs = GetSubs();
             foreach (string UserId in GetWatching())
             {
-                if (!Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Exceptions"].Contains(UserId))
+                bool IsException = false;
+                foreach (string Exception in Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Exceptions"])
+                {
+                    if (Exception == UserId) { IsException = true; break; }
+                }
+                if (IsException)
                 {
                     if (Subs.Contains(UserId)) { Shared.Data.Accounts.GiveUser(UserId, Shared.IDType.Twitch, int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Watching"]["Subscriber"].ToString())); }
                     else { Shared.Data.Accounts.GiveUser(UserId, Shared.IDType.Twitch, int.Parse(Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Watching"]["Viewer"].ToString())); }

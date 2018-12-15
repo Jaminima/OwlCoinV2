@@ -164,6 +164,10 @@ namespace OwlCoinV2.Backend.TwitchBot
         static List<string[]> UserInteraction = new List<string[]> { };
         static void AwardForInteraction(OnMessageReceivedArgs e)
         {
+            foreach (string Exception in Shared.ConfigHandler.Config["Rewards"]["Twitch"]["Exceptions"])
+            {
+                if (e.ChatMessage.UserId == Exception) { return; }
+            }
             foreach (string[] Pair in UserInteraction)
             {
                 if (Pair[0] == e.ChatMessage.UserId)

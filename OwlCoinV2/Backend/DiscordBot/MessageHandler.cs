@@ -111,6 +111,10 @@ namespace OwlCoinV2.Backend.DiscordBot
 
         static async Task AwardForInteraction(SocketMessage Message)
         {
+            foreach (string Exception in Shared.ConfigHandler.Config["Rewards"]["Discord"]["Exceptions"])
+            {
+                if (Message.Author.Id.ToString() == Exception) { return; }
+            }
             foreach (string[] Pair in UserInteraction)
             {
                 if (Pair[0] == Message.Author.Id.ToString())
