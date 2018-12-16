@@ -9,14 +9,24 @@ namespace OwlCoinV2.Backend.NightBotReplacement
     public class Song
     {
         public string YoutubeID, RequesterTwitchID;
-    }
-
-    public class Queue
-    {
-        public Dictionary<int,Song> SongQueue=new Dictionary<int, Song> { };
         public Newtonsoft.Json.Linq.JToken ToJson()
         {
             return Newtonsoft.Json.Linq.JToken.FromObject(this);
         }
+    }
+
+    public class Queue
+    {
+        public List<Song> SongQueue=new List<Song> { };
+        public Newtonsoft.Json.Linq.JToken ToJson()
+        {
+            return Newtonsoft.Json.Linq.JToken.FromObject(this);
+        }
+    }
+
+    public enum PlayerState
+    {
+        Playing,
+        Paused
     }
 }

@@ -43,7 +43,25 @@ namespace OwlCoinV2.Backend
             string[] URLPath = Context.Request.Url.PathAndQuery.ToLower().Split("/".ToCharArray());
             if (URLPath[1] == "queue")
             {
-                return NightBotReplacement.Init.Queue.ToJson();
+                return NightBotReplacement.Init.GetQueue();
+            }
+            if (URLPath[1] == "currentsong")
+            {
+                return NightBotReplacement.Init.GetSong();
+            }
+            else if (URLPath[1] == "state")
+            {
+                return NightBotReplacement.Init.GetState();
+            }
+            else if (URLPath[1] == "skip")
+            {
+                if (Context.Request.Headers.AllKeys.Contains("Authorization"))
+                {
+                    if (Context.Request.Headers["Authorization"] == "1234")
+                    {
+                        NightBotReplacement.Init.Dequeue(0);
+                    }
+                }
             }
             else if (URLPath.Length == 2)
             {
