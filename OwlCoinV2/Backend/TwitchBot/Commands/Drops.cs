@@ -153,8 +153,11 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
             return D;
         }
 
+        static bool Islive = false;
+        static DateTime LastLiveCheck;
         public static bool IsLive()
         {
+            if (LastLiveCheck != null) { if (((TimeSpan)(DateTime.Now - LastLiveCheck)).TotalSeconds < 60) { return Islive; } }
             try
             {
                 WebRequest Req = WebRequest.Create("https://api.twitch.tv/helix/streams?user_login=" + Shared.ConfigHandler.Config["ChannelName"]);
@@ -164,6 +167,7 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
                 WebResponse Res = Req.GetResponse();
                 string D = new StreamReader(Res.GetResponseStream()).ReadToEnd();
                 Newtonsoft.Json.Linq.JObject JD = Newtonsoft.Json.Linq.JObject.Parse(D);
+                LastLiveCheck = DateTime.Now;
                 if (JD["data"].Count() != 0)
                 {
                     if (JD["data"][0]["type"].ToString() == "live")
