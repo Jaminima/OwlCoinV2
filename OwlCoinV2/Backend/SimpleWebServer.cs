@@ -9,6 +9,7 @@ namespace OwlCoinV2.Backend
 {
     public static class SimpleWebServer
     {
+        static DateTime UpSince = DateTime.Now;
         static HttpListener Listener = new HttpListener();
         public static void Start()
         {
@@ -28,7 +29,9 @@ namespace OwlCoinV2.Backend
             HttpListenerResponse Response = Context.Response;
             Response.StatusCode = 200; // Indicate the status as 200, ie alive
             Response.ContentType = "application/json";
-            byte[] ByteResponseData = Encoding.UTF8.GetBytes("The Discord+Twitch Bot Is Alive");
+            byte[] ByteResponseData = Encoding.UTF8.GetBytes(
+                Newtonsoft.Json.Linq.JToken.Parse("{'UpSince':'"+UpSince.ToString()+"'}").ToString()
+                );
             try
             {
                 Response.OutputStream.Write(ByteResponseData, 0, ByteResponseData.Length);

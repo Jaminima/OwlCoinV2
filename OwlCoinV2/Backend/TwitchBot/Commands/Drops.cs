@@ -25,9 +25,9 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
                     RaffleLastRunMin = DateTime.Now.Minute;
                     if (Raffles % 4 == 0) { new Thread(() => RaffleStart(true)).Start(); } else { new Thread(() => RaffleStart(false)).Start(); }
                 }
-                if (DateTime.Now.Minute != DonationLastRunMin)
+                if (DateTime.Now.Minute != DonationLastRunMin&&IsLive())
                 {
-                    //Shared.APIIntergrations.Streamlabs.Donations.CheckForNewDonation();
+                    Shared.APIIntergrations.Streamlabs.Donations.CheckForNewDonation();
                     DonationLastRunMin = DateTime.Now.Minute;
                 }
                 if (DateTime.Now.Minute % 10 == 0&&WatchingGiveOCLastRunMin!=DateTime.Now.Minute)
