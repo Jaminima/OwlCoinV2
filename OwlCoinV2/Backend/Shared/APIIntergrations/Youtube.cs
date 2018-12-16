@@ -21,5 +21,18 @@ namespace OwlCoinV2.Backend.Shared.APIIntergrations
             Newtonsoft.Json.Linq.JToken Resp = Newtonsoft.Json.Linq.JToken.Parse(SData);
             return "https://youtu.be/"+Resp["items"][0]["id"]["videoId"].ToString();
         }
+
+        public static Newtonsoft.Json.Linq.JToken VidDetails(string YoutubeID)
+        {
+            WebRequest Req = WebRequest.Create("https://www.googleapis.com/youtube/v3/videos?key=" + ConfigHandler.LoginConfig["Youtube"]["AuthToken"].ToString()
+                + "&id=" + YoutubeID
+                + "&part=contentDetails");
+            Req.Method = "GET";
+            WebResponse Res = Req.GetResponse();
+            string SData = new StreamReader(Res.GetResponseStream()).ReadToEnd();
+            Newtonsoft.Json.Linq.JToken Resp = Newtonsoft.Json.Linq.JToken.Parse(SData);
+            return Resp;
+        }
+
     }
 }

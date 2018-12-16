@@ -41,11 +41,14 @@ namespace OwlCoinV2.Backend.NightBotReplacement
                 string YoutubeID = GetYoutubeID(URLName);
                 if (YoutubeVideoExists(YoutubeID))
                 {
-                    Song NewSong = new Song();
-                    NewSong.RequesterTwitchID = RequesterTwitchID;
-                    NewSong.YoutubeID = YoutubeID;
-                    Queue.SongQueue.Add(NewSong);
-                    return true;
+                    if (System.Xml.XmlConvert.ToTimeSpan(Shared.APIIntergrations.Youtube.VidDetails(YoutubeID)["items"][0]["contentDetails"]["duration"].ToString()).TotalSeconds<600)
+                    {
+                        Song NewSong = new Song();
+                        NewSong.RequesterTwitchID = RequesterTwitchID;
+                        NewSong.YoutubeID = YoutubeID;
+                        Queue.SongQueue.Add(NewSong);
+                        return true;
+                    }
                 }
             }
             return false;
