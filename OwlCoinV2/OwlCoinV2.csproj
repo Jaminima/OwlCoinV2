@@ -232,6 +232,8 @@
     <Compile Include="Backend\DiscordBot\Commands\NotificationHandler.cs" />
     <Compile Include="Backend\DiscordBot\Commands\Viewer\Commands.cs" />
     <Compile Include="Backend\DiscordBot\Commands\Viewer\Duel.cs" />
+    <Compile Include="Backend\NightBotReplacement\Init.cs" />
+    <Compile Include="Backend\NightBotReplacement\Objects.cs" />
     <Compile Include="Backend\Shared\APIIntergrations\Streamlabs\Donations.cs" />
     <Compile Include="Backend\Shared\APIIntergrations\Youtube.cs" />
     <Compile Include="Backend\Shared\InputVerification.cs" />

@@ -12,9 +12,11 @@ namespace OwlCoinV2.Backend
         public static void Start()
         {
             Shared.ConfigHandler.LoadConfig(true);
-            TwitchBot.Bot.Start();
-            DiscordBot.Bot.Start();
+            //TwitchBot.Bot.Start();
+            //DiscordBot.Bot.Start();
             SimpleWebServer.Start();
+            NightBotReplacement.Init.Enqueue("https://www.youtube.com/watch?v=yBizWE31R78&ffff", "1234");
+            NightBotReplacement.Init.Enqueue("https://www.youtube.com/watch?v=tQpKb0U800I&fff", "1234");
         }
 
     }
