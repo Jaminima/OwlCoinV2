@@ -17,39 +17,39 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
         {
             if (SegmentedMessage.Length < 2) { MessageHandler.NotLongEnough(e); return; }
             string SubCommand = SegmentedMessage[1].ToLower();
-            if (SubCommand == "current")
+            if (SubCommand == "currenttest")
             {
                 Current(e, SegmentedMessage);
             }
-            if (SubCommand == "queue")
-            {
-                Queue(e, SegmentedMessage);
-            }
-            if (SubCommand == "playlist"||SubCommand=="list")
-            {
-                Playlist(e,SegmentedMessage);
-            }
-            if (SubCommand == "cancel")
-            {
-                CancelSong(e, SegmentedMessage);
-            }
-            if (SubCommand == "play")
+            //if (SubCommand == "queue")
+            //{
+            //    Queue(e, SegmentedMessage);
+            //}
+            //if (SubCommand == "playlist" || SubCommand == "list")
+            //{
+            //    Playlist(e, SegmentedMessage);
+            //}
+            //if (SubCommand == "canceltest")
+            //{
+            //    CancelSong(e, SegmentedMessage);
+            //}
+            if (SubCommand == "playtest")
             {
                 Moderator.Commands.Play(e, SegmentedMessage);
             }
-            if (SubCommand == "pause")
+            if (SubCommand == "pausetest")
             {
                 Moderator.Commands.Pause(e, SegmentedMessage);
             }
-            if (SubCommand == "skip")
+            if (SubCommand == "skiptest")
             {
                 Moderator.Commands.Skip(e, SegmentedMessage);
             }
-            if (SubCommand == "volume")
+            if (SubCommand == "volumetest")
             {
                 Moderator.Commands.Volume(e, SegmentedMessage);
             }
-            if (SubCommand == "remove")
+            if (SubCommand == "removetest")
             {
                 Moderator.Commands.Remove(e, SegmentedMessage);
             }
@@ -71,31 +71,29 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
 
         public static void Current(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
-            Newtonsoft.Json.Linq.JObject SongData=GetSongData();
-            if (SongData == null)
-            { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["CurrentFailed"].ToString(), null); return; }
-            string Name = SongData["_currentSong"]["track"]["title"].ToString()+" - "+SongData["_currentSong"]["track"]["url"];
+            Newtonsoft.Json.Linq.JToken YT = Shared.APIIntergrations.Youtube.VidDetails(NightBotReplacement.Init.GetSong()["YoutubeID"].ToString());
+            string Name = YT["items"][0]["snippet"]["title"].ToString()+" -- https://youtu.be/"+YT["items"][0]["id"].ToString();
             MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Current"].ToString(), null,-1,-1,Name);
         }
 
         public static Dictionary<String, String> PreviousSongRequests = new Dictionary<string, string> { };
-        public static void CancelSong(OnMessageReceivedArgs e, string[] SegmentedMessage)
-        {
-            Newtonsoft.Json.Linq.JToken QueueData = Shared.APIIntergrations.Nightbot.Requests.GetQueue();
-            if (PreviousSongRequests.ContainsKey(e.ChatMessage.UserId))
-            {
-                Newtonsoft.Json.Linq.JToken Data = Shared.APIIntergrations.Nightbot.Requests.RemoveID(PreviousSongRequests[e.ChatMessage.UserId]);
-                if (Data["status"].ToString() == "200")
-                {
-                    int Required = int.Parse(Shared.ConfigHandler.Config["Songs"]["Cost"]["Viewer"].ToString());
-                    if (e.ChatMessage.IsSubscriber) { Required = int.Parse(Shared.ConfigHandler.Config["Songs"]["Cost"]["Subscriber"].ToString()); }
-                    Shared.Data.Accounts.GiveUser(e.ChatMessage.UserId, Shared.IDType.Twitch,Required);
-                    MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Cancel"].ToString(), null);
-                }
-                else { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["CancelFailed"].ToString(), null); }
-            }
-            else { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["CancelFailed"].ToString(), null); }
-        }
+        //public static void CancelSong(OnMessageReceivedArgs e, string[] SegmentedMessage)
+        //{
+        //    //Newtonsoft.Json.Linq.JToken QueueData = Shared.APIIntergrations.Nightbot.Requests.GetQueue();
+        //    //if (PreviousSongRequests.ContainsKey(e.ChatMessage.UserId))
+        //    //{
+        //    //    Newtonsoft.Json.Linq.JToken Data = Shared.APIIntergrations.Nightbot.Requests.RemoveID(PreviousSongRequests[e.ChatMessage.UserId]);
+        //    //    if (Data["status"].ToString() == "200")
+        //    //    {
+        //    //        int Required = int.Parse(Shared.ConfigHandler.Config["Songs"]["Cost"]["Viewer"].ToString());
+        //    //        if (e.ChatMessage.IsSubscriber) { Required = int.Parse(Shared.ConfigHandler.Config["Songs"]["Cost"]["Subscriber"].ToString()); }
+        //    //        Shared.Data.Accounts.GiveUser(e.ChatMessage.UserId, Shared.IDType.Twitch,Required);
+        //    //        MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Cancel"].ToString(), null);
+        //    //    }
+        //    //    else { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["CancelFailed"].ToString(), null); }
+        //    //}
+        //    //else { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["CancelFailed"].ToString(), null); }
+        //}
 
         public static Newtonsoft.Json.Linq.JObject GetSongData()
         {

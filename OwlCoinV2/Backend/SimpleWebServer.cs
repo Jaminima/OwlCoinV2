@@ -43,7 +43,11 @@ namespace OwlCoinV2.Backend
             string[] URLPath = Context.Request.Url.PathAndQuery.ToLower().Split("/".ToCharArray());
             if (URLPath[1] == "queue")
             {
-                return NightBotReplacement.Init.GetQueue();
+                return NightBotReplacement.Init.Queue.ToJson();
+            }
+            if (URLPath[1] == "playlist")
+            {
+                return NightBotReplacement.Init.PlayList.ToJson();
             }
             if (URLPath[1] == "currentsong")
             {
@@ -52,6 +56,18 @@ namespace OwlCoinV2.Backend
             else if (URLPath[1] == "state")
             {
                 return NightBotReplacement.Init.GetState();
+            }
+            else if (URLPath[1] == "statechange")
+            {
+                if (Context.Request.Headers.AllKeys.Contains("Authorization")&& Context.Request.Headers.AllKeys.Contains("State") && Context.Request.Headers.AllKeys.Contains("Volume"))
+                {
+                    if (Context.Request.Headers["Authorization"] == "1234")
+                    {
+                        if (Context.Request.Headers["State"].ToString() == "0") { NightBotReplacement.Init.PlayerState.PlayerState = NightBotReplacement.PlayerState.Playing; }
+                        if (Context.Request.Headers["State"].ToString() == "1") { NightBotReplacement.Init.PlayerState.PlayerState = NightBotReplacement.PlayerState.Paused; }
+                        try { NightBotReplacement.Init.PlayerState.Volume = int.Parse(Context.Request.Headers["Volume"]); } catch { }
+                    }
+                }
             }
             else if (URLPath[1] == "skip")
             {

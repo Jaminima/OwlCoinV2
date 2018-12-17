@@ -26,7 +26,7 @@ namespace OwlCoinV2.Backend.Shared.APIIntergrations
         {
             WebRequest Req = WebRequest.Create("https://www.googleapis.com/youtube/v3/videos?key=" + ConfigHandler.LoginConfig["Youtube"]["AuthToken"].ToString()
                 + "&id=" + YoutubeID
-                + "&part=contentDetails");
+                + "&part=contentDetails,snippet");
             Req.Method = "GET";
             WebResponse Res = Req.GetResponse();
             string SData = new StreamReader(Res.GetResponseStream()).ReadToEnd();

@@ -64,18 +64,18 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
             if (e.ChatMessage.IsSubscriber) { Required = int.Parse(Shared.ConfigHandler.Config["Songs"]["Cost"]["Subscriber"].ToString()); }
             if (MyBal >= Required)
             {
-                bool Result = NightBotReplacement.Init.Enqueue(
-                    e.ChatMessage.Message.Replace(Shared.ConfigHandler.Config["Prefix"].ToString()+"r ","")
-                    .Replace(Shared.ConfigHandler.Config["Prefix"].ToString() + "sr ", "")
+                NightBotReplacement.Enqueued Result = NightBotReplacement.Init.Enqueue(
+                    e.ChatMessage.Message.Replace(Shared.ConfigHandler.Config["Prefix"].ToString()+"rtest ","")
+                    .Replace(Shared.ConfigHandler.Config["Prefix"].ToString() + "srtest ", "")
                     ,e.ChatMessage.UserId);
-                if (Result)
+                if (Result.ErrorReason==NightBotReplacement.ErrorReason.Success)
                 {
-                    //try { Songs.PreviousSongRequests.Remove(e.ChatMessage.UserId); } catch { }
-                    //Songs.PreviousSongRequests.Add(e.ChatMessage.UserId,Result["item"]["_id"].ToString());
-                    MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Request"]["Success"].ToString(), null /*,int.Parse(Result["item"]["_position"].ToString()), -1, Result["item"]["track"]["title"].ToString()*/);
+                    try { Songs.PreviousSongRequests.Remove(e.ChatMessage.UserId); } catch { }
+                    Songs.PreviousSongRequests.Add(e.ChatMessage.UserId, Result.YoutubeCode);
+                    MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Request"]["Success"].ToString(), null ,Result.Position, -1, Result.Title);
                     Shared.Data.Accounts.TakeUser(e.ChatMessage.UserId, Shared.IDType.Twitch, Required);
                 }
-                else { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Request"]["Failed"].ToString(), null, -1, -1 /*,Result["message"].ToString()*/); }
+                else { MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Songs"]["Request"]["Failed"].ToString(), null, -1, -1 ,Result.ErrorReason.ToString()); }
             }
             else { MessageHandler.SendMessage(e,MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NotEnough"].ToString(),e.ChatMessage)); }
         }

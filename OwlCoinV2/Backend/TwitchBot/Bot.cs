@@ -31,16 +31,16 @@ namespace OwlCoinV2.Backend.TwitchBot
             TwitchC = new TwitchClient();
             TwitchC.Initialize(credentials, Shared.ConfigHandler.Config["ChannelName"].ToString());
             TwitchC.OnMessageReceived += MessageHandler.HandleMessage;
-            TwitchC.OnMessageReceived += Logger.AddToLog;
-            TwitchC.OnGiftedSubscription += Events.SubGifted;
-            TwitchC.OnNewSubscriber += Events.Subbed;
-            TwitchC.OnReSubscriber += Events.ReSubbed;
+            //TwitchC.OnMessageReceived += Logger.AddToLog;
+            //TwitchC.OnGiftedSubscription += Events.SubGifted;
+            //TwitchC.OnNewSubscriber += Events.Subbed;
+            //TwitchC.OnReSubscriber += Events.ReSubbed;
             //TwitchC.OnBeingHosted += Events.Hosting;
             TwitchC.Connect();
             Console.WriteLine("TwitchBot Started");
             System.Threading.Thread.Sleep(500);
-            new Thread(() => Commands.Drops.Handler()).Start();
-            AutoMessage.Start();
+            //new Thread(() => Commands.Drops.Handler()).Start();
+            //AutoMessage.Start();
         }
 
     }

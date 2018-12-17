@@ -37,7 +37,7 @@ namespace OwlCoinV2.Backend.TwitchBot
                 //    if (SegmentedMessage.Length < 2) { NotLongEnough(e); return; }
                 //    Bot.TwitchC.SendMessage(e.ChatMessage.Channel, e.ChatMessage.Message.Remove(0, Command.Length + Prefix.Length + 1));
                 //}
-                
+
                 if (Command == "join")
                 {
                     Commands.Viewer.Commands.JoinRaffle(e);
@@ -56,17 +56,17 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Commands.Viewer.Commands.Uptime(e, SegmentedMessage);
                 }
 
-                if (Command == "pay"||Command=="give"+Shared.ConfigHandler.Config["CurrencyName"].ToString().ToLower())
+                if (Command == "pay" || Command == "give" + Shared.ConfigHandler.Config["CurrencyName"].ToString().ToLower())
                 {
                     Commands.Viewer.Commands.Pay(e, SegmentedMessage);
                 }
 
-                if (Command == Shared.ConfigHandler.Config["CurrencyName"].ToString().ToLower() || Command == "bal"||Command=="balance"||Command==Shared.ConfigHandler.Config["CurrencyAbreviation"].ToString().ToLower())
+                if (Command == Shared.ConfigHandler.Config["CurrencyName"].ToString().ToLower() || Command == "bal" || Command == "balance" || Command == Shared.ConfigHandler.Config["CurrencyAbreviation"].ToString().ToLower())
                 {
                     Commands.Viewer.Commands.OwlCoin(e, SegmentedMessage);
                 }
 
-                if (Command == "r" || Command == "sr")
+                if (Command == "rtest" || Command == "srtest")
                 {
                     Commands.Viewer.Commands.SongRequest(e, SegmentedMessage);
                 }
@@ -78,7 +78,7 @@ namespace OwlCoinV2.Backend.TwitchBot
 
                 if (Command == "give")
                 {
-                    Commands.Moderator.Commands.GivePoints(e,SegmentedMessage);
+                    Commands.Moderator.Commands.GivePoints(e, SegmentedMessage);
                 }
 
                 if (Command == "setgame")
@@ -90,7 +90,7 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Commands.Moderator.Commands.SetTitle(e, SegmentedMessage);
                 }
 
-                if (Command == "songs"||Command=="song")
+                if (Command == "songs" || Command == "song")
                 {
                     Commands.Viewer.Songs.Proccessor(e, SegmentedMessage);
                 }
@@ -127,7 +127,7 @@ namespace OwlCoinV2.Backend.TwitchBot
 
                 if (Command == "fish")
                 {
-                    Commands.Viewer.Commands.Fish(e,SegmentedMessage);
+                    Commands.Viewer.Commands.Fish(e, SegmentedMessage);
                 }
 
                 if (Command == "refresh" || Command == "refreshconfig")
@@ -145,7 +145,7 @@ namespace OwlCoinV2.Backend.TwitchBot
                     Commands.Viewer.Commands.Help(e, SegmentedMessage);
                 }
 
-                
+
 
             }
             else
