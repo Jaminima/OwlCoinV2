@@ -36,7 +36,7 @@ namespace OwlCoinV2.Backend.Shared.APIIntergrations.Nightbot
             catch (WebException E)
             {
                 Console.WriteLine(new StreamReader(E.Response.GetResponseStream()).ReadToEnd());
-                return GetAuthToken();
+                return "";
             }
         }
 
