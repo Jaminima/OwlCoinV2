@@ -52,6 +52,7 @@ namespace OwlCoinV2.Backend.NightBotReplacement
     {
         InQueue,
         InValidURL,
-        Success
+        Success,
+        SearchTermInvalid
     }
 }

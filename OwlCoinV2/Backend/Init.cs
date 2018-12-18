@@ -12,6 +12,7 @@ namespace OwlCoinV2.Backend
         public static void Start()
         {
             Shared.ConfigHandler.LoadConfig(true);
+            NightBotReplacement.Init.LoadPlaylist();
             TwitchBot.Bot.Start();
             //DiscordBot.Bot.Start();
             SimpleWebServer.Start();

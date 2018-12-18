@@ -11,6 +11,7 @@ namespace OwlCoinV2.Backend.NightBotReplacement
     public static class Init
     {
         public static Queue Queue = new Queue();
+        static Queue UnShuffledPlayList;
         public static Queue PlayList = new Queue();
         public static State PlayerState = new State();
 
@@ -28,21 +29,33 @@ namespace OwlCoinV2.Backend.NightBotReplacement
         static Random Rnd = new Random();
         public static void LoadPlaylist()
         {
-            PlayList = new Queue();
-            string[] Lines = System.IO.File.ReadAllLines("./Data/Playlist.txt");
-            string[] ShuffledLines = new string[Lines.Length];
-            foreach(string Line in Lines)
+            if (UnShuffledPlayList == null)
             {
-                int NewLocation = Rnd.Next(0,Lines.Length);
-                while (ShuffledLines[NewLocation] != null)
+                UnShuffledPlayList = new Queue();
+                string PageToken = null;
+                Newtonsoft.Json.Linq.JToken YTPlaylistItem = null;
+                while (PageToken != null || YTPlaylistItem == null)
                 {
-                    NewLocation = Rnd.Next(0, Lines.Length);
+                    YTPlaylistItem = Shared.APIIntergrations.Youtube.PlayListRead("PLPowxVhPe3JyPGiidXbm3QdC2H9yiS6qB", PageToken);
+                    try { PageToken = YTPlaylistItem["nextPageToken"].ToString(); } catch { PageToken = null; }
+                    foreach (Newtonsoft.Json.Linq.JToken QueueItem in YTPlaylistItem["items"])
+                    {
+                        Song NewSong = new Song();
+                        NewSong.YoutubeID = QueueItem["contentDetails"]["videoId"].ToString();
+                        UnShuffledPlayList.SongQueue.Add(NewSong);
+                    }
                 }
-                ShuffledLines[NewLocation] = Line;
             }
-            foreach (string Line in ShuffledLines)
+            PlayList = new Queue();
+            List<int> AddedSongs = new List<int> { };
+            while (AddedSongs.Count != UnShuffledPlayList.SongQueue.Count)
             {
-                Enqueue(Line, null,true);
+                int SongToAdd = Rnd.Next(0, UnShuffledPlayList.SongQueue.Count);
+                if (!AddedSongs.Contains(SongToAdd))
+                {
+                    PlayList.SongQueue.Add(UnShuffledPlayList.SongQueue[SongToAdd]);
+                    AddedSongs.Add(SongToAdd);
+                }
             }
         }
 
@@ -54,7 +67,7 @@ namespace OwlCoinV2.Backend.NightBotReplacement
         public static Enqueued Enqueue(string URLName,string RequesterTwitchID,bool TooPlaylist=false)
         {
             Enqueued EnQueued = new Enqueued();
-            if (URLName.StartsWith("https://www.youtube.com/watch?v="))
+            if (URLName.Contains("v=")||URLName.StartsWith("https://youtu.be/"))
             {
                 string YoutubeID = GetYoutubeID(URLName);
                 if (YoutubeVideoExists(YoutubeID))
@@ -72,14 +85,22 @@ namespace OwlCoinV2.Backend.NightBotReplacement
                             EnQueued.Position = Queue.SongQueue.Count - 1;
                             EnQueued.Title = YT["items"][0]["snippet"]["title"].ToString();
                             EnQueued.Author = YT["items"][0]["snippet"]["channelTitle"].ToString();
-                            EnQueued.ErrorReason = ErrorReason.Success;
-                            return EnQueued;
                         }
                         else { PlayList.SongQueue.Add(NewSong); }
+                        EnQueued.ErrorReason = ErrorReason.Success;
+                        return EnQueued;
                     }
                 }
+                EnQueued.ErrorReason = ErrorReason.InValidURL;
+                return EnQueued;
             }
-            EnQueued.ErrorReason = ErrorReason.InValidURL;
+            Newtonsoft.Json.Linq.JToken YTSearchResponse = Shared.APIIntergrations.Youtube.VidFromKeyWords(URLName);
+            foreach (Newtonsoft.Json.Linq.JToken ResponseItem in YTSearchResponse["items"])
+            {
+                Enqueued Try = Enqueue("https://www.youtube.com/watch?v="+ResponseItem["id"]["videoId"].ToString(), RequesterTwitchID, TooPlaylist);
+                if (Try.ErrorReason == ErrorReason.Success) { return Try; }
+            }
+            EnQueued.ErrorReason = ErrorReason.SearchTermInvalid;
             return EnQueued;
         }
 
@@ -119,7 +140,8 @@ namespace OwlCoinV2.Backend.NightBotReplacement
 
         static string GetYoutubeID(string URL)
         {
-            return URL.Replace("https://www.youtube.com/watch?v=", "").Substring(0, 11);
+            if (URL.Contains("v=")) { return URL.Split(new string[] { "v=" }, StringSplitOptions.None)[1].Substring(0, 11); }
+            return URL.Replace("https://youtu.be/", "");
         }
 
 

@@ -65,62 +65,62 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Moderator
 
         public static void Play(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
-            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
-            {
+            //if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
+            //{
                 NightBotReplacement.Init.PlayerState.PlayerState = NightBotReplacement.PlayerState.Playing;
                 MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Play"].ToString(), null);
                 return;
-            }
-            NotMod(e);
+            //}
+            //NotMod(e);
         }
 
         public static void Pause(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
-            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
-            {
+            //if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
+            //{
                 NightBotReplacement.Init.PlayerState.PlayerState = NightBotReplacement.PlayerState.Paused;
                 MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Pause"].ToString(), null);
                 return;
-            }
-            NotMod(e);
+            //}
+            //NotMod(e);
         }
 
         public static void Skip(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
-            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
-            {
+            //if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
+            //{
                 NightBotReplacement.Init.Dequeue(0);
                 MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Skip"].ToString(), null);
                 return;
-            }
-            NotMod(e);
+            //}
+            //NotMod(e);
         }
 
         public static void Remove(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
-            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
-            {
+            //if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
+            //{
                 int Item = 0;
                 try { Item = int.Parse(SegmentedMessage[2]); } catch { MessageHandler.InvalidParameter(e); return; }
                 NightBotReplacement.Init.Dequeue(Item);
                 MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["RemoveSong"].ToString(), null);
                 return;
-            }
-            NotMod(e);
+            //}
+            //NotMod(e);
         }
 
         public static void Volume(OnMessageReceivedArgs e, string[] SegmentedMessage)
         {
-            if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
-            {
+            //if (e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator)
+            //{
                 if (SegmentedMessage.Length != 3) { MessageHandler.NotLongEnough(e); return; }
                 int Volume;
                 try { Volume = int.Parse(SegmentedMessage[2]); } catch { MessageHandler.InvalidParameter(e); return; }
                 NightBotReplacement.Init.PlayerState.Volume = Volume;
                 MessageHandler.SendMessage(e, Shared.ConfigHandler.Config["CommandResponses"]["Moderator"]["Volume"].ToString(), null);
                 return;
-            }
-            NotMod(e);
+            //}
+            //NotMod(e);
         }
 
         public static void Promote(OnMessageReceivedArgs e, string[] SegmentedMessage)
