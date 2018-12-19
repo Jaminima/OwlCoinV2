@@ -73,6 +73,10 @@ namespace OwlCoinV2.Backend.NightBotReplacement
                 if (YoutubeVideoExists(YoutubeID))
                 {
                     Newtonsoft.Json.Linq.JToken YT = Shared.APIIntergrations.Youtube.VidDetails(YoutubeID);
+                    if (YT["items"].Count() == 0)
+                    {
+                        EnQueued.ErrorReason = ErrorReason.SearchTermInvalid;
+                    }
                     if (System.Xml.XmlConvert.ToTimeSpan(YT["items"][0]["contentDetails"]["duration"].ToString()).TotalSeconds<600)
                     {
                         if (YoutubeVideoInQueue(YoutubeID)) { EnQueued.ErrorReason = ErrorReason.InQueue; return EnQueued; }
