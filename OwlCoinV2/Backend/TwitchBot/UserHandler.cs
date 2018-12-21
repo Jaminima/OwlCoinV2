@@ -15,14 +15,22 @@ namespace OwlCoinV2.Backend.TwitchBot
     {
         public static TwitchLib.Api.Models.v5.Users.Users UserFromUsername(string Username)
         {
-            Task<TwitchLib.Api.Models.v5.Users.Users> GetUName = new TwitchLib.Api.Sections.Users.V5Api(Bot.TwitchA).GetUserByNameAsync(Username);
-            return Task.Run(async () => await new TwitchLib.Api.Sections.Users.V5Api(Bot.TwitchA).GetUserByNameAsync(Username)).Result;
+            try
+            {
+                Task<TwitchLib.Api.Models.v5.Users.Users> GetUName = new TwitchLib.Api.Sections.Users.V5Api(Bot.TwitchA).GetUserByNameAsync(Username);
+                return Task.Run(async () => await new TwitchLib.Api.Sections.Users.V5Api(Bot.TwitchA).GetUserByNameAsync(Username)).Result;
+            }
+            catch (Exception E) { Console.WriteLine(E); return null; }
         }
 
         public static TwitchLib.Api.Models.v5.Users.User UserFromUserID(string UserID)
         {
-            Task<TwitchLib.Api.Models.v5.Users.User> GetUName = new TwitchLib.Api.Sections.Users.V5Api(Bot.TwitchA).GetUserByIDAsync(UserID);
-            return Task.Run(async () => await new TwitchLib.Api.Sections.Users.V5Api(Bot.TwitchA).GetUserByIDAsync(UserID)).Result;
+            try
+            {
+                Task<TwitchLib.Api.Models.v5.Users.User> GetUName = new TwitchLib.Api.Sections.Users.V5Api(Bot.TwitchA).GetUserByIDAsync(UserID);
+                return Task.Run(async () => await new TwitchLib.Api.Sections.Users.V5Api(Bot.TwitchA).GetUserByIDAsync(UserID)).Result;
+            }
+            catch (Exception E) { Console.WriteLine(E); return null; }
         }
 
     }
