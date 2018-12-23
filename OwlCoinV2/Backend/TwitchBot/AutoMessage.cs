@@ -9,29 +9,38 @@ namespace OwlCoinV2.Backend.TwitchBot
 {
     public static class AutoMessage
     {
-        public static void Start()
+        static Dictionary<int, DateTime> MessageHistory = new Dictionary<int, DateTime> { };
+        static DateTime LastMessage;
+        public static void MessageSender()
         {
-            int LoopStartDelay = int.Parse(Shared.ConfigHandler.Config["AutoMessages"]["LoopStartDelay"].ToString());
-            int Items = Shared.ConfigHandler.Config["AutoMessages"]["Messages"].Count();
-            new Thread(() => StartLoop(LoopStartDelay,Items)).Start();
-        }
-
-        static void StartLoop(int StartupDealy,int Items)
-        {
-            for (int i=0;i<Items;i++)
+            if (Commands.Drops.IsLive())
             {
-                new Thread(() => MessageLoop(i)).Start();
-                System.Threading.Thread.Sleep(StartupDealy * 60000);
-            }
-        }
-
-        static void MessageLoop(int i)
-        {
-            while (true)
-            {
-                if (Commands.Drops.IsLive())
-                { MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), Shared.ConfigHandler.Config["AutoMessages"]["Messages"][i]["Text"].ToString(), null,null); }
-                System.Threading.Thread.Sleep(int.Parse(Shared.ConfigHandler.Config["AutoMessages"]["Messages"][i]["Delay"].ToString()) * 60000);
+                Newtonsoft.Json.Linq.JToken MessageSet = Shared.ConfigHandler.Config["AutoMessages"]["Messages"];
+                int MinDelay = int.Parse(Shared.ConfigHandler.Config["AutoMessages"]["MinDelay"].ToString());
+                if (((TimeSpan)(DateTime.Now - LastMessage)).TotalSeconds > MinDelay)
+                {
+                    for (int i = 0; i < MessageSet.Count(); i++)
+                    {
+                        if (MessageHistory.ContainsKey(i))
+                        {
+                            int Delay = int.Parse(MessageSet[i]["Delay"].ToString());
+                            if (((TimeSpan)(DateTime.Now - MessageHistory[i])).TotalMinutes > Delay)
+                            {
+                                MessageHistory[i] = DateTime.Now;
+                                MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), MessageSet[i]["Text"].ToString(), null, null);
+                                LastMessage = DateTime.Now;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            MessageHistory.Add(i, DateTime.Now);
+                            MessageHandler.SendMessage(Shared.ConfigHandler.Config["ChannelName"].ToString(), MessageSet[i]["Text"].ToString(), null, null);
+                            LastMessage = DateTime.Now;
+                            break;
+                        }
+                    }
+                }
             }
         }
     }

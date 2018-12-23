@@ -16,26 +16,27 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands
         {
             int RaffleLastRunMin = -1;
             int WatchingGiveOCLastRunMin = -1;
-            int DonationLastRunMin = -1;
+            int DonationCheckLastRunMin = -1;
             while (true)
             {
-                if (DateTime.Now.Minute % 15 == 0 && RaffleLastRunMin!=DateTime.Now.Minute && IsLive())
+                System.Threading.Thread.Sleep(2000);
+                AutoMessage.MessageSender();
+                if (DateTime.Now.Minute % 15 == 0 && RaffleLastRunMin != DateTime.Now.Minute && IsLive())
                 {
                     Raffles++;
                     RaffleLastRunMin = DateTime.Now.Minute;
                     if (Raffles % 4 == 0) { new Thread(() => RaffleStart(true)).Start(); } else { new Thread(() => RaffleStart(false)).Start(); }
                 }
-                if (DateTime.Now.Minute != DonationLastRunMin&&IsLive())
+                if (DateTime.Now.Minute != DonationCheckLastRunMin && IsLive())
                 {
+                    DonationCheckLastRunMin = DateTime.Now.Minute;
                     Shared.APIIntergrations.Streamlabs.Donations.CheckForNewDonation();
-                    DonationLastRunMin = DateTime.Now.Minute;
                 }
-                if (DateTime.Now.Minute % 10 == 0&&WatchingGiveOCLastRunMin!=DateTime.Now.Minute)
+                if (DateTime.Now.Minute % 10 == 0 && WatchingGiveOCLastRunMin != DateTime.Now.Minute)
                 {
                     WatchingGiveOCLastRunMin = DateTime.Now.Minute;
                     new Thread(() => WatchingGiveOC()).Start();
                 }
-                System.Threading.Thread.Sleep(2000);
             }
         }
         static Random Rnd = new Random();
