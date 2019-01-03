@@ -20,9 +20,16 @@ namespace OwlCoinV2.Backend.TwitchBot.Commands.Viewer
         {
             if (SegmentedMessage.Length != 3) { MessageHandler.NotLongEnough(e); return; }
             string TheirID = SegmentedMessage[1]; Shared.IDType TheirIDType = Shared.IDType.Twitch;
-            if (TheirID.StartsWith("@")) { TheirID = TheirID.Replace("@", "");
+            if (TheirID.StartsWith("@"))
+            {
+                TheirID = TheirID.Replace("@", "");
                 try { TheirID = UserHandler.UserFromUsername(TheirID).Matches[0].Id; }
-                catch { MessageHandler.SendMessage(e,MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NoUser"].ToString(),e.ChatMessage)); return; } }
+                catch { MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NoUser"].ToString(), e.ChatMessage)); return; }
+            }
+            else
+            {
+                MessageHandler.SendMessage(e, MessageHandler.ParseConfigString(Shared.ConfigHandler.Config["CommandResponses"]["Errors"]["NoUser"].ToString(), e.ChatMessage)); return;
+            }
             int Amount = 0;
             if (SegmentedMessage[2].ToLower() == "all") { Amount = Shared.Data.Accounts.GetBalance(e.ChatMessage.UserId.ToString(), Shared.IDType.Twitch); }
             else if (SegmentedMessage[2].ToLower().EndsWith("k"))
